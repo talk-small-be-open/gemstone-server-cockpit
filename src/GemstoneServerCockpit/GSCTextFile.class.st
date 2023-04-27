@@ -1,0 +1,66 @@
+Class {
+	#name : #GSCTextFile,
+	#superclass : #GSCTool,
+	#instVars : [
+		'fileReference',
+		'shouldContent',
+		'contentTemplate'
+	],
+	#category : #'GemstoneServerCockpit-Model'
+}
+
+{ #category : #'as yet unclassified' }
+GSCTextFile >> checkMe [
+	self beNotNeedsAttention.
+
+	self isExisting ifFalse: [ ^ self beNeedsAttention: 'File does not exist' ].
+	
+	fileReference contents ~= contentTemplate contentString ifTrue: [ ^ self beNeedsAttention: 'File contents differ' ]
+]
+
+{ #category : #accessing }
+GSCTextFile >> contentTemplate [
+
+	^ contentTemplate
+]
+
+{ #category : #accessing }
+GSCTextFile >> contentTemplate: anObject [
+
+	contentTemplate := anObject
+]
+
+{ #category : #'tool-actions' }
+GSCTextFile >> doWriteFile [
+	fileReference ifNil: [ self log: 'File path not defined'. ^ self ].
+	
+	fileReference ensureDelete.
+	
+	fileReference writeStreamEncoded: 'utf-8' do: [ :s |
+		s << contentTemplate contentString
+	].
+
+	self log: 'File created'.
+	
+	self refresh
+]
+
+{ #category : #accessing }
+GSCTextFile >> filePath: aString [
+	fileReference := aString asFileReference.
+	
+	self log: 'File: ', aString
+	
+]
+
+{ #category : #'private - initialization' }
+GSCTextFile >> initMe [
+	self isExisting ifFalse: [ self log: 'File does not exist' ] ifTrue: [
+		self log: 'Current content is:'.
+		self log: fileReference contents ]
+]
+
+{ #category : #testing }
+GSCTextFile >> isExisting [
+	^ fileReference notNil and: [ fileReference exists ]
+]
