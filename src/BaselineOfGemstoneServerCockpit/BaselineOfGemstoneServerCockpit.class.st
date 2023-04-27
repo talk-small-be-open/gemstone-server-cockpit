@@ -18,10 +18,10 @@ BaselineOfGemstoneServerCockpit >> baseline: spec [
 			spec baseline: 'OSSubprocess' with: [
 				spec repository: 'github://pharo-contributions/OSSubprocess:master/repository' ].
 
-			spec baseline: 'RenoirSt' with: [
+"			spec baseline: 'RenoirSt' with: [
 				spec
 					repository: 'github://ba-st/RenoirSt:release-candidate';
-					loads: #('Development') ].
+					loads: #('Development') ]."
 
 			spec package: 'MCL-Utils-Blankness' with: [
 				spec repository: 'github://talk-small-be-open/utils:master/src'
@@ -30,7 +30,7 @@ BaselineOfGemstoneServerCockpit >> baseline: spec [
 	
 			spec
 				package: 'GemstoneServerCockpit' with: [
-					spec requires: #('Seaside3' 'OSSubprocess' 'RenoirSt' 'MCL-Utils-Blankness') ].
+					spec requires: #('Seaside3' 'OSSubprocess' "'RenoirSt'" 'MCL-Utils-Blankness') ].
 		].
 	
 	spec
