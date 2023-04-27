@@ -126,7 +126,9 @@ GSCConfiguration >> nodesDo: aTwoArgBlock [
 
 { #category : #'as yet unclassified' }
 GSCConfiguration >> presetFrom: another [
-	
+	another entriesDo: [ :keyPath :value |
+		value ifNotBlank: [  ]
+	]
 ]
 
 { #category : #printing }
