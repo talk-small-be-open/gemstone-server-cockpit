@@ -42,5 +42,5 @@ GSCApplication >> renderBodyOn: html [
 
 { #category : #'as yet unclassified' }
 GSCApplication >> shortCode [
-	^ 'todo'	
+	^ self configAt: 'project:shortCode'
 ]

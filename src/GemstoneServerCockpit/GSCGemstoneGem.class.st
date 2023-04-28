@@ -6,3 +6,15 @@ Class {
 	],
 	#category : #'GemstoneServerCockpit-Model'
 }
+
+{ #category : #accessing }
+GSCGemstoneGem >> portNumber [
+
+	^ portNumber
+]
+
+{ #category : #accessing }
+GSCGemstoneGem >> portNumber: anObject [
+
+	portNumber := anObject
+]

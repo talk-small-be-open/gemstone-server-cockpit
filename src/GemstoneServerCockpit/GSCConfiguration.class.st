@@ -23,18 +23,18 @@ GSCConfiguration class >> fromFile: aStringPath [
 ]
 
 { #category : #arithmetic }
-GSCConfiguration >> / aSymbol [
-	^ self at: aSymbol
+GSCConfiguration >> / aString [
+	^ self at: aString
 ]
 
 { #category : #arithmetic }
-GSCConfiguration >> at: aSymbol [
+GSCConfiguration >> at: aPathlikeStructure [
 	| parts dict |
-	parts := self getKeySequence: aSymbol.
+	parts := self getKeySequence: aPathlikeStructure.
 	
 	dict := self getNestedDictionary: parts allButLast.
 	
-	^ dict at: (parts last) ifAbsentPut: [ nil ]
+	^ dict at: (parts last asString) ifAbsentPut: [ nil ]
 ]
 
 { #category : #arithmetic }
@@ -49,13 +49,13 @@ GSCConfiguration >> at: aSymbol ifAbsent: aBlock [
 ]
 
 { #category : #arithmetic }
-GSCConfiguration >> at: aSymbol put: aValue [
+GSCConfiguration >> at: aPathlikeStructure put: aValue [
 	| parts dict |
-	parts := self getKeySequence: aSymbol.
+	parts := self getKeySequence: aPathlikeStructure.
 	
 	dict := self getNestedDictionary: parts allButLast.
 	
-	^ dict at: (parts last) put: aValue
+	^ dict at: (parts last asString) put: aValue
 ]
 
 { #category : #accessing }
@@ -78,8 +78,17 @@ GSCConfiguration >> entriesDo: aTwoArgBlock [
 ]
 
 { #category : #arithmetic }
-GSCConfiguration >> getKeySequence: aSymbolOrString [
-	^ aSymbolOrString asSymbol findTokens: '.:'
+GSCConfiguration >> getKeySequence: aPathlikeStructure [
+
+	aPathlikeStructure isString ifTrue: [
+		^ aPathlikeStructure asString findTokens: '.:'
+	].
+
+	aPathlikeStructure isCollection ifTrue: [
+		^ aPathlikeStructure collect: [ :each | each asString ]
+	].
+	
+	self error: 'Wrong format of path'
 
 ]
 
@@ -93,7 +102,7 @@ GSCConfiguration >> getNestedDictionary: aKeysCollection [
 		
 		current isDictionary ifFalse: [ self error: 'Can not access non-dictionary config node' ].
 		
-		next := current at: each asSymbol ifAbsentPut: [ self dictionaryClass new ].
+		next := current at: each asString ifAbsentPut: [ self dictionaryClass new ].
 		current := next.
 	].
 	
@@ -127,7 +136,9 @@ GSCConfiguration >> nodesDo: aTwoArgBlock [
 { #category : #'as yet unclassified' }
 GSCConfiguration >> presetFrom: another [
 	another entriesDo: [ :keyPath :value |
-		value ifNotBlank: [  ]
+		value ifNotBlank: [
+			self at: keyPath default: value
+		]
 	]
 ]
 

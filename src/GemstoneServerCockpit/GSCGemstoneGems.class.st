@@ -7,8 +7,9 @@ Class {
 { #category : #building }
 GSCGemstoneGems >> build [
 
-	1 to: (self configAt: 'gems:count') do: [ :index |
-		self add: GSCGemstoneGem
+	(self configAt: 'gemstone:gemPorts') do: [ :port |
+		self add: GSCGemstoneGem then: [ :gem |
+			gem portNumber: port ]
 	].
 
 ]

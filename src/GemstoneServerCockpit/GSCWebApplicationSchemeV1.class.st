@@ -79,7 +79,10 @@ GSCWebApplicationSchemeV1 >> buildDefaultConfiguration [
 
 { #category : #accessing }
 GSCWebApplicationSchemeV1 >> ensureDefaultConfig [
+	
 	super ensureDefaultConfig.
 	
-	config at: 'gems:count' default: [ 3 ]
+	config presetFrom: self buildDefaultConfiguration
+	
+	"config at: 'gems:count' default: [ 3 ]"
 ]
