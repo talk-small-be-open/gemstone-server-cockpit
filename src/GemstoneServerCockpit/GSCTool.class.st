@@ -12,24 +12,31 @@ Class {
 
 { #category : #adding }
 GSCTool >> add: aToolClass [
+	^ self add: aToolClass then: nil
+]
+
+{ #category : #adding }
+GSCTool >> add: aToolClass then: aBlock [
 	| child |
 	
 	child := aToolClass new.
 	self addTool: child.
 
-	^ child
-]
+	aBlock ifNotNil: [
+		aBlock value: child ].
 
-{ #category : #adding }
-GSCTool >> add: aToolClass then: aBlock [
-	aBlock value: (self add: aToolClass)
+"	aBlock value: (self add: aToolClass)."
+	
+	child build.
+	^ child
+
 ]
 
 { #category : #adding }
 GSCTool >> addTool: aTool [
 	aTool parent: self.
 	children add: aTool.
-	aTool build.
+"	aTool build."
 	
 	^ aTool
 ]
@@ -61,14 +68,9 @@ GSCTool >> appShortCode [
 	^ self application shortCode
 ]
 
-{ #category : #'as yet unclassified' }
-GSCTool >> appShortName [
-	^ self application shortName
-]
-
 { #category : #accessing }
 GSCTool >> application [
-	^ self ancestors atLast: 2
+	^ self ancestors atLast: 2 ifAbsent: [ nil ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -130,8 +132,14 @@ GSCTool >> clearLog [
 ]
 
 { #category : #accessing }
+GSCTool >> config [
+	^ self application ifNil: [ self root config ] ifNotNil: [ :app |
+		app config ]
+]
+
+{ #category : #accessing }
 GSCTool >> configAt: aConfigKey [
-	^ self application config at: aConfigKey
+	^ self config at: aConfigKey
 ]
 
 { #category : #accessing }
@@ -143,7 +151,7 @@ GSCTool >> configAt: aConfigKey default: aBlock [
 
 { #category : #accessing }
 GSCTool >> configAt: aConfigKey put: aValue [
-	^ self application config at: aConfigKey put: aValue
+	^ self config at: aConfigKey put: aValue
 ]
 
 { #category : #'as yet unclassified' }
@@ -204,7 +212,10 @@ GSCTool >> parent: anObject [
 
 { #category : #'as yet unclassified' }
 GSCTool >> performToolAction: aSelector [
-	^ self perform: aSelector
+	^ [ self perform: aSelector ] on: Error do: [ :e |
+		self log: ('ERROR ', e asString).
+		GSCCore instance isDevelopment ifTrue: [ e pass ]
+	]
 ]
 
 { #category : #accessing }
@@ -244,7 +255,7 @@ GSCTool >> renderLogOn: html [
 	log ifNotEmpty: [ 
 		html heading: 'Log'.
 		log do: [ :each |
-			html div: each ]
+			html preformatted: each ]
 	]
 ]
 
@@ -256,6 +267,11 @@ GSCTool >> renderOn: html [
 	self renderActionsOn: html.
 	self renderLogOn: html.
 	self renderBodyOn: html.
+]
+
+{ #category : #accessing }
+GSCTool >> root [
+	^ self ancestors last
 ]
 
 { #category : #'as yet unclassified' }

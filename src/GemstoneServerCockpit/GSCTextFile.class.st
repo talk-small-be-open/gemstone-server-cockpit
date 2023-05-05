@@ -15,7 +15,7 @@ GSCTextFile >> checkMe [
 
 	self isExisting ifFalse: [ ^ self beNeedsAttention: 'File does not exist' ].
 	
-	fileReference contents ~= contentTemplate contentString ifTrue: [ ^ self beNeedsAttention: 'File contents differ' ]
+	fileReference contents ~= contentTemplate contentString withUnixLineEndings ifTrue: [ ^ self beNeedsAttention: 'File contents differ' ]
 ]
 
 { #category : #accessing }
@@ -34,10 +34,11 @@ GSCTextFile >> contentTemplate: anObject [
 GSCTextFile >> doWriteFile [
 	fileReference ifNil: [ self log: 'File path not defined'. ^ self ].
 	
+	fileReference parent ensureCreateDirectory.
 	fileReference ensureDelete.
 	
 	fileReference writeStreamEncoded: 'utf-8' do: [ :s |
-		s << contentTemplate contentString
+		s << contentTemplate contentString withUnixLineEndings
 	].
 
 	self log: 'File created'.
@@ -47,9 +48,10 @@ GSCTextFile >> doWriteFile [
 
 { #category : #accessing }
 GSCTextFile >> filePath: aString [
-	fileReference := aString asFileReference.
 	
-	self log: 'File: ', aString
+	fileReference := GSCCore instance realPathForFile: aString.
+	
+	self log: 'File: ', fileReference pathString
 	
 ]
 
@@ -63,4 +65,9 @@ GSCTextFile >> initMe [
 { #category : #testing }
 GSCTextFile >> isExisting [
 	^ fileReference notNil and: [ fileReference exists ]
+]
+
+{ #category : #accessing }
+GSCTextFile >> title [
+	^ fileReference basename
 ]

@@ -27,6 +27,11 @@ GSCConfiguration >> / aString [
 	^ self at: aString
 ]
 
+{ #category : #converting }
+GSCConfiguration >> asDictionary [
+	^ data copy
+]
+
 { #category : #arithmetic }
 GSCConfiguration >> at: aPathlikeStructure [
 	| parts dict |
@@ -58,6 +63,11 @@ GSCConfiguration >> at: aPathlikeStructure put: aValue [
 	^ dict at: (parts last asString) put: aValue
 ]
 
+{ #category : #'as yet unclassified' }
+GSCConfiguration >> copyWith: another [
+	^ self copy overwriteWith: another
+]
+
 { #category : #accessing }
 GSCConfiguration >> data: aDictionary [
 	data := self dictionaryClass newFrom: aDictionary
@@ -65,7 +75,8 @@ GSCConfiguration >> data: aDictionary [
 
 { #category : #accessing }
 GSCConfiguration >> dictionaryClass [
-	"keep it Dictionary, since then STON is cleaner, instead of IdentityDictionary"
+	"keep it Dictionary, since then STON is cleaner, instead of IdentityDictionary.
+	TODO: Maybe OrderedDictionary would work with STON?"
 	^ Dictionary
 ]
 
@@ -131,6 +142,23 @@ GSCConfiguration >> loadFromFile: aFilePathString [
 { #category : #enumerating }
 GSCConfiguration >> nodesDo: aTwoArgBlock [
 	self recurseIn: data path: OrderedCollection new do: aTwoArgBlock
+]
+
+{ #category : #'as yet unclassified' }
+GSCConfiguration >> overwriteWith: another [
+	another entriesDo: [ :keyPath :value |
+		self at: keyPath default: value
+	]
+]
+
+{ #category : #copying }
+GSCConfiguration >> postCopy [
+	super postCopy.
+	
+	"data := data deepCopy."
+	self nodesDo: [ :key :value |
+		self at: key put: value copy
+	]
 ]
 
 { #category : #'as yet unclassified' }

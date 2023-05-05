@@ -18,10 +18,11 @@ GSCSttTemplate class >> tool: aGscTool sttString: aString [
 
 { #category : #accessing }
 GSCSttTemplate >> contentString [
-	| me |
+"	| me |
 	me := GSCSmalltalkTemplateDataGateway tool: tool.
+"
 
-	^ mclSmalltalkTemplate evaluateFor: me
+	^ mclSmalltalkTemplate evaluateFor: tool
 ]
 
 { #category : #'as yet unclassified' }

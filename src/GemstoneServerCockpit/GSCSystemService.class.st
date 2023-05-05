@@ -31,3 +31,13 @@ GSCSystemService >> isRunning [
 	^ GSCCore instance runShellIsSuccess: ('systemctl is-active --quiet ', serviceName)
 
 ]
+
+{ #category : #accessing }
+GSCSystemService >> name: aString [
+	serviceName := aString
+]
+
+{ #category : #accessing }
+GSCSystemService >> title [
+	^ 'Service ', serviceName
+]

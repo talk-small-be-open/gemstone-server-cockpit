@@ -29,6 +29,12 @@ GSCApplication >> doSaveConfigFile [
 	config storeToFile.
 ]
 
+{ #category : #testing }
+GSCApplication >> isBeta [
+	^ true "TODO"
+	
+]
+
 { #category : #'as yet unclassified' }
 GSCApplication >> longName [
 	^ 'TODO TODO TODO'

@@ -9,6 +9,25 @@ Class {
 }
 
 { #category : #accessing }
+GSCSimpleTemplate class >> source: aString [
+	^ self new
+		source: aString;
+		yourself
+]
+
+{ #category : #accessing }
+GSCSimpleTemplate >> contentString [
+	| out |
+	out := source.
+	
+	replacements keysAndValuesDo: [ :search :replace |
+		out := out copyReplaceAll: search with: replace
+	].
+	
+	^ out
+]
+
+{ #category : #accessing }
 GSCSimpleTemplate >> initialize [
 	super initialize.
 	

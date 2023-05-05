@@ -6,10 +6,19 @@ Class {
 
 { #category : #building }
 GSCWebApplicationSchemeV1 >> buildApplicationToolInto: aRootTool [
-	| app |
-	app := GSCApplication new.
+	| app appConfig |
+
+"	app := GSCApplication new.
 	app config: config.
-	aRootTool addTool: app.
+	aRootTool addTool: app."
+	
+	appConfig := aRootTool config copyWith: config.
+
+	app := aRootTool add: GSCApplication then: [ :a |
+		a config: appConfig
+	].
+	
+	app add: GSCNginxSite.
 	
 	app add: GSCGemstoneStone then: [ :stone |
 		stone add: GSCDummy.
@@ -20,10 +29,6 @@ GSCWebApplicationSchemeV1 >> buildApplicationToolInto: aRootTool [
 	
 	app add: GSCGemstoneGems.
 	
-	app add: GSCNginx.
-
-
-
 	^ app
 ]
 
@@ -35,8 +40,7 @@ GSCWebApplicationSchemeV1 >> buildDefaultConfiguration [
 	conf := GSCEasyConfigurationBuilder new.
 
 	conf project
-		installationPath: '/opt/webapp';
-		acronym: 'MyWebApp';
+		shortCode: 'MyWebApp';
 		name: 'My web application'.
 
 	conf application
@@ -55,6 +59,7 @@ GSCWebApplicationSchemeV1 >> buildDefaultConfiguration [
 
 	conf server
 		username: 'ubuntu';
+		installationPath: '/opt/webapp';
 		adminEmail: '';
 		softwarePackages: #(vim).
 

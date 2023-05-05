@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'rootTool',
 		'uuidString',
-		'shellProcess'
+		'shellProcess',
+		'filesystemRoot'
 	],
 	#classVars : [
 		'Instance'
@@ -43,6 +44,12 @@ GSCCore class >> startUp: isComingUp [
 	]
 ]
 
+{ #category : #accessing }
+GSCCore >> filesystemRoot [
+
+	^ filesystemRoot
+]
+
 { #category : #actions }
 GSCCore >> install [
 	self installSeasideComponents.
@@ -74,8 +81,29 @@ GSCCore >> instanceId [
 ]
 
 { #category : #testing }
+GSCCore >> isDevelopment [
+	"TODO"
+	^ true
+]
+
+{ #category : #testing }
 GSCCore >> isShellProcessRunning [
 	^ shellProcess notNil and: [ shellProcess isTerminated not ]
+]
+
+{ #category : #helpers }
+GSCCore >> realPathForFile: aFileReferenceOrString [
+	| fr |
+	fr := aFileReferenceOrString asFileReference.
+	
+	"OPTIMIZE: I think there is a onliner for that, but did not find it"
+	filesystemRoot isRoot ifFalse: [
+		| relative |
+		relative := fr relativeTo: Path root.
+		^ (filesystemRoot resolvePath: relative) asFileReference.
+	].
+
+	^ fr
 ]
 
 { #category : #accessing }
@@ -128,14 +156,23 @@ GSCCore >> runShellIsSuccess: aString [
 
 { #category : #'as yet unclassified' }
 GSCCore >> setup [
-	self setupExample
+	| rootConf |
+	rootTool := GSCRoot new.
+	
+	rootConf := GSCConfiguration fromFile: ('/etc/gsc/gsc.conf').
+	rootTool config: rootConf.
+	
+	self setupServer.
+	self setupExample.
+	
+	rootTool init.
+	rootTool check.
+
 ]
 
 { #category : #'as yet unclassified' }
 GSCCore >> setupExample [
-	rootTool := GSCFolder new.
 	
-	"TODO: read from config or system"
 
 	1 to: 5 do: [ :index |
 		| app scheme conf |
@@ -144,9 +181,6 @@ GSCCore >> setupExample [
 		scheme config: conf.
 		
 		app := scheme buildApplicationToolInto: rootTool.
-		
-		app init.
-		app check.
 		
 	]
 ]
@@ -162,8 +196,62 @@ GSCCore >> setupFromConfigFiles [
 		
 		app := scheme buildApplicationToolInto: rootTool.
 		
-		app init.
-		app check.
-		
 	]
+]
+
+{ #category : #'as yet unclassified' }
+GSCCore >> setupServer [
+	"TODO: DEV"
+	filesystemRoot := '/tmp/gsc_test_file_root' asPath.
+
+	filesystemRoot asFileReference ensureCreateDirectory.
+	
+	rootTool add: GSCNginx.
+	
+	rootTool add: GSCMonit.
+	
+	rootTool add: GSCGsDevKit.
+
+	rootTool add: GSCAnsibleTasks then: [ :ansible |
+		ansible addTasksJson: '
+[
+    {
+        "name": "Set timezone to Switzerland",
+        "timezone": {
+            "name": "Europe/Zurich"
+        }
+    },
+    {
+        "name": "Add user group",
+        "group": {
+            "name": "{{remoteUser}}"
+        }
+    },
+    {
+        "name": "Add user",
+        "user": {
+            "name": "{{remoteUser}}",
+            "group": "adm",
+            "groups": "sudo, {{remoteUser}}",
+            "shell": "/bin/bash"
+        }
+    }
+]
+'
+	]
+]
+
+{ #category : #helpers }
+GSCCore >> temporaryFolder [
+	^ '/tmp' asFileReference
+]
+
+{ #category : #helpers }
+GSCCore >> temporaryUniqueFile: anExtensionString [
+	| uuid file |
+	uuid := UUID new.
+	
+	file := self temporaryFolder / (uuid greaseString, '.', anExtensionString).
+	
+	^ file
 ]
