@@ -27,10 +27,13 @@ BaselineOfGemstoneServerCockpit >> baseline: spec [
 				spec repository: 'github://talk-small-be-open/utils:master/src'
 			].
 				
+			spec package: 'MCLSmalltalkTemplate' with: [
+				spec repository: 'github://talk-small-be-open/utils:master/src'
+			].
 	
 			spec
 				package: 'GemstoneServerCockpit' with: [
-					spec requires: #('Seaside3' 'OSSubprocess' "'RenoirSt'" 'MCL-Utils-Blankness') ].
+					spec requires: #('Seaside3' 'OSSubprocess' "'RenoirSt'" 'MCL-Utils-Blankness' 'MCLSmalltalkTemplate') ].
 		].
 	
 	spec
