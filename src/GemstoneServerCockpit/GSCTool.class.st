@@ -276,7 +276,14 @@ GSCTool >> root [
 
 { #category : #'as yet unclassified' }
 GSCTool >> runShellCommand: aString [
-	GSCCore instance runAsyncShell: aString logInto: log
+	GSCCore instance runAsyncShell: aString onLog: [ :lines |
+		log addAll: lines ]
+]
+
+{ #category : #'as yet unclassified' }
+GSCTool >> runSudoShellCommand: aString [
+	GSCCore instance runSudoAsyncShell: aString onLog: [ :lines |
+		log addAll: lines ]
 ]
 
 { #category : #accessing }

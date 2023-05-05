@@ -5,7 +5,8 @@ Class {
 		'rootTool',
 		'uuidString',
 		'shellProcess',
-		'filesystemRoot'
+		'filesystemRoot',
+		'temporarySudoPassword'
 	],
 	#classVars : [
 		'Instance'
@@ -50,6 +51,13 @@ GSCCore >> filesystemRoot [
 	^ filesystemRoot
 ]
 
+{ #category : #'as yet unclassified' }
+GSCCore >> getSudoPassword [
+	temporarySudoPassword ifNil: [ self error: 'You need to give the sudo password' ].
+	
+	^ temporarySudoPassword
+]
+
 { #category : #actions }
 GSCCore >> install [
 	self installSeasideComponents.
@@ -91,6 +99,11 @@ GSCCore >> isShellProcessRunning [
 	^ shellProcess notNil and: [ shellProcess isTerminated not ]
 ]
 
+{ #category : #testing }
+GSCCore >> isSudoPasswordSet [
+	^ temporarySudoPassword notBlank
+]
+
 { #category : #helpers }
 GSCCore >> realPathForFile: aFileReferenceOrString [
 	| fr |
@@ -113,7 +126,7 @@ GSCCore >> rootTool [
 ]
 
 { #category : #shell }
-GSCCore >> runAsyncShell: aString logInto: aCollection [
+GSCCore >> runAsyncShell: aString onLog: aBlock [
 	self isShellProcessRunning ifTrue: [ self error: 'Another shell process is running' ].
 
 	shellProcess := [
@@ -133,12 +146,12 @@ GSCCore >> runAsyncShell: aString logInto: aCollection [
 				doing: [ :process :outStream :errStream |  
 					| read | 
 					read := outStream upToEnd.
-					aCollection addAll: read lines.
+					aBlock value: read lines.
 				]
 				onExitDo: [ :process :outStream :errStream  |
-					| read | 
+"					| read | 
 					read := outStream upToEnd.
-					aCollection addAll: read lines.
+					aBlock value: read lines."
 					
 					process closeAndCleanStreams.
 				]
@@ -152,6 +165,72 @@ GSCCore >> runShellIsSuccess: aString [
 		shellCommand: aString;
 		runAndWait;
 		isSuccess
+]
+
+{ #category : #shell }
+GSCCore >> runSudoAsyncShell: aString onLog: aBlock [
+	| sudoPassword output |
+	
+	self isShellProcessRunning ifTrue: [ self error: 'Another shell process is running' ].
+
+	sudoPassword := self getSudoPassword.
+
+	shellProcess := [
+		| process |
+		process := OSSUnixSubprocess new.
+		process
+			shellCommand: ('sudo -S ', aString);
+			redirectStdout;
+			redirectStderr;
+			createMissingStandardStreams: true;
+			run.
+
+		process stdinStream
+			nextPutAll: sudoPassword;
+			close.
+
+		process waitForExitPollingEvery: (Delay forMilliseconds: 500) doing: [ :proc :outStream :errStream |  
+			| out | 
+			out := outStream upToEnd.
+			aBlock value: out lines.
+		].
+
+"		output := process stdoutStream upToEnd.
+		aCollection addAll: output lines."
+		
+		process closeAndCleanStreams.
+			
+	] forkAt: Processor userInterruptPriority. 
+]
+
+{ #category : #shell }
+GSCCore >> runSudoShellIsSuccess: aString [ 
+	| process sudoPassword |
+
+	sudoPassword := self getSudoPassword.
+
+	process := OSSUnixSubprocess new.
+		
+		process
+			shellCommand: ('sudo -S ', aString);
+			createMissingStandardStreams: true;
+			run.
+			
+		process stdinStream 
+			nextPutAll: sudoPassword;
+			close.
+
+		process
+			waitForExit;
+			closeAndCleanStreams.
+
+		^ process isSuccess
+]
+
+{ #category : #'as yet unclassified' }
+GSCCore >> setSudoPassword: aString [
+	temporarySudoPassword := aString
+
 ]
 
 { #category : #'as yet unclassified' }
@@ -187,16 +266,19 @@ GSCCore >> setupExample [
 
 { #category : #'as yet unclassified' }
 GSCCore >> setupFromConfigFiles [
-	('/etc/gsc/conf.d' asFileReference filesMatching: '*.conf') do: [ :each |
-		| conf scheme app |
-		conf := GSCConfiguration fromFile: each pathString.
+	| confDir |
+	confDir := '/etc/gsc/conf.d' asFileReference.
+	confDir exists ifTrue: [
+		(confDir filesMatching: '*.conf') do: [ :each |
+			| conf scheme app |
+			conf := GSCConfiguration fromFile: each pathString.
 
-		scheme := conf schemeClass new.
-		scheme config: conf.
-		
-		app := scheme buildApplicationToolInto: rootTool.
-		
-	]
+			scheme := conf schemeClass new.
+			scheme config: conf.
+			
+			app := scheme buildApplicationToolInto: rootTool.
+			
+	]]
 ]
 
 { #category : #'as yet unclassified' }

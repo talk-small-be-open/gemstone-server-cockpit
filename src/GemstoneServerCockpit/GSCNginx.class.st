@@ -16,7 +16,10 @@ GSCNginx >> build [
 	self add: GSCSystemService then: [ :service |
 		service
 			name: 'nginx'
-	]
+	].
+
+	self add: GSCAptPackageService then: [ :apt |
+		apt packageName: 'nginx' ]
 ]
 
 { #category : #'as yet unclassified' }

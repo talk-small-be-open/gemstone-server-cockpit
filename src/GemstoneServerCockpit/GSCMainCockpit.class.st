@@ -36,6 +36,12 @@ GSCMainCockpit >> renderContentOn: html [
 		html script: 'setTimeout(function(){ location.reload() }, 1000);'.
 	].
 
+	GSCCore instance isSudoPasswordSet ifFalse: [
+		html anchor
+			callback: [ self setSudoPassword ];
+			with: 'Set sudo password ...'
+	].
+
 	html div class: 'main'; with: [ 
 		html div class: 'upperPane'; with: [
 			self renderPanesOn: html
@@ -126,4 +132,11 @@ GSCMainCockpit >> selectedTools [
 	] whileTrue.
 
 	^ all
+]
+
+{ #category : #initialization }
+GSCMainCockpit >> setSudoPassword [
+	| pw |
+	pw := self request: 'Password?'.
+	GSCCore instance setSudoPassword: pw
 ]
