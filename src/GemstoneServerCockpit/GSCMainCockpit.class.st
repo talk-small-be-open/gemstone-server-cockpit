@@ -23,6 +23,11 @@ GSCMainCockpit >> isSelectedTool: aTool [
 	^ self selectedTools includes: aTool
 ]
 
+{ #category : #'as yet unclassified' }
+GSCMainCockpit >> killShellProcess [
+	GSCCore instance killShellProcess 
+]
+
 { #category : #accessing }
 GSCMainCockpit >> lastSelectedTool [
 	^ self selectedTools atLast: 1 ifAbsent: [ nil ]
@@ -33,6 +38,9 @@ GSCMainCockpit >> renderContentOn: html [
 
 	GSCCore instance isShellProcessRunning ifTrue: [ 
 		html div: 'SHELL RUNS!'.
+		html anchor
+			callback: [ self killShellProcess ];
+			with: 'kill'.
 		html script: 'setTimeout(function(){ location.reload() }, 1000);'.
 	].
 

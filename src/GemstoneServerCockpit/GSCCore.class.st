@@ -6,7 +6,9 @@ Class {
 		'uuidString',
 		'shellProcess',
 		'filesystemRoot',
-		'temporarySudoPassword'
+		'temporarySudoPassword',
+		'sudoPasswortTimestamp',
+		'shellSubprocess'
 	],
 	#classVars : [
 		'Instance'
@@ -45,6 +47,13 @@ GSCCore class >> startUp: isComingUp [
 	]
 ]
 
+{ #category : #'as yet unclassified' }
+GSCCore >> autoexpireSudoPassword [
+	sudoPasswortTimestamp ifNil: [ ^ self ].
+	(sudoPasswortTimestamp < (DateAndTime now - 2 hours)) ifTrue: [ 
+		temporarySudoPassword := nil ]
+]
+
 { #category : #accessing }
 GSCCore >> filesystemRoot [
 
@@ -53,6 +62,9 @@ GSCCore >> filesystemRoot [
 
 { #category : #'as yet unclassified' }
 GSCCore >> getSudoPassword [
+	
+	self autoexpireSudoPassword.
+	
 	temporarySudoPassword ifNil: [ self error: 'You need to give the sudo password' ].
 	
 	^ temporarySudoPassword
@@ -101,7 +113,20 @@ GSCCore >> isShellProcessRunning [
 
 { #category : #testing }
 GSCCore >> isSudoPasswordSet [
+	self autoexpireSudoPassword.
 	^ temporarySudoPassword notBlank
+]
+
+{ #category : #'as yet unclassified' }
+GSCCore >> killShellProcess [
+	"Kill the OS subprocess. The Pharo process then will terminate automatically"
+	shellSubprocess ifNotNil: [
+		shellSubprocess terminate ].
+]
+
+{ #category : #logging }
+GSCCore >> log: aString [
+	Transcript crShow: aString
 ]
 
 { #category : #helpers }
@@ -129,8 +154,11 @@ GSCCore >> rootTool [
 GSCCore >> runAsyncShell: aString onLog: aBlock [
 	self isShellProcessRunning ifTrue: [ self error: 'Another shell process is running' ].
 
+	self log: aString.
+
 	shellProcess := [
-		OSSUnixSubprocess new
+		shellSubprocess := OSSUnixSubprocess new.
+		shellSubprocess
 	"		command: aString;"
 			shellCommand: aString;
 	"		arguments: (Array with: Smalltalk image imagePath);"
@@ -154,12 +182,18 @@ GSCCore >> runAsyncShell: aString onLog: aBlock [
 					aBlock value: read lines."
 					
 					process closeAndCleanStreams.
-				]
-			] forkAt: Processor userInterruptPriority. 
+				].
+
+				shellSubprocess := nil.
+
+			] forkAt: Processor userInterruptPriority named: 'GSC shell process'
 ]
 
 { #category : #shell }
 GSCCore >> runShellIsSuccess: aString [ 
+
+	self log: aString.
+	
 	^ OSSUnixSubprocess new
 "		command: aString;"
 		shellCommand: aString;
@@ -169,27 +203,29 @@ GSCCore >> runShellIsSuccess: aString [
 
 { #category : #shell }
 GSCCore >> runSudoAsyncShell: aString onLog: aBlock [
-	| sudoPassword output |
+	| sudoPassword cmd |
 	
 	self isShellProcessRunning ifTrue: [ self error: 'Another shell process is running' ].
 
 	sudoPassword := self getSudoPassword.
 
+	cmd := ('sudo -S -- ''', aString, '''').
+	self log: cmd.
+
 	shellProcess := [
-		| process |
-		process := OSSUnixSubprocess new.
-		process
-			shellCommand: ('sudo -S -- ''', aString, '''');
+		shellSubprocess := OSSUnixSubprocess new.
+		shellSubprocess
+			shellCommand: cmd;
 			redirectStdout;
 			redirectStderr;
 			createMissingStandardStreams: true;
 			run.
 
-		process stdinStream
+		shellSubprocess stdinStream
 			nextPutAll: sudoPassword;
 			close.
 
-		process waitForExitPollingEvery: (Delay forMilliseconds: 500) doing: [ :proc :outStream :errStream |  
+		shellSubprocess waitForExitPollingEvery: (Delay forMilliseconds: 500) doing: [ :proc :outStream :errStream |  
 			| out | 
 			out := outStream upToEnd.
 			aBlock value: out lines.
@@ -198,38 +234,45 @@ GSCCore >> runSudoAsyncShell: aString onLog: aBlock [
 "		output := process stdoutStream upToEnd.
 		aCollection addAll: output lines."
 		
-		process closeAndCleanStreams.
-			
-	] forkAt: Processor userInterruptPriority. 
+		shellSubprocess closeAndCleanStreams.
+		
+		shellSubprocess := nil.
+
+	] forkAt: Processor userInterruptPriority named: 'GSC shell process'
 ]
 
 { #category : #shell }
 GSCCore >> runSudoShellIsSuccess: aString [ 
-	| process sudoPassword |
+	| process sudoPassword cmd |
 
 	sudoPassword := self getSudoPassword.
 
 	process := OSSUnixSubprocess new.
+
+	cmd := ('sudo -S -- ''', aString, '''').
+	self log: cmd.
 		
-		process
-			shellCommand: ('sudo -S -- ''', aString, '''');
-			createMissingStandardStreams: true;
-			run.
-			
-		process stdinStream 
-			nextPutAll: sudoPassword;
-			close.
+	process
+		shellCommand: cmd;
+		createMissingStandardStreams: true;
+		run.
+		
+	process stdinStream 
+		nextPutAll: sudoPassword;
+		close.
 
-		process
-			waitForExit;
-			closeAndCleanStreams.
+	process
+		waitForExit;
+		closeAndCleanStreams.
 
-		^ process isSuccess
+	^ process isSuccess
 ]
 
 { #category : #'as yet unclassified' }
 GSCCore >> setSudoPassword: aString [
-	temporarySudoPassword := aString
+	temporarySudoPassword := aString.
+	
+	sudoPasswortTimestamp := DateAndTime now
 
 ]
 
@@ -329,7 +372,13 @@ GSCCore >> setupServer [
     }
 ]
 '
-	]
+	].
+
+	rootTool add: GSCFolder then: [ :folder |
+		folder name: 'Utilities'.
+
+		folder add: GSCShellConsole
+	].
 ]
 
 { #category : #helpers }
