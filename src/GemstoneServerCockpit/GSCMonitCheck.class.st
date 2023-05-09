@@ -63,3 +63,8 @@ GSCMonitCheck >> doStop [
 GSCMonitCheck >> doUnmonitor [
 	self runShellCommand: ('monit "', checkName, '" unmonitor')
 ]
+
+{ #category : #accessing }
+GSCMonitCheck >> title [
+	^ 'monit check ', checkName
+]

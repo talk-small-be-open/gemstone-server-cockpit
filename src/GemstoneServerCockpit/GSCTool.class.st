@@ -241,12 +241,28 @@ GSCTool >> renderBodyOn: html [
 ]
 
 { #category : #rendering }
+GSCTool >> renderLabel: aString number: aNumber on: html [
+
+	html label: aString.
+	html text: ': '.
+	html span: aNumber printString
+]
+
+{ #category : #rendering }
+GSCTool >> renderLabel: aString text: aString2 on: html [
+
+	html label: aString.
+	html text: ': '.
+	html span: aString2
+]
+
+{ #category : #rendering }
 GSCTool >> renderListEntryOn: html [
 	html span: self title.
 	self needsAttention ifTrue: [
-		html span: '!!!'
+		html span: ' !'
 	] ifFalse: [
-		self childNeedsAttention ifTrue: [ html span: '???' ]
+		self childNeedsAttention ifTrue: [ html span: ' (!)' ]
 	]
 ]
 
@@ -265,8 +281,9 @@ GSCTool >> renderOn: html [
 
 	self needsAttention ifTrue: [ html div: 'ATTENTION!!!' ].
 	self renderActionsOn: html.
-	self renderLogOn: html.
 	self renderBodyOn: html.
+	self renderLogOn: html.
+
 ]
 
 { #category : #accessing }

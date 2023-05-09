@@ -21,10 +21,10 @@ GSCWebApplicationSchemeV1 >> buildApplicationToolInto: aRootTool [
 	app add: GSCNginxSite.
 	
 	app add: GSCGemstoneStone then: [ :stone |
-		stone add: GSCDummy.
-		stone add: GSCShellCommand then: [ :shell |
+"		stone add: GSCDummy."
+"		stone add: GSCShellCommand then: [ :shell |
 			shell cmd: 'ping -t 5 google.com'
-		]
+		]"
 	].
 	
 	app add: GSCGemstoneGems.

@@ -15,7 +15,7 @@ GSCTextFile >> checkMe [
 
 	self isExisting ifFalse: [ ^ self beNeedsAttention: 'File does not exist' ].
 	
-	fileReference contents ~= contentTemplate contentString withUnixLineEndings ifTrue: [ ^ self beNeedsAttention: 'File contents differ' ]
+	self fileContents ~= contentTemplate contentString withUnixLineEndings ifTrue: [ ^ self beNeedsAttention: 'File contents differ' ]
 ]
 
 { #category : #accessing }
@@ -47,24 +47,41 @@ GSCTextFile >> doWriteFile [
 ]
 
 { #category : #accessing }
+GSCTextFile >> fileContents [
+	^ fileReference contents
+]
+
+{ #category : #accessing }
 GSCTextFile >> filePath: aString [
 	
 	fileReference := GSCCore instance realPathForFile: aString.
 	
-	self log: 'File: ', fileReference pathString
+"	self log: 'File: ', fileReference pathString"
 	
 ]
 
 { #category : #'private - initialization' }
 GSCTextFile >> initMe [
-	self isExisting ifFalse: [ self log: 'File does not exist' ] ifTrue: [
+	super initMe.
+"	self isExisting ifFalse: [ self log: 'File does not exist' ] ifTrue: [
 		self log: 'Current content is:'.
-		self log: fileReference contents ]
+		self log: fileReference contents ]"
 ]
 
 { #category : #testing }
 GSCTextFile >> isExisting [
 	^ fileReference notNil and: [ fileReference exists ]
+]
+
+{ #category : #rendering }
+GSCTextFile >> renderBodyOn: html [
+	self isExisting ifTrue: [
+		html preformatted
+			class: 'fileContent';
+			with: self fileContents
+	].
+
+	self renderLabel: 'File path' text: fileReference pathString on: html
 ]
 
 { #category : #accessing }

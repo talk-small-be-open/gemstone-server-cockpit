@@ -64,6 +64,11 @@ GSCGemstoneGem >> portNumber: anObject [
 	portNumber := anObject
 ]
 
+{ #category : #rendering }
+GSCGemstoneGem >> renderBodyOn: html [
+	self renderLabel: 'Port' number: portNumber on: html
+]
+
 { #category : #'as yet unclassified' }
 GSCGemstoneGem >> stoneName [
 	^ self configAt: 'gemstone:stoneName'

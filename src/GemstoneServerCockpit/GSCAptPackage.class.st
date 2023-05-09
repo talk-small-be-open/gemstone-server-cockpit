@@ -1,5 +1,5 @@
 Class {
-	#name : #GSCAptPackageService,
+	#name : #GSCAptPackage,
 	#superclass : #GSCTool,
 	#instVars : [
 		'packageName'
@@ -8,7 +8,7 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-GSCAptPackageService >> checkMe [
+GSCAptPackage >> checkMe [
 	self beNotNeedsAttention.
 	
 	self isInstalled ifFalse: [ ^ self beNeedsAttention: 'Package is not installed' ].
@@ -17,24 +17,29 @@ GSCAptPackageService >> checkMe [
 ]
 
 { #category : #'as yet unclassified' }
-GSCAptPackageService >> doInstall [
+GSCAptPackage >> doInstall [
 	self runSudoShellCommand: ('apt install --yes ', packageName)
 ]
 
 { #category : #testing }
-GSCAptPackageService >> isInstalled [
+GSCAptPackage >> isInstalled [
 	^ GSCCore instance runShellIsSuccess: ('dpkg-query --status ', packageName)
 
 ]
 
 { #category : #accessing }
-GSCAptPackageService >> packageName [
+GSCAptPackage >> packageName [
 
 	^ packageName
 ]
 
 { #category : #accessing }
-GSCAptPackageService >> packageName: anObject [
+GSCAptPackage >> packageName: anObject [
 
 	packageName := anObject
+]
+
+{ #category : #accessing }
+GSCAptPackage >> title [
+	^ 'APT ', packageName
 ]

@@ -37,7 +37,7 @@ GSCApplication >> isBeta [
 
 { #category : #'as yet unclassified' }
 GSCApplication >> longName [
-	^ 'TODO TODO TODO'
+	^ self configAt: 'project:name'
 ]
 
 { #category : #rendering }
@@ -49,4 +49,9 @@ GSCApplication >> renderBodyOn: html [
 { #category : #'as yet unclassified' }
 GSCApplication >> shortCode [
 	^ self configAt: 'project:shortCode'
+]
+
+{ #category : #accessing }
+GSCApplication >> title [
+	^ self longName
 ]

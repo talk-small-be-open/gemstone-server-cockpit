@@ -179,7 +179,7 @@ GSCCore >> runSudoAsyncShell: aString onLog: aBlock [
 		| process |
 		process := OSSUnixSubprocess new.
 		process
-			shellCommand: ('sudo -S ', aString);
+			shellCommand: ('sudo -S -- ''', aString, '''');
 			redirectStdout;
 			redirectStderr;
 			createMissingStandardStreams: true;
@@ -212,7 +212,7 @@ GSCCore >> runSudoShellIsSuccess: aString [
 	process := OSSUnixSubprocess new.
 		
 		process
-			shellCommand: ('sudo -S ', aString);
+			shellCommand: ('sudo -S -- ''', aString, '''');
 			createMissingStandardStreams: true;
 			run.
 			
@@ -287,6 +287,15 @@ GSCCore >> setupServer [
 	filesystemRoot := '/tmp/gsc_test_file_root' asPath.
 
 	filesystemRoot asFileReference ensureCreateDirectory.
+
+	rootTool add: GSCFolder then: [ :folder |
+		folder name: 'APT packages'.
+
+		folder add: GSCAptPackage then: [ :apt |
+			apt packageName: 'unzip' ].
+		folder add: GSCAptPackage then: [ :apt |
+			apt packageName: 'git' ].
+	].
 	
 	rootTool add: GSCNginx.
 	

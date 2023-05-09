@@ -18,7 +18,7 @@ GSCNginx >> build [
 			name: 'nginx'
 	].
 
-	self add: GSCAptPackageService then: [ :apt |
+	self add: GSCAptPackage then: [ :apt |
 		apt packageName: 'nginx' ]
 ]
 
@@ -107,4 +107,9 @@ http {
 
 }
 '
+]
+
+{ #category : #accessing }
+GSCNginx >> title [
+	^ 'NGINX Webserver'
 ]

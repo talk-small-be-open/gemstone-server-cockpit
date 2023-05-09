@@ -37,6 +37,12 @@ GSCSystemService >> name: aString [
 	serviceName := aString
 ]
 
+{ #category : #rendering }
+GSCSystemService >> renderBodyOn: html [
+
+"	self renderLabel: 'File path' text: fileReference pathString on: html"
+]
+
 { #category : #accessing }
 GSCSystemService >> title [
 	^ 'Service ', serviceName
