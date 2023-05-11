@@ -211,7 +211,7 @@ GSCCore >> runSudoAsyncShell: aString onOutput: aBlock [
 	sudoPassword := self getSudoPassword.
 
 	cmd := 'sudo'.
-	args := { '--non-interactive'. '--stdin'. '--'. 'sh'. '-c'. aString. }.
+	args := { '--prompt='. '--stdin'. '--'. 'sh'. '-c'. aString. }.
 	self log: cmd.
 
 	shellProcess := [
@@ -254,7 +254,7 @@ GSCCore >> runSudoShellIsSuccess: aString [
 	process := OSSUnixSubprocess new.
 
 	cmd := 'sudo'.
-	args := { '--non-interactive'. '--stdin'. '--'. 'sh'. '-c'. aString. }.
+	args := { '--prompt='. '--stdin'. '--'. 'sh'. '-c'. aString. }.
 	self log: cmd.
 		
 	process
