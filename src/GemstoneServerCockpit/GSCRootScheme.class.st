@@ -17,5 +17,9 @@ GSCRootScheme >> buildDefaultConfiguration [
 		adminEmail: '';
 		softwarePackages: #(vim).
 
+	conf gemstone
+		gsHome: '/opt/GsDevKit_home'.
+		
+
 	^ conf asGscConfiguration
 ]

@@ -63,8 +63,7 @@ GSCWebApplicationSchemeV1 >> buildDefaultConfiguration [
 		stoneName: 'webappStone';
 		version: '3.6.5';
 		keyfile: nil;
-		gemPorts: (10001 to: 10005) asArray;
-		gsHome: '/opt/GsDevKit_home'.
+		gemPorts: (10001 to: 10005) asArray.
 
 	conf web
 		useSsl: false;

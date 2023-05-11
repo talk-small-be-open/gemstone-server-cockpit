@@ -54,6 +54,21 @@ GSCCore >> autoexpireSudoPassword [
 		temporarySudoPassword := nil ]
 ]
 
+{ #category : #shell }
+GSCCore >> createOSSUnixSubprocess [
+	| process gsHome path |
+	
+	gsHome := (rootTool configAt: 'gemstone:gsHome') ifBlank: [ '/opt/GsDevKit_home' ].
+	path := Smalltalk os environment at: 'PATH'.
+	
+	process := OSSUnixSubprocess new
+		environmentAt: 'GS_HOME' put: gsHome;
+		environmentAt: 'PATH' put: (gsHome, '/bin:', path);
+		yourself.
+	
+	^ process
+]
+
 { #category : #accessing }
 GSCCore >> filesystemRoot [
 
@@ -164,7 +179,7 @@ GSCCore >> runAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
 	[
 		| isSuccess |
 		
-		shellSubprocess := OSSUnixSubprocess new.
+		shellSubprocess := self createOSSUnixSubprocess.
 		shellSubprocess
 	"		command: aString;"
 			shellCommand: aString;
@@ -206,7 +221,7 @@ GSCCore >> runShellIsSuccess: aString [
 
 	self log: aString.
 	
-	^ OSSUnixSubprocess new
+	^ self createOSSUnixSubprocess
 "		command: aString;"
 		shellCommand: aString;
 		runAndWait;
@@ -227,13 +242,13 @@ GSCCore >> runSudoAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
 	sudoPassword := self getSudoPassword.
 
 	cmd := 'sudo'.
-	args := { '--prompt='. '--stdin'. '--'. 'sh'. '-c'. aString. }.
+	args := { '--preserve-env'. '--prompt='. '--stdin'. '--'. 'sh'. '-c'. aString. }.
 
 	self log: (cmd, (args joinUsing: String space)).
 
 	[
 		| isSuccess |
-		shellSubprocess := OSSUnixSubprocess new.
+		shellSubprocess := self createOSSUnixSubprocess.
 		shellSubprocess
 			command: cmd;
 			arguments: args;
@@ -273,10 +288,10 @@ GSCCore >> runSudoShellIsSuccess: aString [
 
 	sudoPassword := self getSudoPassword.
 
-	process := OSSUnixSubprocess new.
+	process := self createOSSUnixSubprocess.
 
 	cmd := 'sudo'.
-	args := { '--prompt='. '--stdin'. '--'. 'sh'. '-c'. aString. }.
+	args := { '--preserve-env'. '--prompt='. '--stdin'. '--'. 'sh'. '-c'. aString. }.
 	self log: (cmd, (args joinUsing: String space)).
 
 		
