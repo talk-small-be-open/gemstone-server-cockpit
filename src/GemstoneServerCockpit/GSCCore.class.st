@@ -151,7 +151,7 @@ GSCCore >> rootTool [
 ]
 
 { #category : #shell }
-GSCCore >> runAsyncShell: aString onLog: aBlock [
+GSCCore >> runAsyncShell: aString onOutput: aBlock [
 	self isShellProcessRunning ifTrue: [ self error: 'Another shell process is running' ].
 
 	self log: aString.
@@ -172,9 +172,10 @@ GSCCore >> runAsyncShell: aString onLog: aBlock [
 	"		addAllEnvVariablesFromParentWithoutOverride;" "we will inherit then all but $HOME"
 			runAndWaitPollingEvery: (Delay forMilliseconds: 500)
 				doing: [ :process :outStream :errStream |  
-					| read | 
-					read := outStream upToEnd.
-					aBlock value: read lines.
+					outStream upToEnd ifNotBlank: [ :output |
+						aBlock value: output lines ].
+					errStream upToEnd ifNotBlank: [ :output |
+						aBlock value: output lines ].
 				]
 				onExitDo: [ :process :outStream :errStream  |
 "					| read | 
@@ -202,20 +203,22 @@ GSCCore >> runShellIsSuccess: aString [
 ]
 
 { #category : #shell }
-GSCCore >> runSudoAsyncShell: aString onLog: aBlock [
-	| sudoPassword cmd |
+GSCCore >> runSudoAsyncShell: aString onOutput: aBlock [
+	| sudoPassword cmd args |
 	
 	self isShellProcessRunning ifTrue: [ self error: 'Another shell process is running' ].
 
 	sudoPassword := self getSudoPassword.
 
-	cmd := ('sudo -S -- ''', aString, '''').
+	cmd := 'sudo'.
+	args := { '--non-interactive'. '--stdin'. '--'. 'sh'. '-c'. aString. }.
 	self log: cmd.
 
 	shellProcess := [
 		shellSubprocess := OSSUnixSubprocess new.
 		shellSubprocess
-			shellCommand: cmd;
+			command: cmd;
+			arguments: args;
 			redirectStdout;
 			redirectStderr;
 			createMissingStandardStreams: true;
@@ -226,9 +229,10 @@ GSCCore >> runSudoAsyncShell: aString onLog: aBlock [
 			close.
 
 		shellSubprocess waitForExitPollingEvery: (Delay forMilliseconds: 500) doing: [ :proc :outStream :errStream |  
-			| out | 
-			out := outStream upToEnd.
-			aBlock value: out lines.
+			outStream upToEnd ifNotBlank: [ :output |
+				aBlock value: output lines ].
+			errStream upToEnd ifNotBlank: [ :output |
+				aBlock value: output lines ].
 		].
 
 "		output := process stdoutStream upToEnd.
@@ -243,17 +247,19 @@ GSCCore >> runSudoAsyncShell: aString onLog: aBlock [
 
 { #category : #shell }
 GSCCore >> runSudoShellIsSuccess: aString [ 
-	| process sudoPassword cmd |
+	| process sudoPassword cmd args |
 
 	sudoPassword := self getSudoPassword.
 
 	process := OSSUnixSubprocess new.
 
-	cmd := ('sudo -S -- ''', aString, '''').
+	cmd := 'sudo'.
+	args := { '--non-interactive'. '--stdin'. '--'. 'sh'. '-c'. aString. }.
 	self log: cmd.
 		
 	process
-		shellCommand: cmd;
+		command: cmd;
+		arguments: args;
 		createMissingStandardStreams: true;
 		run.
 		
