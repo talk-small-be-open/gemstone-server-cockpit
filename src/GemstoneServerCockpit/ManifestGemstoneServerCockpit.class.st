@@ -14,5 +14,5 @@ ManifestGemstoneServerCockpit class >> ruleParseTreeLintRuleV1FalsePositive [
 
 { #category : #'code-critics' }
 ManifestGemstoneServerCockpit class >> ruleSentNotImplementedRuleV1FalsePositive [
-	^ #(#(#(#RGMethodDefinition #(#GSCWebApplicationSchemeV1 #buildEmptyConfiguration #false)) #'2023-03-30T10:58:52.931807+02:00') #(#(#RGMethodDefinition #(#GSCWebApplicationSchemeV1 #buildDefaultConfiguration #false)) #'2023-04-27T08:05:36.281298+02:00') )
+	^ #(#(#(#RGMethodDefinition #(#GSCWebApplicationSchemeV1 #buildEmptyConfiguration #false)) #'2023-03-30T10:58:52.931807+02:00') #(#(#RGMethodDefinition #(#GSCWebApplicationSchemeV1 #buildDefaultConfiguration #false)) #'2023-04-27T08:05:36.281298+02:00') #(#(#RGMethodDefinition #(#GSCRootScheme #buildDefaultConfiguration #false)) #'2023-05-11T14:10:22.541978+02:00') )
 ]

@@ -1,6 +1,6 @@
 Class {
 	#name : #GSCApplicationScheme,
-	#superclass : #Object,
+	#superclass : #GSCSchemeBase,
 	#instVars : [
 		'config'
 	],
@@ -9,16 +9,6 @@ Class {
 
 { #category : #building }
 GSCApplicationScheme >> buildApplicationToolInto: aRootTool [
-	self subclassResponsibility
-]
-
-{ #category : #building }
-GSCApplicationScheme >> buildDefaultConfiguration [
-	self subclassResponsibility
-]
-
-{ #category : #building }
-GSCApplicationScheme >> buildEmptyConfiguration [
 	self subclassResponsibility
 ]
 

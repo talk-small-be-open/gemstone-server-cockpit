@@ -6,19 +6,21 @@ Class {
 
 { #category : #building }
 GSCWebApplicationSchemeV1 >> buildApplicationToolInto: aRootTool [
-	| app appConfig |
+	| app |
 
 "	app := GSCApplication new.
 	app config: config.
 	aRootTool addTool: app."
 	
-	appConfig := aRootTool config copyWith: config.
+"	appConfig := aRootTool config copyWith: config."
 
 	app := aRootTool add: GSCApplication then: [ :a |
-		a config: appConfig
+		a config: config copy
 	].
 	
 	app add: GSCNginxSite.
+
+	app add: GSCHaproxySite.
 	
 	app add: GSCGemstoneStone then: [ :stone |
 "		stone add: GSCDummy."
@@ -56,12 +58,6 @@ GSCWebApplicationSchemeV1 >> buildDefaultConfiguration [
 		path: '/opt/albus/school';
 		url: 'ssh://gitolite@mindclue.dyndns.org:3690/kshp/albus_school_kshp.git';
 		branch: 'master'."
-
-	conf server
-		username: 'ubuntu';
-		installationPath: '/opt/webapp';
-		adminEmail: '';
-		softwarePackages: #(vim).
 
 	conf gemstone
 		stoneName: 'webappStone';

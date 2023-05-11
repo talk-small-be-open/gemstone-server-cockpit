@@ -299,10 +299,15 @@ GSCCore >> setSudoPassword: aString [
 
 { #category : #'as yet unclassified' }
 GSCCore >> setup [
-	| rootConf |
+	| rootConf defaultRootConf |
 	rootTool := GSCRoot new.
 	
+	defaultRootConf := GSCRootScheme new buildDefaultConfiguration.
+	
 	rootConf := GSCConfiguration fromFile: ('/etc/gsc/gsc.conf').
+	rootConf presetFrom: defaultRootConf.
+	rootConf storeToFile.
+	
 	rootTool config: rootConf.
 	
 	self setupServer.
@@ -321,6 +326,8 @@ GSCCore >> setupExample [
 		| app scheme conf |
 		scheme := GSCWebApplicationSchemeV1 new.
 		conf := GSCConfiguration fromFile: ('/etc/gsc/conf.d/example', index asString, '.conf').
+		conf at: 'project:name' put: ('Example Webapp ', index asString).
+
 		scheme config: conf.
 		
 		app := scheme buildApplicationToolInto: rootTool.

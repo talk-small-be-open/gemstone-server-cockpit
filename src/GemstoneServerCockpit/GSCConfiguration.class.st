@@ -37,9 +37,9 @@ GSCConfiguration >> at: aPathlikeStructure [
 	| parts dict |
 	parts := self getKeySequence: aPathlikeStructure.
 	
-	dict := self getNestedDictionary: parts allButLast.
+	dict := self getNestedDictionary: parts allButLast ifAbsent: [ ^ nil ].
 	
-	^ dict at: (parts last asString) ifAbsentPut: [ nil ]
+	^ dict at: (parts last asString) ifAbsent: [ nil ]
 ]
 
 { #category : #arithmetic }
@@ -88,6 +88,13 @@ GSCConfiguration >> entriesDo: aTwoArgBlock [
 	]
 ]
 
+{ #category : #accessing }
+GSCConfiguration >> filePath: aString [
+	
+	fileReference := GSCCore instance realPathForFile: aString.
+	
+]
+
 { #category : #arithmetic }
 GSCConfiguration >> getKeySequence: aPathlikeStructure [
 
@@ -105,6 +112,11 @@ GSCConfiguration >> getKeySequence: aPathlikeStructure [
 
 { #category : #arithmetic }
 GSCConfiguration >> getNestedDictionary: aKeysCollection [
+	^ self getNestedDictionary: aKeysCollection ifAbsent: nil
+]
+
+{ #category : #arithmetic }
+GSCConfiguration >> getNestedDictionary: aKeysCollection ifAbsent: aBlock [
 	| current |
 	
 	current := data.
@@ -112,6 +124,8 @@ GSCConfiguration >> getNestedDictionary: aKeysCollection [
 		| next |
 		
 		current isDictionary ifFalse: [ self error: 'Can not access non-dictionary config node' ].
+		
+		aBlock ifNotNil: [ current at: each asString ifAbsent: [ ^ aBlock value ] ].
 		
 		next := current at: each asString ifAbsentPut: [ self dictionaryClass new ].
 		current := next.
@@ -129,7 +143,7 @@ GSCConfiguration >> initialize [
 
 { #category : #'as yet unclassified' }
 GSCConfiguration >> loadFromFile: aFilePathString [
-	fileReference := aFilePathString asFileReference.
+	self filePath: aFilePathString.
 	
 	fileReference exists ifFalse: [ ^ self ].
 
@@ -211,13 +225,6 @@ GSCConfiguration >> schemeClass [
 
 { #category : #'as yet unclassified' }
 GSCConfiguration >> storeToFile [
-	self storeToFile: fileReference pathString
-]
-
-{ #category : #'as yet unclassified' }
-GSCConfiguration >> storeToFile: aPathString [
-	fileReference := aPathString asFileReference.
-	
 	
 	fileReference ensureDelete writeStreamDo: [ :stream |
 		STON writer 
@@ -225,4 +232,10 @@ GSCConfiguration >> storeToFile: aPathString [
 			prettyPrint: true;
 			newLine: String lf;
 			nextPut: data ]
+]
+
+{ #category : #'as yet unclassified' }
+GSCConfiguration >> storeToFile: aPathString [
+	self filePath: aPathString.
+	self storeToFile.
 ]

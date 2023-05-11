@@ -139,7 +139,14 @@ GSCTool >> config [
 
 { #category : #accessing }
 GSCTool >> configAt: aConfigKey [
-	^ self config at: aConfigKey
+	| value |
+	value := self config at: aConfigKey.
+	
+	value ifNil: [
+		self isRoot ifFalse: [
+			value := self root config at: aConfigKey ]].
+	
+	^ value
 ]
 
 { #category : #accessing }
@@ -186,6 +193,11 @@ GSCTool >> initialize [
 	children := OrderedCollection new.
 	self clearLog.
 	needsAttention := false
+]
+
+{ #category : #testing }
+GSCTool >> isRoot [
+	^ false
 ]
 
 { #category : #accessing }

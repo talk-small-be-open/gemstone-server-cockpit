@@ -19,6 +19,11 @@ GSCRoot >> config: anObject [
 	config := anObject
 ]
 
+{ #category : #testing }
+GSCRoot >> isRoot [
+	^ true
+]
+
 { #category : #accessing }
 GSCRoot >> root [
 	^ self
