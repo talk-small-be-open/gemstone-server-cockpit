@@ -108,7 +108,7 @@ GSCCore >> isDevelopment [
 
 { #category : #testing }
 GSCCore >> isShellProcessRunning [
-	^ shellProcess notNil and: [ shellProcess isTerminated not ]
+	^ shellSubprocess notNil and: [ shellSubprocess isComplete not ]
 ]
 
 { #category : #testing }
@@ -161,7 +161,9 @@ GSCCore >> runAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
 
 	self log: aString.
 
-	shellProcess := [
+	[
+		| isSuccess |
+		
 		shellSubprocess := OSSUnixSubprocess new.
 		shellSubprocess
 	"		command: aString;"
@@ -188,11 +190,13 @@ GSCCore >> runAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
 					aBlock value: read lines."
 					
 					process closeAndCleanStreams.
-					aFinishBlock ifNotNil: [ 
-						aFinishBlock value: process isSuccess ]
 				].
 
+				isSuccess := shellSubprocess isSuccess.
 				shellSubprocess := nil.
+				
+				aFinishBlock ifNotNil: [ 
+					aFinishBlock value: isSuccess ]
 
 			] forkAt: Processor userInterruptPriority named: 'GSC shell process'
 ]
@@ -224,9 +228,11 @@ GSCCore >> runSudoAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
 
 	cmd := 'sudo'.
 	args := { '--prompt='. '--stdin'. '--'. 'sh'. '-c'. aString. }.
-	self log: cmd.
 
-	shellProcess := [
+	self log: (cmd, (args joinUsing: String space)).
+
+	[
+		| isSuccess |
 		shellSubprocess := OSSUnixSubprocess new.
 		shellSubprocess
 			command: cmd;
@@ -251,11 +257,12 @@ GSCCore >> runSudoAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
 		aCollection addAll: output lines."
 		
 		shellSubprocess closeAndCleanStreams.
+		isSuccess := shellSubprocess isSuccess.
+		shellSubprocess := nil.
 		
 		aFinishBlock ifNotNil: [ 
-			aFinishBlock value: shellSubprocess isSuccess ].
+			aFinishBlock value: isSuccess ].
 		
-		shellSubprocess := nil.
 
 	] forkAt: Processor userInterruptPriority named: 'GSC shell process'
 ]
@@ -270,7 +277,8 @@ GSCCore >> runSudoShellIsSuccess: aString [
 
 	cmd := 'sudo'.
 	args := { '--prompt='. '--stdin'. '--'. 'sh'. '-c'. aString. }.
-	self log: cmd.
+	self log: (cmd, (args joinUsing: String space)).
+
 		
 	process
 		command: cmd;
