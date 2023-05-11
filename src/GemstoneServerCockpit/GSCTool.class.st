@@ -220,7 +220,8 @@ GSCTool >> performToolAction: aSelector [
 
 { #category : #accessing }
 GSCTool >> refresh [
-	self initMe
+	self initMe.
+	self checkMe.
 ]
 
 { #category : #rendering }
@@ -293,14 +294,32 @@ GSCTool >> root [
 
 { #category : #'as yet unclassified' }
 GSCTool >> runShellCommand: aString [
+	^ self runShellCommand: aString then: nil
+]
+
+{ #category : #'as yet unclassified' }
+GSCTool >> runShellCommand: aString then: aBlock [
 	GSCCore instance runAsyncShell: aString onOutput: [ :lines |
-		log addAll: lines ]
+		log addAll: lines ] onFinish: [ :success |
+			self refresh.
+			aBlock ifNotNil: [
+				success ifTrue: aBlock ]	
+	]
 ]
 
 { #category : #'as yet unclassified' }
 GSCTool >> runSudoShellCommand: aString [
+	^ self runSudoShellCommand: aString then: nil
+]
+
+{ #category : #'as yet unclassified' }
+GSCTool >> runSudoShellCommand: aString then: aBlock [
 	GSCCore instance runSudoAsyncShell: aString onOutput: [ :lines |
-		log addAll: lines ]
+		log addAll: lines ] onFinish: [ :success |
+			self refresh.
+			aBlock ifNotNil: [
+				success ifTrue: aBlock ]
+	]
 ]
 
 { #category : #accessing }

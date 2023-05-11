@@ -1,0 +1,128 @@
+Class {
+	#name : #GSCHaproxy,
+	#superclass : #GSCTool,
+	#category : #'GemstoneServerCockpit-Model'
+}
+
+{ #category : #building }
+GSCHaproxy >> build [
+
+	self add: GSCTextFile then: [ :file |
+		file
+			filePath: ('/etc/haproxy/haproxy.cfg');
+			contentTemplate: self haproxyConfigTemplate
+	].
+
+	self add: GSCSystemService then: [ :service |
+		service name: 'haproxy'
+	].
+
+	self add: GSCAptPackage then: [ :apt |
+		apt packageName: 'haproxy' ]
+]
+
+{ #category : #'as yet unclassified' }
+GSCHaproxy >> haproxyConfigTemplate [
+	^ GSCSttTemplate tool: self sttString: '
+global
+		log /dev/log		local0
+		log /dev/log		local1 notice
+		chroot /var/lib/haproxy
+		user haproxy
+		group haproxy
+		daemon
+
+		# For debugging on the commandline with socket access (see http://cbonte.github.io/haproxy-dconv/1.8/management.html#9.3)
+		#stats socket /var/run/haproxy.sock mode 600 level admin
+    #stats timeout 2m
+
+defaults
+		log			global
+		mode		http
+		option	httplog
+		option	dontlognull
+		retries 3
+		timeout connect 5000
+		timeout client	50000
+		timeout server	50000
+		errorfile 400 /etc/haproxy/errors/400.http
+		errorfile 403 /etc/haproxy/errors/403.http
+		errorfile 408 /etc/haproxy/errors/408.http
+		errorfile 500 /etc/haproxy/errors/500.http
+		errorfile 502 /etc/haproxy/errors/502.http
+		errorfile 503 /etc/haproxy/errors/503.http
+		errorfile 504 /etc/haproxy/errors/504.http
+
+
+
+frontend nginx
+		bind 127.0.0.1:9000
+		default_backend gems
+
+		# # Rate limiting, sliding window, see https://www.haproxy.com/blog/four-examples-of-haproxy-rate-limiting/
+		# stick-table  type ip  size 100k  expire 30s  store http_req_rate(10s)
+    # http-request track-sc0 src
+    # http-request deny deny_status 429 if { sc_http_req_rate(0) gt 20 }
+
+		# # or this?
+		# rate-limit sessions 10
+
+		# # or this?
+		# # https://medium.com/faun/understanding-rate-limiting-on-haproxy-b0cf500310b1
+    # # ACL function declarations
+    # acl is_abuse src_http_req_rate(Abuse) ge 10  
+    # acl inc_abuse_cnt src_inc_gpc0(Abuse) gt 0   
+    # acl abuse_cnt src_get_gpc0(Abuse) gt 0
+    # # Rules
+    # tcp-request connection track-sc0 src table Abuse
+    # tcp-request connection reject if abuse_cnt
+    # http-request deny if abuse_cnt
+    # http-request deny if is_abuse inc_abuse_cnt
+
+		# see also
+		# https://gist.github.com/procrastinatio/6b6579230d99be5bfa26d04acd788e7a
+
+
+frontend stats
+    bind 127.0.0.1:8404
+    stats enable
+    stats uri /stats
+    stats refresh 10s
+		#log false
+		option dontlog-normal
+    # stats admin if LOCALHOST
+
+# # Pseudo backend to store rates
+# backend Abuse
+#     # stick-table type ip size 100K expire 30m store gpc0,http_req_rate(10s)
+# 		# better: IP taken from XFF
+# 		stick-table type integer size 100K expire 30m store gpc0,http_req_rate(10s)
+
+backend gems
+		balance roundrobin
+
+		# maxconnrate 5 # per second
+		default-server check inter 30s maxconn 1 maxqueue 10 non-stick
+
+		# # Save real ip in the table
+		# stick store-request req.fhdr(X-Forwarded-For) table Abuse
+
+		# option httpclose
+		# Because of Seaside server, which cant handle keepalive?
+		option http-server-close
+		
+#DONT, X-Forwarded-For is already added by nginx		option forwardfor
+
+		option httpchk GET /ping
+#		http-check send
+
+		<?stt me gemPorts do: [ :each | ?>
+		server gem<?stt= each asString ?> 127.0.0.1:<?stt= each asString ?>
+		<?stt ] ?>
+'
+]
+
+{ #category : #accessing }
+GSCHaproxy >> title [
+	^ 'HAproxy balancer'
+]

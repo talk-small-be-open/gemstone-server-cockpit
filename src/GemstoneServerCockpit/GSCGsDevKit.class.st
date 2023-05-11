@@ -14,9 +14,8 @@ GSCGsDevKit >> checkMe [
 
 { #category : #'as yet unclassified' }
 GSCGsDevKit >> doCloneFromGitRepo [
-	self runSudoShellCommand: 'mkdir -f /opt/GsDevKit_home'.
-	self runSudoShellCommand: 'chown ', (self configAt: 'server:username'), ' /opt/GsDevKit_home'.
-	self runShellCommand: 'git clone https://github.com/GsDevKit/GsDevKit_home.git /opt/GsDevKit_home'
+	self runSudoShellCommand: ('mkdir -p /opt/GsDevKit_home && chown ', (self configAt: 'server:username'), ' /opt/GsDevKit_home') then: [
+		self runShellCommand: 'git clone https://github.com/GsDevKit/GsDevKit_home.git /opt/GsDevKit_home' ]
 ]
 
 { #category : #'as yet unclassified' }

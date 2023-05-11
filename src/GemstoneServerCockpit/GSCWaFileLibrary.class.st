@@ -19,6 +19,10 @@ body {
 	background-color: green;
 }
 
+a { 
+	text-decoration: none;
+}
+
 div.main { 
 	display: flex;
 	flex-direction: column;

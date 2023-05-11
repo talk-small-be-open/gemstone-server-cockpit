@@ -13,7 +13,7 @@ GSCMonitCheck >> build [
 
 	self add: GSCTextFile then: [ :file |
 		file
-			filePath: ('/etc/monit/conf.d/', self appShortCode, '_', checkName, '.conf');
+			filePath: ('/etc/monit/conf.d/', checkName, '.conf');
 			contentTemplate: configTemplate
 	].
 

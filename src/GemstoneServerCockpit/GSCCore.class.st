@@ -152,6 +152,11 @@ GSCCore >> rootTool [
 
 { #category : #shell }
 GSCCore >> runAsyncShell: aString onOutput: aBlock [
+	^ self runAsyncShell: aString onOutput: aBlock onFinish: nil
+]
+
+{ #category : #shell }
+GSCCore >> runAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
 	self isShellProcessRunning ifTrue: [ self error: 'Another shell process is running' ].
 
 	self log: aString.
@@ -183,6 +188,8 @@ GSCCore >> runAsyncShell: aString onOutput: aBlock [
 					aBlock value: read lines."
 					
 					process closeAndCleanStreams.
+					aFinishBlock ifNotNil: [ 
+						aFinishBlock value: process isSuccess ]
 				].
 
 				shellSubprocess := nil.
@@ -204,6 +211,11 @@ GSCCore >> runShellIsSuccess: aString [
 
 { #category : #shell }
 GSCCore >> runSudoAsyncShell: aString onOutput: aBlock [
+	^ self runSudoAsyncShell: aString onOutput: aBlock onFinish: nil
+]
+
+{ #category : #shell }
+GSCCore >> runSudoAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
 	| sudoPassword cmd args |
 	
 	self isShellProcessRunning ifTrue: [ self error: 'Another shell process is running' ].
@@ -239,6 +251,9 @@ GSCCore >> runSudoAsyncShell: aString onOutput: aBlock [
 		aCollection addAll: output lines."
 		
 		shellSubprocess closeAndCleanStreams.
+		
+		aFinishBlock ifNotNil: [ 
+			aFinishBlock value: shellSubprocess isSuccess ].
 		
 		shellSubprocess := nil.
 
