@@ -36,13 +36,7 @@ GSCMainCockpit >> lastSelectedTool [
 { #category : #rendering }
 GSCMainCockpit >> renderContentOn: html [
 
-	GSCCore instance isShellProcessRunning ifTrue: [ 
-		html div: 'SHELL RUNS!'.
-		html anchor
-			callback: [ self killShellProcess ];
-			with: 'kill'.
-		html script: 'setTimeout(function(){ location.reload() }, 1000);'.
-	].
+	self renderSubprocessOn: html.
 
 	GSCCore instance isSudoPasswordSet ifFalse: [
 		html anchor
@@ -85,6 +79,24 @@ GSCMainCockpit >> renderPanesOn: html [
 			self renderPane: index list: each children on: html.
 		]
 	]
+]
+
+{ #category : #rendering }
+GSCMainCockpit >> renderSubprocessOn: html [
+
+	GSCCore instance isShellProcessRunning ifTrue: [ 
+		html div: 'SHELL RUNS!'.
+		html anchor
+			callback: [ self killShellProcess ];
+			with: 'kill'.
+		html script: 'setTimeout(function(){ location.reload() }, 1000);'.
+		
+		html form: [ 
+			html textInput
+				callback: [ :value | self writeToSubprocess: value ].
+			html submitButton ]
+	].
+
 ]
 
 { #category : #rendering }
@@ -147,4 +159,9 @@ GSCMainCockpit >> setSudoPassword [
 	| pw |
 	pw := self request: 'Password?'.
 	GSCCore instance setSudoPassword: pw
+]
+
+{ #category : #writing }
+GSCMainCockpit >> writeToSubprocess: aString [
+	GSCCore instance writeToShellProcess: (aString, String cr)
 ]

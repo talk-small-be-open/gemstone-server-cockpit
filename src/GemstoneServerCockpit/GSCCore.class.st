@@ -446,3 +446,10 @@ GSCCore >> temporaryUniqueFile: anExtensionString [
 	
 	^ file
 ]
+
+{ #category : #writing }
+GSCCore >> writeToShellProcess: aString [
+	shellSubprocess stdinStream
+		nextPutAll: aString;
+		close.
+]
