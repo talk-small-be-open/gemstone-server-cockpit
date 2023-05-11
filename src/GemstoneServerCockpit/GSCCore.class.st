@@ -181,17 +181,10 @@ GSCCore >> runAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
 		
 		shellSubprocess := self createOSSUnixSubprocess.
 		shellSubprocess
-	"		command: aString;"
 			shellCommand: aString;
-	"		arguments: (Array with: Smalltalk image imagePath);"
-	"		defaultWriteStreamCreationBlock: [ OSSVMProcess vmProcess systemAccessor makeNonBlockingPipe ];"
 			redirectStdout; "automatic default stream creation...above closure."
-	"		redirectStderrTo: '/tmp/stderrFile.txt' asFileReference writeStream;"
 			redirectStderr;
-	"		createMissingStandardStreams: false;" "therefore won't create stdin stream"
-	"		workingDirectory: '/home';" "set working directory for child"
-	"		environmentAt: 'HOME' put: '/tmp/home';"
-	"		addAllEnvVariablesFromParentWithoutOverride;" "we will inherit then all but $HOME"
+			createMissingStandardStreams: true;
 			runAndWaitPollingEvery: (Delay forMilliseconds: 500)
 				doing: [ :process :outStream :errStream |  
 					outStream upToEnd ifNotBlank: [ :output |

@@ -89,7 +89,7 @@ GSCMainCockpit >> renderSubprocessOn: html [
 		html anchor
 			callback: [ self killShellProcess ];
 			with: 'kill'.
-		html script: 'setTimeout(function(){ location.reload() }, 1000);'.
+		html script: 'setTimeout(function(){ location.reload() }, 5000);'.
 		
 		html form: [ 
 			html textInput
