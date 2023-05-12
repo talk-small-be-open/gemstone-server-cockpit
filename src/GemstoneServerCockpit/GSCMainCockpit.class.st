@@ -163,5 +163,5 @@ GSCMainCockpit >> setSudoPassword [
 
 { #category : #writing }
 GSCMainCockpit >> writeToSubprocess: aString [
-	GSCCore instance writeToShellProcess: (aString, String cr)
+	GSCCore instance writeToShellProcess: (aString, String lf)
 ]
