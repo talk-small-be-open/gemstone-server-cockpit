@@ -4,7 +4,6 @@ Class {
 	#instVars : [
 		'rootTool',
 		'uuidString',
-		'shellProcess',
 		'filesystemRoot',
 		'temporarySudoPassword',
 		'sudoPasswortTimestamp',
@@ -245,14 +244,18 @@ GSCCore >> runSudoAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
 		shellSubprocess
 			command: cmd;
 			arguments: args;
+"			defaultReadStreamCreationBlock: [OSSVMProcess vmProcess systemAccessor makeNonBlockingPipe];"
 			redirectStdout;
 			redirectStderr;
+			redirectStdin;
 			createMissingStandardStreams: true;
 			run.
 
 		shellSubprocess stdinStream
 			nextPutAll: sudoPassword;
-			close.
+			nextPut: Character lf;
+			flush.
+"			close."
 
 		shellSubprocess waitForExitPollingEvery: (Delay forMilliseconds: 500) doing: [ :proc :outStream :errStream |  
 			outStream upToEnd ifNotBlank: [ :output |
@@ -441,8 +444,17 @@ GSCCore >> temporaryUniqueFile: anExtensionString [
 ]
 
 { #category : #writing }
+GSCCore >> writeLineToShellProcess: aString [
+	shellSubprocess stdinStream
+		nextPutAll: aString;
+"		cr;"
+		nextPut: Character lf;
+		flush
+]
+
+{ #category : #writing }
 GSCCore >> writeToShellProcess: aString [
 	shellSubprocess stdinStream
 		nextPutAll: aString;
-		close.
+		flush
 ]
