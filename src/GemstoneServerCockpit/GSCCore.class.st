@@ -7,7 +7,8 @@ Class {
 		'filesystemRoot',
 		'temporarySudoPassword',
 		'sudoPasswortTimestamp',
-		'shellSubprocess'
+		'shellSubprocess',
+		'isDevelopment'
 	],
 	#classVars : [
 		'Instance'
@@ -53,6 +54,11 @@ GSCCore >> autoexpireSudoPassword [
 		temporarySudoPassword := nil ]
 ]
 
+{ #category : #'as yet unclassified' }
+GSCCore >> beDevelopment [
+	isDevelopment := true
+]
+
 { #category : #shell }
 GSCCore >> createOSSUnixSubprocess [
 	| process gsHome path |
@@ -82,6 +88,13 @@ GSCCore >> getSudoPassword [
 	temporarySudoPassword ifNil: [ self error: 'You need to give the sudo password' ].
 	
 	^ temporarySudoPassword
+]
+
+{ #category : #initialization }
+GSCCore >> initialize [
+	super initialize.
+
+	isDevelopment := false.
 ]
 
 { #category : #actions }
@@ -116,8 +129,7 @@ GSCCore >> instanceId [
 
 { #category : #testing }
 GSCCore >> isDevelopment [
-	"TODO"
-	^ true
+	^ isDevelopment
 ]
 
 { #category : #testing }
@@ -176,14 +188,24 @@ GSCCore >> runAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
 	self log: aString.
 
 	[
-		| isSuccess |
+		| isSuccess args |
 		
 		shellSubprocess := self createOSSUnixSubprocess.
+		
+		args := { '--return'. '--quiet'. '--echo'. 'never'. '-c'. aString. 'typescript.log' }.
+		
+		Smalltalk os current isMacOS ifTrue: [
+			args := { '-q'. 'typescript.log'. aString }
+		].
+		
 		shellSubprocess
-			shellCommand: aString;
+"			shellCommand: aString;"
+			command: 'script';
+			arguments: args;
 			redirectStdout; "automatic default stream creation...above closure."
 			redirectStderr;
-			createMissingStandardStreams: true;
+			redirectStdin;
+"			createMissingStandardStreams: true;"
 			runAndWaitPollingEvery: (Delay forMilliseconds: 500)
 				doing: [ :process :outStream :errStream |  
 					outStream upToEnd ifNotBlank: [ :output |
@@ -234,13 +256,22 @@ GSCCore >> runSudoAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
 	sudoPassword := self getSudoPassword.
 
 	[
-		| isSuccess cmd args |
+		| isSuccess cmd args scriptArgs |
 
 		shellSubprocess := self createOSSUnixSubprocess.
 
+		scriptArgs := { '--return'. '--quiet'. '--echo'. 'never'. '-c'. aString. 'typescript.log' }.
+		
+		Smalltalk os current isMacOS ifTrue: [
+			scriptArgs := { '-q'. 'typescript.log'. aString }
+		].
+		
+
 		cmd := 'sudo'.
-		args := { '--preserve-env'. '--prompt='. '--stdin'. '--'. shellSubprocess shellCommand. '-c'. aString. }.
-		self log: (cmd, (args joinUsing: String space)).
+		args := { '--preserve-env'. '--prompt='. '--stdin'. '--'. 'script'. }, scriptArgs.
+"		args := { '--preserve-env'. '--prompt='. '--stdin'. '--'. shellSubprocess shellCommand. '-c'. aString. }."
+"		args := { '--preserve-env'. '--prompt='. '--stdin'. '--'. shellSubprocess shellCommand. '-i' }."
+		self log: (cmd, ' ', (args joinUsing: String space)).
 
 		shellSubprocess
 			command: cmd;
@@ -289,7 +320,7 @@ GSCCore >> runSudoShellIsSuccess: aString [
 
 	cmd := 'sudo'.
 	args := { '--preserve-env'. '--prompt='. '--stdin'. '--'. process shellCommand. '-c'. aString. }.
-	self log: (cmd, (args joinUsing: String space)).
+	self log: (cmd, ' ', (args joinUsing: String space)).
 		
 	process
 		command: cmd;
