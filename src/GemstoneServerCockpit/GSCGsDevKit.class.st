@@ -15,7 +15,7 @@ GSCGsDevKit >> checkMe [
 { #category : #'as yet unclassified' }
 GSCGsDevKit >> doCloneFromGitRepo [
 	self runSudoShellCommand: ('mkdir -p /opt/GsDevKit_home && chown ', (self configAt: 'server:username'), ' /opt/GsDevKit_home') then: [
-		self runShellCommand: 'git clone https://github.com/GsDevKit/GsDevKit_home.git /opt/GsDevKit_home' ]
+		self runShellCommand: ('git clone ', self repoUrl, ' /opt/GsDevKit_home') ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -26,6 +26,15 @@ GSCGsDevKit >> doInstallScript [
 { #category : #testing }
 GSCGsDevKit >> isInstalled [
 	^ GSCCore instance runShellIsSuccess: ('test -f /opt/GsDevKit_home/bin/.gsdevkitSetup')
+
+]
+
+{ #category : #'as yet unclassified' }
+GSCGsDevKit >> repoUrl [
+"	^ 'https://github.com/GsDevKit/GsDevKit_home.git'"
+	
+	"# inlcudes Ubuntu 22.04:"
+	^ 'https://github.com/pdebruic/GsDevKit_home'
 
 ]
 
