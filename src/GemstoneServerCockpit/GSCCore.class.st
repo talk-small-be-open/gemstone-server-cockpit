@@ -227,20 +227,21 @@ GSCCore >> runSudoAsyncShell: aString onOutput: aBlock [
 
 { #category : #shell }
 GSCCore >> runSudoAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
-	| sudoPassword cmd args |
+	| sudoPassword |
 	
 	self isShellProcessRunning ifTrue: [ self error: 'Another shell process is running' ].
 
 	sudoPassword := self getSudoPassword.
 
-	cmd := 'sudo'.
-	args := { '--preserve-env'. '--prompt='. '--stdin'. '--'. 'sh'. '-c'. aString. }.
-
-	self log: (cmd, (args joinUsing: String space)).
-
 	[
-		| isSuccess |
+		| isSuccess cmd args |
+
 		shellSubprocess := self createOSSUnixSubprocess.
+
+		cmd := 'sudo'.
+		args := { '--preserve-env'. '--prompt='. '--stdin'. '--'. shellSubprocess shellCommand. '-c'. aString. }.
+		self log: (cmd, (args joinUsing: String space)).
+
 		shellSubprocess
 			command: cmd;
 			arguments: args;
@@ -287,9 +288,8 @@ GSCCore >> runSudoShellIsSuccess: aString [
 	process := self createOSSUnixSubprocess.
 
 	cmd := 'sudo'.
-	args := { '--preserve-env'. '--prompt='. '--stdin'. '--'. 'sh'. '-c'. aString. }.
+	args := { '--preserve-env'. '--prompt='. '--stdin'. '--'. process shellCommand. '-c'. aString. }.
 	self log: (cmd, (args joinUsing: String space)).
-
 		
 	process
 		command: cmd;
