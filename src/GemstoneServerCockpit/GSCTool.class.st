@@ -50,6 +50,20 @@ GSCTool >> ancestors [
 	^ collection
 ]
 
+{ #category : #accessing }
+GSCTool >> ancestorsDetect: aBlock [
+	self ancestorsDo: [ :each | 
+		(aBlock value: each) ifTrue: [ ^ each ]
+	].
+	
+	^ nil
+]
+
+{ #category : #'as yet unclassified' }
+GSCTool >> ancestorsDetectKindOf: aClass [
+	^ self ancestorsDetect: [ :each | each isKindOf: aClass ]
+]
+
 { #category : #enumerating }
 GSCTool >> ancestorsDo: aBlock [
 	parent ifNotNil: [ 
@@ -154,6 +168,11 @@ GSCTool >> configAt: aConfigKey default: aBlock [
 	^ (self configAt: aConfigKey) ifNil: [
 		(self configAt: aConfigKey put: aBlock value)
 	]
+]
+
+{ #category : #accessing }
+GSCTool >> configAt: aConfigKey ifBlank: aBlock [
+	^ (self configAt: aConfigKey) ifBlank: aBlock
 ]
 
 { #category : #accessing }
@@ -332,6 +351,11 @@ GSCTool >> runSudoShellCommand: aString then: aBlock [
 			aBlock ifNotNil: [
 				success ifTrue: aBlock ]
 	]
+]
+
+{ #category : #'as yet unclassified' }
+GSCTool >> runTodeCommand: aCommand stone: aStoneName [
+	self runShellCommand: 'todeIt ', aStoneName, ' ', aCommand
 ]
 
 { #category : #accessing }

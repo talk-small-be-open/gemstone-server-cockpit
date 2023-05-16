@@ -21,6 +21,11 @@ GSCMonit >> build [
 		apt packageName: 'monit' ]
 ]
 
+{ #category : #'as yet unclassified' }
+GSCMonit >> doReload [
+	self runSudoShellCommand: 'monit reload'
+]
+
 { #category : #building }
 GSCMonit >> monitConfigTemplate [
 	^ GSCSimpleTemplate source: '

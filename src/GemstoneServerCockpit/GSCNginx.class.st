@@ -7,6 +7,9 @@ Class {
 { #category : #building }
 GSCNginx >> build [
 
+	self add: GSCAptPackage then: [ :apt |
+		apt packageName: 'nginx' ].
+
 	self add: GSCTextFile then: [ :file |
 		file
 			filePath: ('/etc/nginx/nginx.conf');
@@ -18,8 +21,10 @@ GSCNginx >> build [
 			name: 'nginx'
 	].
 
-	self add: GSCAptPackage then: [ :apt |
-		apt packageName: 'nginx' ]
+	
+"TODO
+  - name: User {{remoteUser}} is in group www-data (uploaded files permission)
+"
 ]
 
 { #category : #'as yet unclassified' }

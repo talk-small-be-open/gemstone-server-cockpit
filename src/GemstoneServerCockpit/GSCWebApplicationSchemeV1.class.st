@@ -43,7 +43,8 @@ GSCWebApplicationSchemeV1 >> buildDefaultConfiguration [
 
 	conf project
 		shortCode: 'MyWebApp';
-		name: 'My web application'.
+		name: 'My web application';
+		email: 'andreas.brodbeck@mindclue.ch'.
 
 	conf application
 		gitUrl: '';
@@ -60,7 +61,6 @@ GSCWebApplicationSchemeV1 >> buildDefaultConfiguration [
 		branch: 'master'."
 
 	conf gemstone
-		stoneName: 'webappStone';
 		version: '3.6.5';
 		keyfile: nil;
 		gemPorts: (10001 to: 10005) asArray.

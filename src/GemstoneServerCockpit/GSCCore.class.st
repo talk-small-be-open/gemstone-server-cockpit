@@ -410,12 +410,15 @@ GSCCore >> setupServer [
 	filesystemRoot asFileReference ensureCreateDirectory.
 
 	rootTool add: GSCFolder then: [ :folder |
-		folder name: 'APT packages'.
+		folder name: 'Software packages'.
 
-		folder add: GSCAptPackage then: [ :apt |
-			apt packageName: 'unzip' ].
-		folder add: GSCAptPackage then: [ :apt |
-			apt packageName: 'git' ].
+		{'logrotate'. 'ufw'. 'git'. 'htop'. 'unzip'. 'zip'. 'pigz'. 'aptitude'. 'mosh'.
+		'cronic'. 'goaccess'. 'lnav'. 'mailutils' "for ngxblocker to send emails" } do: [ :each |
+			folder add: GSCAptPackage then: [ :apt |
+				apt packageName: each ] ].
+
+		folder add: GSCSnapPackage then: [ :apt |
+			apt packageName: 'certbot' ].
 	].
 	
 	rootTool add: GSCNginx.

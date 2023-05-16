@@ -4,18 +4,36 @@ Class {
 	#category : #'GemstoneServerCockpit-Model'
 }
 
+{ #category : #building }
+GSCGsDevKit >> build [
+	self add: GSCGitRepository then: [ :git |
+		git
+			folderPath: '/opt/GsDevKit_home';
+			url: self repoUrl
+	].
+
+	self add: GSCGeneralTool then: [ :tool |
+		tool checkMeBlock: [
+			'/opt/GsDevKit_home/dev/clients/tode' asFileReference exists ifFalse: [ tool beNeedsAttention: 'tODE client does not exits' ].
+		].
+		tool actionBlock: [ tool runShellCommand: 'createClient tode' ].
+		tool title: 'tODE client'
+	].
+
+	"Copy our own STON file for the Seaside project"
+	self add: GSCTextFile then: [ :file |
+		"Why?! Seaside will be loaded from my baseline! But this has some more helper scripts packed for GemStone"
+		file filePath: '/opt/GsDevKit_home/sys/local/server/projects/Seaside3.ston'.
+		file contentTemplate: self seasideStonTemplate
+	]
+]
+
 { #category : #'as yet unclassified' }
 GSCGsDevKit >> checkMe [
 	self beNotNeedsAttention.
 	
 	self isInstalled ifFalse: [ ^ self beNeedsAttention: 'GsDevKit is not installed' ].
 
-]
-
-{ #category : #'as yet unclassified' }
-GSCGsDevKit >> doCloneFromGitRepo [
-	self runSudoShellCommand: ('mkdir -p /opt/GsDevKit_home && chown ', (self configAt: 'server:username'), ' /opt/GsDevKit_home') then: [
-		self runShellCommand: ('git clone ', self repoUrl, ' /opt/GsDevKit_home') ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -36,6 +54,24 @@ GSCGsDevKit >> repoUrl [
 	"# inlcudes Ubuntu 22.04:"
 	^ 'https://github.com/pdebruic/GsDevKit_home'
 
+]
+
+{ #category : #'as yet unclassified' }
+GSCGsDevKit >> seasideStonTemplate [
+	^ GSCSimpleTemplate source: '
+TDObjectGatewayLeafNode{#name:''Seaside3'',#contents:''^ TDProjectSpecEntryDefinition new
+    comment: \''\'';
+    projectUrl: \''https://github.com/SeasideSt/Seaside\'';
+    baseline: \''Seaside3\''
+      repository: \''github://SeasideSt/Seaside:master/repository\''
+      loads: #(\''Base\'' \''Core\'' \''JSON\'' \''Email\'' \''Javascript\'' \''JQuery\'' \''Production\'' \''Zinc\'' \''Tests\'');
+    installScript: \''project clone --https --local Seaside3
+      project install --local --url=http://gsdevkit.github.io/GsDevKit_home/GsApplicationTools.ston\'';
+    gitCheckout: \''master\'';
+    status: #(#\''inactive\'');
+    locked: false;
+    yourself''}
+'
 ]
 
 { #category : #accessing }

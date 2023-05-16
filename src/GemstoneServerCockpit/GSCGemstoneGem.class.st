@@ -71,5 +71,5 @@ GSCGemstoneGem >> renderBodyOn: html [
 
 { #category : #'as yet unclassified' }
 GSCGemstoneGem >> stoneName [
-	^ self configAt: 'gemstone:stoneName'
+	^ self appShortCode
 ]
