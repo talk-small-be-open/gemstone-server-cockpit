@@ -31,6 +31,11 @@ GSCTextFile >> contentTemplate: anObject [
 ]
 
 { #category : #'tool-actions' }
+GSCTextFile >> doShowFile [
+	self log: contentTemplate contentString
+]
+
+{ #category : #'tool-actions' }
 GSCTextFile >> doWriteFile [
 	fileReference ifNil: [ self log: 'File path not defined'. ^ self ].
 	

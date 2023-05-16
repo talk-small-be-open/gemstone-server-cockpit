@@ -73,6 +73,11 @@ GSCTool >> ancestorsDo: aBlock [
 ]
 
 { #category : #'as yet unclassified' }
+GSCTool >> appFindTool: aClass [
+	^ self application descendantsDetectKindOf: aClass
+]
+
+{ #category : #'as yet unclassified' }
 GSCTool >> appName [
 	^ self application longName
 ]
@@ -178,6 +183,40 @@ GSCTool >> configAt: aConfigKey ifBlank: aBlock [
 { #category : #accessing }
 GSCTool >> configAt: aConfigKey put: aValue [
 	^ self config at: aConfigKey put: aValue
+]
+
+{ #category : #enumerating }
+GSCTool >> descendantsCollect: aBlock [
+	| collection |
+	collection := OrderedCollection new.
+	self descendantsDo: [ :each | collection add: (aBlock value: each) ].
+	^ collection
+]
+
+{ #category : #enumerating }
+GSCTool >> descendantsDetect: aBlock [
+	self descendantsDo: [ :each | (aBlock value: each) ifTrue: [ ^ each ] ].
+	^ nil
+]
+
+{ #category : #enumerating }
+GSCTool >> descendantsDetectKindOf: aClass [
+	^ self descendantsDetect: [ :each | each isKindOf: aClass ]
+]
+
+{ #category : #enumerating }
+GSCTool >> descendantsDo: aBlock [
+	children do: [ :each |
+		aBlock value: each.
+		each descendantsDo: aBlock ]
+]
+
+{ #category : #enumerating }
+GSCTool >> descendantsSelect: aBlock [
+	| collection |
+	collection := OrderedCollection new.
+	self descendantsDo: [ :each | (aBlock value: each) ifTrue: [ collection add: each ] ].
+	^ collection
 ]
 
 { #category : #'as yet unclassified' }
@@ -321,6 +360,11 @@ GSCTool >> renderOn: html [
 { #category : #accessing }
 GSCTool >> root [
 	^ self ancestors last
+]
+
+{ #category : #'as yet unclassified' }
+GSCTool >> rootFindTools: aClass [
+	^ self root descendantsSelect: [ :each | each isKindOf: aClass ]
 ]
 
 { #category : #'as yet unclassified' }

@@ -25,7 +25,33 @@ GSCGsDevKit >> build [
 		"Why?! Seaside will be loaded from my baseline! But this has some more helper scripts packed for GemStone"
 		file filePath: '/opt/GsDevKit_home/sys/local/server/projects/Seaside3.ston'.
 		file contentTemplate: self seasideStonTemplate
-	]
+	].
+
+
+	"Use a bit more than 2GB of max shared memory, since the 'Limited' GemStone license will give us 2GB"
+	self add: GSCLineInFile then: [ :lif |
+		lif
+			filePath: '/etc/sysctl.conf';
+			search: 'kernel.shmmax=';
+			line: ('kernel.shmmax=', (2.5*1024*1024*1024) asInteger asString)
+	].
+	self add: GSCLineInFile then: [ :lif |
+		lif
+			filePath: '/etc/sysctl.conf';
+			search: 'kernel.shmall=';
+			line: ('kernel.shmall=', (2.5*1024*1024*1024 / 4) ceiling asInteger asString)
+	].
+
+	self add: GSCTextFile then: [ :file |
+		file
+			filePath: '/etc/profile.d/Z99-gsdevkit.sh';
+			contentTemplate: (GSCSimpleTemplate source: '
+# Env vars for resres
+export GS_HOME=/opt/GsDevKit_home
+export PATH=$GS_HOME/bin:$PATH
+')
+	].
+
 ]
 
 { #category : #'as yet unclassified' }

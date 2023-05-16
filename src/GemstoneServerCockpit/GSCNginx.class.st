@@ -75,10 +75,10 @@ http {
 		# We use HAProxy as an intermediate load balancer, because its far better than nginx.
 		# And, important: It queues the request per backend server instance, since we allow only
 		# one single request per GemStone gem.
-		upstream haproxy_upstream { 
-			server 127.0.0.1:9000; 
-			keepalive 64; 
-		}
+		#upstream haproxy_upstream { 
+		#	server 127.0.0.1:9000; 
+		#	keepalive 64; 
+		#}
 
 		#
 		# Limits

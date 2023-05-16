@@ -17,6 +17,17 @@ GSCGemstoneGem >> build [
 			configTemplate: self monitConfigTemplate
 	].
 
+	"Register Servers in tODE"
+	"TODO only if not installed already"
+	self add: GSCGeneralTool then: [ :tool |
+		tool title: 'Register seaside internal Zinc webserver'.
+		tool actionBlock: [
+			| p |
+			p := portNumber asString.
+			tool runTodeCommand: ('/home/seaside/gemServer --register=seaside', p, ' --type=zinc --port=', p) stone: self stoneName ].
+	].
+
+
 ]
 
 { #category : #starting }

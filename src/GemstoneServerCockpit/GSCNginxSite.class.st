@@ -25,6 +25,11 @@ GSCNginxSite >> domains [
 ]
 
 { #category : #'as yet unclassified' }
+GSCNginxSite >> haproxyPortNumber [
+	^ 9000
+]
+
+{ #category : #'as yet unclassified' }
 GSCNginxSite >> nginxDomainsString [
 	^ self domains joinUsing: String space
 ]
@@ -112,7 +117,9 @@ add_header Cache-Control "no-store, no-cache, must-revalidate, max-age=0, proxy-
 # Allow connections from Browser to websocket
 add_header Content-Security-Policy "connect-src https: ''self'' wss://$host;";
 
-proxy_pass http://haproxy_upstream;
+# proxy_pass http://127.0.0.1:<?stt= me haproxyPortNumber ?>;
+proxy_pass http://unix:/tmp/haproxy_<?stt= me appShortCode ?>.socket:/;
+proxy_socket_keepalive on;
 
 # For upstream keepalive to work properly
 proxy_http_version 1.1;
@@ -131,6 +138,11 @@ proxy_set_header        X-Forwarded-Proto  https;
 # nginx should handle http errors from haproxy
 proxy_intercept_errors on;
 '
+]
+
+{ #category : #accessing }
+GSCNginxSite >> title [
+	^ 'nginx site'
 ]
 
 { #category : #'as yet unclassified' }

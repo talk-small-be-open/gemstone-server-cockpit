@@ -376,6 +376,7 @@ GSCCore >> setupExample [
 		| app scheme conf |
 		scheme := GSCWebApplicationSchemeV1 new.
 		conf := GSCConfiguration fromFile: ('/etc/gsc/conf.d/example', index asString, '.conf').
+		conf at: 'project:shortCode' put: ('ExampleApp', index asString).
 		conf at: 'project:name' put: ('Example Webapp ', index asString).
 
 		scheme config: conf.
@@ -422,6 +423,8 @@ GSCCore >> setupServer [
 	].
 	
 	rootTool add: GSCNginx.
+	
+	rootTool add: GSCHaproxy.
 	
 	rootTool add: GSCMonit.
 	

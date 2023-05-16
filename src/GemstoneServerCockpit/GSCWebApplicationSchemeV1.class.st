@@ -62,13 +62,13 @@ GSCWebApplicationSchemeV1 >> buildDefaultConfiguration [
 
 	conf gemstone
 		version: '3.6.5';
-		keyfile: nil;
-		gemPorts: (10001 to: 10005) asArray.
+		keyfile: nil.
 
 	conf web
 		useSsl: false;
 		appUrlPaths: {'app'. 'admin'};
 		domains: {'www.example.com'. };
+		workersCount: 5;
 		nginxIncludeFile: ''.
 
 	conf mail

@@ -33,18 +33,6 @@ GSCGemstoneStone >> build [
 "TODO		tool checkMeBlock: "
 	].
 
-	"Register Servers in tODE"
-	"TODO only if not installed already"
-	self add: GSCGeneralTool then: [ :tool |
-		tool title: 'Register seaside internal Zinc webserver'.
-		tool actionBlock: [
-			(tool configAt: 'gemstone:gemPorts') do: [ :eachPort |
-				| p |
-				p := eachPort asString.
-				tool runTodeCommand: ('/home/seaside/gemServer --register=seaside', p, ' --type=zinc --port=', p) stone: self stoneName ].
-	]].
-
-
 
 	self add: GSCTodeProject then: [ :project |
 		project
@@ -134,4 +122,9 @@ GSCGemstoneStone >> stoneName [
 { #category : #'as yet unclassified' }
 GSCGemstoneStone >> stoneVersion [
 	^ self configAt: 'gemstone:version' ifBlank: [ '3.6.5' ]
+]
+
+{ #category : #accessing }
+GSCGemstoneStone >> title [
+	^ 'GemStone stone'
 ]
