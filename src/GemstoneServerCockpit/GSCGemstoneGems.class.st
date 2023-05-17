@@ -7,9 +7,9 @@ Class {
 { #category : #building }
 GSCGemstoneGems >> build [
 
-	self gemPorts do: [ :each |
+	1 to: self gemsCount do: [ :each |
 		self add: GSCGemstoneGem then: [ :gem |
-			gem portNumber: each ]
+			gem gemIndex: each ]
 	].
 
 ]
@@ -19,8 +19,13 @@ GSCGemstoneGems >> gemPorts [
 	| start |
 	start := self startPort.
 	
-	^ (1 to: (self configAt: 'web:workersCount')) collect: [ :index |
+	^ (1 to: self gemsCount) collect: [ :index |
 		start + index - 1 ].
+]
+
+{ #category : #'as yet unclassified' }
+GSCGemstoneGems >> gemsCount [
+	^ (self configAt: 'web:workersCount')
 ]
 
 { #category : #'private - initialization' }
@@ -33,7 +38,7 @@ GSCGemstoneGems >> initMe [
 { #category : #'as yet unclassified' }
 GSCGemstoneGems >> startPort [
 	"TODO"
-	^ 8101
+	^ 8001 + (self appIndex * 100)
 ]
 
 { #category : #accessing }

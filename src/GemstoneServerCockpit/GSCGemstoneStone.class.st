@@ -94,7 +94,7 @@ GSCGemstoneStone >> keyfilePath [
 
 { #category : #'as yet unclassified' }
 GSCGemstoneStone >> monitCheckName [
-	^ ('gemstone_stone_', self appShortCode)
+	^ (self appShortCode, '_gemstone_stone')
 ]
 
 { #category : #'as yet unclassified' }

@@ -2,7 +2,7 @@ Class {
 	#name : #GSCGemstoneGem,
 	#superclass : #GSCTool,
 	#instVars : [
-		'portNumber',
+		'gemIndex',
 		'monitCheck'
 	],
 	#category : #'GemstoneServerCockpit-Model'
@@ -23,7 +23,7 @@ GSCGemstoneGem >> build [
 		tool title: 'Register seaside internal Zinc webserver'.
 		tool actionBlock: [
 			| p |
-			p := portNumber asString.
+			p := self portNumber asString.
 			tool runTodeCommand: ('/home/seaside/gemServer --register=seaside', p, ' --type=zinc --port=', p) stone: self stoneName ].
 	].
 
@@ -40,9 +40,21 @@ GSCGemstoneGem >> doStop [
 	monitCheck doStop
 ]
 
+{ #category : #accessing }
+GSCGemstoneGem >> gemIndex [
+
+	^ gemIndex
+]
+
+{ #category : #accessing }
+GSCGemstoneGem >> gemIndex: anObject [
+
+	gemIndex := anObject
+]
+
 { #category : #'as yet unclassified' }
 GSCGemstoneGem >> monitCheckName [
-	^ ('gemstone_gem_', portNumber asString)
+	^ (self appShortCode, '_gemstone_gem_', self gemIndex asString)
 ]
 
 { #category : #'as yet unclassified' }
@@ -65,22 +77,20 @@ check process <?stt= me monitCheckName ?> with pidfile /opt/GsDevKit_home/server
 
 { #category : #accessing }
 GSCGemstoneGem >> portNumber [
-
-	^ portNumber
-]
-
-{ #category : #accessing }
-GSCGemstoneGem >> portNumber: anObject [
-
-	portNumber := anObject
+	^ self parent startPort + gemIndex - 1
 ]
 
 { #category : #rendering }
 GSCGemstoneGem >> renderBodyOn: html [
-	self renderLabel: 'Port' number: portNumber on: html
+	self renderLabel: 'Port' number: self portNumber on: html
 ]
 
 { #category : #'as yet unclassified' }
 GSCGemstoneGem >> stoneName [
 	^ self appShortCode
+]
+
+{ #category : #accessing }
+GSCGemstoneGem >> title [
+	^ 'gem ', gemIndex asString
 ]
