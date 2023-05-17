@@ -8,6 +8,12 @@ Class {
 	#category : #'GemstoneServerCockpit-View'
 }
 
+{ #category : #'as yet unclassified' }
+GSCMainCockpit >> checkAll [
+	core rootTool check
+	
+]
+
 { #category : #initialization }
 GSCMainCockpit >> initialize [
 	super initialize.
@@ -15,7 +21,7 @@ GSCMainCockpit >> initialize [
 	core := GSCCore instance.
 "	selectedTools := OrderedCollection new."
 	
-	selectedToolChain := IdentityDictionary new.
+	self reset
 ]
 
 { #category : #testing }
@@ -31,6 +37,12 @@ GSCMainCockpit >> killShellProcess [
 { #category : #accessing }
 GSCMainCockpit >> lastSelectedTool [
 	^ self selectedTools atLast: 1 ifAbsent: [ nil ]
+]
+
+{ #category : #'as yet unclassified' }
+GSCMainCockpit >> reSetup [
+
+	core setup
 ]
 
 { #category : #rendering }
@@ -64,8 +76,18 @@ GSCMainCockpit >> renderCoreToolbarOn: html [
 		html textInput
 			callback: [ :value | core filesystemRoot: value ];
 			with: core filesystemRoot pathString.
-		html submitButton: 'Save'
+		html submitButton: 'Save'.
 	
+		html space.
+		html anchor
+			callback: [ self checkAll ];
+			with: 'check all'.
+
+		html space.
+		html anchor
+			callback: [ self reSetup ];
+			with: 're-setup'
+
 	]
 ]
 
@@ -119,6 +141,11 @@ GSCMainCockpit >> renderTheToolOn: html [
 		self lastSelectedTool ifNotNil: [ :tool |
 			tool renderOn: html ]
 	]
+]
+
+{ #category : #initialization }
+GSCMainCockpit >> reset [
+	selectedToolChain := IdentityDictionary new.
 ]
 
 { #category : #'as yet unclassified' }

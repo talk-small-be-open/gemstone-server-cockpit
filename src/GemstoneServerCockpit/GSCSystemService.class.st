@@ -18,12 +18,12 @@ GSCSystemService >> checkMe [
 
 { #category : #starting }
 GSCSystemService >> doStart [
-	self runShellCommand: ('service "', serviceName, '" start')
+	self runSudoShellCommand: ('service "', serviceName, '" start')
 ]
 
 { #category : #starting }
 GSCSystemService >> doStop [
-	self runShellCommand: ('service "', serviceName, '" stop')
+	self runSudoShellCommand: ('service "', serviceName, '" stop')
 ]
 
 { #category : #starting }

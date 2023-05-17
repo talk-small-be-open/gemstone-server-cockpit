@@ -43,7 +43,7 @@ GSCCore class >> instance [
 GSCCore class >> startUp: isComingUp [
 	isComingUp ifTrue: [
 		"Automatic read in the config files on the server"
-		self instance setupFromConfigFiles
+		self instance setup
 	]
 ]
 
@@ -82,7 +82,10 @@ GSCCore >> filesystemRoot [
 
 { #category : #accessing }
 GSCCore >> filesystemRoot: aString [
-	filesystemRoot := aString asPath
+	filesystemRoot := aString asPath.
+	
+	filesystemRoot isRoot ifFalse: [
+		filesystemRoot asFileReference ensureCreateDirectory ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -100,6 +103,7 @@ GSCCore >> initialize [
 	super initialize.
 
 	isDevelopment := false.
+	filesystemRoot := Path root.
 ]
 
 { #category : #actions }
@@ -368,7 +372,7 @@ GSCCore >> setup [
 	rootTool config: rootConf.
 	
 	self setupServer.
-	self setupExample.
+	self setupExample. "TODO: setupFromConfigFiles"
 	
 	rootTool init.
 	rootTool check.
@@ -413,9 +417,7 @@ GSCCore >> setupFromConfigFiles [
 { #category : #'as yet unclassified' }
 GSCCore >> setupServer [
 	"TODO: DEV"
-	filesystemRoot := '/tmp/gsc_test_file_root' asPath.
-
-	filesystemRoot asFileReference ensureCreateDirectory.
+"	filesystemRoot := '/tmp/gsc_test_file_root' asPath."
 
 	rootTool add: GSCFolder then: [ :folder |
 		folder name: 'Software packages'.

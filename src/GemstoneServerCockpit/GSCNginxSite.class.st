@@ -38,7 +38,6 @@ GSCNginxSite >> nginxDomainsString [
 GSCNginxSite >> sttBlockIdiots [
 	^ '
 # Simple block some annoying idiots
-# OPTIMIZE: Use something like https://github.com/mitchellkrogza/nginx-ultimate-bad-bot-blocker
 # if ($http_user_agent ~ (LieBaoFast|UCBrowser|MQQBrowser|Mb2345Browser|zh-CN|MicroMessenger|zh_CN|Kinza|Bytespider|Baiduspider|Sogou|AspiegelBot|PetalBot|adscanner|serpstatbot|spaziodat|undefined|Barkrowler|Seekport) ) {
 # 	 return 403;
 # }
@@ -48,8 +47,8 @@ GSCNginxSite >> sttBlockIdiots [
 # Nginx Bad Bot Blocker Includes
 # REPO: https://github.com/mitchellkrogza/nginx-ultimate-bad-bot-blocker
 ##
-include /etc/nginx/bots.d/ddos.conf;
-include /etc/nginx/bots.d/blockbots.conf;
+#TODO include /etc/nginx/bots.d/ddos.conf;
+#TODO include /etc/nginx/bots.d/blockbots.conf;
 '
 ]
 
