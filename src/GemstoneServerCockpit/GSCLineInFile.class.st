@@ -13,12 +13,21 @@ Class {
 GSCLineInFile >> checkMe [
 	self beNotNeedsAttention.
 	
-	(self filePath asFileReference contents lines anySatisfy: [ :each | each beginsWith: search ]) ifFalse: [ self beNeedsAttention: 'line in file not found' ]
+	(self filePath asFileReference contents lines anySatisfy: [ :each | each = line ]) ifFalse: [ self beNeedsAttention: 'line in file not found' ]
 ]
 
 { #category : #'as yet unclassified' }
 GSCLineInFile >> doWriteLine [
-	self runSudoShellCommand: ('sed "s/^', search, '.*$/', line, '/" ', filePath)
+	| exists |
+	exists := (self filePath asFileReference contents lines anySatisfy: [ :each | each beginsWith: search ]).
+	
+	exists ifTrue: [
+		"replace"
+		self runSudoShellCommand: ('sed --in-place --quiet "s/^', search, '.*$/', line, '/" ', filePath)
+	] ifFalse: [
+		"append"
+		self runSudoShellCommand: ('echo "', line, '" >> ', filePath)
+	]
 ]
 
 { #category : #accessing }

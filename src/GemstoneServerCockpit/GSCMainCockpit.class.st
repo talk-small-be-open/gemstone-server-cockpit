@@ -36,13 +36,9 @@ GSCMainCockpit >> lastSelectedTool [
 { #category : #rendering }
 GSCMainCockpit >> renderContentOn: html [
 
+	self renderCoreToolbarOn: html.
+	
 	self renderSubprocessOn: html.
-
-	GSCCore instance isSudoPasswordSet ifFalse: [
-		html anchor
-			callback: [ self setSudoPassword ];
-			with: 'Set sudo password ...'
-	].
 
 	html div class: 'main'; with: [ 
 		html div class: 'upperPane'; with: [
@@ -52,6 +48,24 @@ GSCMainCockpit >> renderContentOn: html [
 			self renderTheToolOn: html
 		].
 
+	]
+]
+
+{ #category : #rendering }
+GSCMainCockpit >> renderCoreToolbarOn: html [
+
+	html form: [	
+		core isSudoPasswordSet ifFalse: [
+			html anchor
+				callback: [ self setSudoPassword ];
+				with: 'Set sudo password ...'
+		].
+
+		html textInput
+			callback: [ :value | core filesystemRoot: value ];
+			with: core filesystemRoot pathString.
+		html submitButton: 'Save'
+	
 	]
 ]
 

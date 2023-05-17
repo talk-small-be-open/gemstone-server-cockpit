@@ -80,6 +80,11 @@ GSCCore >> filesystemRoot [
 	^ filesystemRoot
 ]
 
+{ #category : #accessing }
+GSCCore >> filesystemRoot: aString [
+	filesystemRoot := aString asPath
+]
+
 { #category : #'as yet unclassified' }
 GSCCore >> getSudoPassword [
 	
@@ -238,6 +243,8 @@ GSCCore >> runShellIsSuccess: aString [
 	^ self createOSSUnixSubprocess
 "		command: aString;"
 		shellCommand: aString;
+		redirectStdout;
+		redirectStderr;
 		runAndWait;
 		isSuccess
 ]

@@ -185,6 +185,13 @@ GSCTool >> configAt: aConfigKey put: aValue [
 	^ self config at: aConfigKey put: aValue
 ]
 
+{ #category : #'as yet unclassified' }
+GSCTool >> descendantNeedsAttention [
+	self descendantsDo: [ :each | each needsAttention ifTrue: [ ^ true ] ].
+	
+	^ false
+]
+
 { #category : #enumerating }
 GSCTool >> descendantsCollect: aBlock [
 	| collection |
@@ -333,7 +340,7 @@ GSCTool >> renderListEntryOn: html [
 	self needsAttention ifTrue: [
 		html span: ' !'
 	] ifFalse: [
-		self childNeedsAttention ifTrue: [ html span: ' (!)' ]
+		self descendantNeedsAttention ifTrue: [ html span: ' (!)' ]
 	]
 ]
 

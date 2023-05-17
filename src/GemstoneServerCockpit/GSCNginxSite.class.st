@@ -179,7 +179,7 @@ server {
 		<?stt me appUrlPaths do: [ :each | ?>
 			# Speedup access to main app (Frontend and Backend)
 			location /<?stt= each ?> {
-					', self sttProxyToHaproxy, '
+', self sttProxyToHaproxy, '
 			}
 		<?stt ] ?>
 
