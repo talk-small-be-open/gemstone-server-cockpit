@@ -53,7 +53,10 @@ GSCTextFile >> doWriteFile [
 
 { #category : #accessing }
 GSCTextFile >> fileContents [
-	^ fileReference contents
+"	^ fileReference contents."
+	
+	"sudo, has always permission"
+	^ GSCCore instance sudoReadFile: fileReference pathString.
 ]
 
 { #category : #accessing }

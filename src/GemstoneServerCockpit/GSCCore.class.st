@@ -474,6 +474,39 @@ GSCCore >> setupServer [
 	].
 ]
 
+{ #category : #shell }
+GSCCore >> sudoReadFile: aFilePath [
+	| process sudoPassword cmd args contents |
+
+	sudoPassword := self getSudoPassword.
+
+	process := self createOSSUnixSubprocess.
+
+	cmd := 'sudo'.
+	args := { '--preserve-env'. '--prompt='. '--stdin'. '--'. 'cat'. aFilePath. }.
+	self log: (cmd, ' ', (args joinUsing: String space)).
+		
+	process
+		command: cmd;
+		arguments: args;
+		redirectStdout;
+		createMissingStandardStreams: true;
+		run.
+		
+	process stdinStream 
+		nextPutAll: sudoPassword;
+		close.
+
+	process
+		waitForExit.
+		
+	contents := process stdoutStream upToEnd.
+		
+	process closeAndCleanStreams.
+
+	^ contents
+]
+
 { #category : #helpers }
 GSCCore >> temporaryFolder [
 	^ '/tmp' asFileReference
