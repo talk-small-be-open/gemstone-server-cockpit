@@ -47,10 +47,59 @@ GSCCore class >> startUp: isComingUp [
 	]
 ]
 
+{ #category : #shell }
+GSCCore >> OLDrunAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
+	self isShellProcessRunning ifTrue: [ self error: 'Another shell process is running' ].
+
+	self log: aString.
+
+	[
+		| isSuccess args |
+		
+		shellSubprocess := self createOSSUnixSubprocess.
+		
+		args := { '--return'. '--quiet'. '--echo'. 'never'. '-c'. aString. 'typescript.log' }.
+		
+		Smalltalk os current isMacOS ifTrue: [
+			args := { '-q'. 'typescript.log'. aString }
+		].
+		
+		shellSubprocess
+"			shellCommand: aString;"
+			command: 'script';
+			arguments: args;
+			redirectStdout; "automatic default stream creation...above closure."
+			redirectStderr;
+			redirectStdin;
+"			createMissingStandardStreams: true;"
+			runAndWaitPollingEvery: (Delay forMilliseconds: 500)
+				doing: [ :process :outStream :errStream |  
+					outStream upToEnd ifNotBlank: [ :output |
+						aBlock value: output lines ].
+					errStream upToEnd ifNotBlank: [ :output |
+						aBlock value: output lines ].
+				]
+				onExitDo: [ :process :outStream :errStream  |
+"					| read | 
+					read := outStream upToEnd.
+					aBlock value: read lines."
+					
+					process closeAndCleanStreams.
+				].
+
+				isSuccess := shellSubprocess isSuccess.
+				shellSubprocess := nil.
+				
+				aFinishBlock ifNotNil: [ 
+					aFinishBlock value: isSuccess ]
+
+			] forkAt: Processor userInterruptPriority named: 'GSC shell process'
+]
+
 { #category : #'as yet unclassified' }
 GSCCore >> autoexpireSudoPassword [
-	sudoPasswortTimestamp ifNil: [ ^ self ].
-	(sudoPasswortTimestamp < (DateAndTime now - 2 hours)) ifTrue: [ 
+
+	(sudoPasswortTimestamp isNil or: [ sudoPasswortTimestamp < (DateAndTime now - 2 hours)]) ifTrue: [ 
 		temporarySudoPassword := nil ]
 ]
 
@@ -143,7 +192,7 @@ GSCCore >> isDevelopment [
 
 { #category : #testing }
 GSCCore >> isShellProcessRunning [
-	^ shellSubprocess notNil and: [ shellSubprocess isComplete not ]
+	^ shellSubprocess notNil and: [ shellSubprocess isRunning ]
 ]
 
 { #category : #testing }
@@ -156,7 +205,10 @@ GSCCore >> isSudoPasswordSet [
 GSCCore >> killShellProcess [
 	"Kill the OS subprocess. The Pharo process then will terminate automatically"
 	shellSubprocess ifNotNil: [
-		shellSubprocess terminate ].
+		shellSubprocess isRunning ifTrue: [ 
+			shellSubprocess terminate ].
+		shellSubprocess := nil.
+	].
 ]
 
 { #category : #logging }
@@ -192,51 +244,23 @@ GSCCore >> runAsyncShell: aString onOutput: aBlock [
 
 { #category : #shell }
 GSCCore >> runAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
+
 	self isShellProcessRunning ifTrue: [ self error: 'Another shell process is running' ].
 
-	self log: aString.
-
 	[
-		| isSuccess args |
 		
-		shellSubprocess := self createOSSUnixSubprocess.
-		
-		args := { '--return'. '--quiet'. '--echo'. 'never'. '-c'. aString. 'typescript.log' }.
-		
-		Smalltalk os current isMacOS ifTrue: [
-			args := { '-q'. 'typescript.log'. aString }
-		].
-		
-		shellSubprocess
-"			shellCommand: aString;"
-			command: 'script';
-			arguments: args;
-			redirectStdout; "automatic default stream creation...above closure."
-			redirectStderr;
-			redirectStdin;
-"			createMissingStandardStreams: true;"
-			runAndWaitPollingEvery: (Delay forMilliseconds: 500)
-				doing: [ :process :outStream :errStream |  
-					outStream upToEnd ifNotBlank: [ :output |
-						aBlock value: output lines ].
-					errStream upToEnd ifNotBlank: [ :output |
-						aBlock value: output lines ].
-				]
-				onExitDo: [ :process :outStream :errStream  |
-"					| read | 
-					read := outStream upToEnd.
-					aBlock value: read lines."
-					
-					process closeAndCleanStreams.
-				].
+		self runSshOSSUnixSubprocess: aString args: {  } sudo: false onRun: [ :process | 
 
-				isSuccess := shellSubprocess isSuccess.
-				shellSubprocess := nil.
-				
-				aFinishBlock ifNotNil: [ 
-					aFinishBlock value: isSuccess ]
+			process waitForExitPollingEvery: (Delay forMilliseconds: 500) doing: [ :proc :outStream :errStream |  
+				outStream upToEnd ifNotBlank: [ :output |
+					aBlock value: output lines ].
+				errStream upToEnd ifNotBlank: [ :output |
+					aBlock value: output lines ].
+			].
+			
+		] onFinish: aFinishBlock
 
-			] forkAt: Processor userInterruptPriority named: 'GSC shell process'
+	] forkAt: Processor userInterruptPriority named: 'GSC shell process'
 ]
 
 { #category : #shell }
@@ -254,100 +278,115 @@ GSCCore >> runShellIsSuccess: aString [
 ]
 
 { #category : #shell }
+GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: aSudoBoolean onRun: aRunBlock onFinish: aFinishBlock [
+
+	| process sudoPassword cmd args envVars |
+
+	aSudoBoolean ifTrue: [
+		sudoPassword := self getSudoPassword ].
+
+	process := self createOSSUnixSubprocess.
+
+	envVars := {
+		'GS_HOME' -> '/opt/GsDevKit_home'.
+		'PATH' -> '/opt/GsDevKit_home/bin:$PATH'
+	} asDictionary.
+
+	cmd := 'ssh'.
+
+	args := Array streamContents: [ :a |
+		a nextPut: '-ttq'.
+		a nextPut: 'localhost'.
+
+"Geht nicht gut, weil command nicht serialisiert		a nextPut: 'bash'.
+		a nextPut: '--login'.
+		a nextPut: '-c'."
+
+		a nextPut: 'env'.
+		
+		envVars keysAndValuesDo: [ :key :value |
+			a nextPut: (key, '=', value) ].
+
+		aSudoBoolean ifTrue: [
+			a nextPut: 'sudo'.
+			a nextPut: '--preserve-env'.
+			a nextPut: '--prompt='.
+			a nextPut: '--stdin'.
+			a nextPut: '--' ].
+
+		a nextPut: aCommandString.
+		a nextPutAll: anArgsCollection ].
+	
+	self log: (cmd, ' ', (args joinUsing: String space)).
+		
+	shellSubprocess := process.
+	
+	process
+		command: cmd;
+		arguments: args;
+		redirectStdout;
+		createMissingStandardStreams: true;
+		run.
+		
+	"Sending sudo password into stdin with LF."
+	aSudoBoolean ifTrue: [
+		process stdinStream 
+			nextPutAll: sudoPassword;
+			nextPut: Character lf;
+			flush ].
+
+	"let user do stuff with sudo process. Might be waiting in here for exit."
+	aRunBlock ifNotNil: [
+		aRunBlock value: process ].
+
+	"do cleanup stuff in any case"
+	process
+		waitForExit;
+		closeAndCleanStreams.
+
+	"we need to decouple it explicitly here, because the finish block could be
+	a cascaded shell process"
+	shellSubprocess := nil.
+	
+	aFinishBlock ifNotNil: [ 
+		aFinishBlock value: process isSuccess ]
+]
+
+{ #category : #shell }
 GSCCore >> runSudoAsyncShell: aString onOutput: aBlock [
 	^ self runSudoAsyncShell: aString onOutput: aBlock onFinish: nil
 ]
 
 { #category : #shell }
 GSCCore >> runSudoAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
-	| sudoPassword |
 	
 	self isShellProcessRunning ifTrue: [ self error: 'Another shell process is running' ].
 
-	sudoPassword := self getSudoPassword.
-
 	[
-		| isSuccess cmd args scriptArgs |
 
-		shellSubprocess := self createOSSUnixSubprocess.
+		self runSshOSSUnixSubprocess: aString args: {  } sudo: true onRun: [ :process |
 
-		scriptArgs := { '--return'. '--quiet'. '--echo'. 'never'. '-c'. aString. 'typescript.log' }.
-		
-		Smalltalk os current isMacOS ifTrue: [
-			scriptArgs := { '-q'. 'typescript.log'. aString }
-		].
-		
+			process waitForExitPollingEvery: (Delay forMilliseconds: 500) doing: [ :proc :outStream :errStream |
+				outStream upToEnd ifNotBlank: [ :output |
+					aBlock value: output lines ].
+				errStream upToEnd ifNotBlank: [ :output |
+					aBlock value: output lines ].
+			].
 
-		cmd := 'sudo'.
-		args := { '--preserve-env'. '--prompt='. '--stdin'. '--'. 'script'. }, scriptArgs.
-"		args := { '--preserve-env'. '--prompt='. '--stdin'. '--'. shellSubprocess shellCommand. '-c'. aString. }."
-"		args := { '--preserve-env'. '--prompt='. '--stdin'. '--'. shellSubprocess shellCommand. '-i' }."
-		self log: (cmd, ' ', (args joinUsing: String space)).
-
-		shellSubprocess
-			command: cmd;
-			arguments: args;
-"			defaultReadStreamCreationBlock: [OSSVMProcess vmProcess systemAccessor makeNonBlockingPipe];"
-			redirectStdout;
-			redirectStderr;
-			redirectStdin;
-			createMissingStandardStreams: true;
-			run.
-
-		shellSubprocess stdinStream
-			nextPutAll: sudoPassword;
-			nextPut: Character lf;
-			flush.
-"			close."
-
-		shellSubprocess waitForExitPollingEvery: (Delay forMilliseconds: 500) doing: [ :proc :outStream :errStream |  
-			outStream upToEnd ifNotBlank: [ :output |
-				aBlock value: output lines ].
-			errStream upToEnd ifNotBlank: [ :output |
-				aBlock value: output lines ].
-		].
-
-"		output := process stdoutStream upToEnd.
-		aCollection addAll: output lines."
-		
-		shellSubprocess closeAndCleanStreams.
-		isSuccess := shellSubprocess isSuccess.
-		shellSubprocess := nil.
-		
-		aFinishBlock ifNotNil: [ 
-			aFinishBlock value: isSuccess ].
-		
+	"		output := process stdoutStream upToEnd.
+			aCollection addAll: output lines."
+			
+		] onFinish: aFinishBlock
 
 	] forkAt: Processor userInterruptPriority named: 'GSC shell process'
 ]
 
 { #category : #shell }
 GSCCore >> runSudoShellIsSuccess: aString [ 
-	| process sudoPassword cmd args |
 
-	sudoPassword := self getSudoPassword.
+	self runSshOSSUnixSubprocess: aString args: {  } sudo: true onRun: nil onFinish: [ :success | ^ success ].
 
-	process := self createOSSUnixSubprocess.
-
-	cmd := 'sudo'.
-	args := { '--preserve-env'. '--prompt='. '--stdin'. '--'. process shellCommand. '-c'. aString. }.
-	self log: (cmd, ' ', (args joinUsing: String space)).
-		
-	process
-		command: cmd;
-		arguments: args;
-		createMissingStandardStreams: true;
-		run.
-		
-	process stdinStream 
-		nextPutAll: sudoPassword;
-		close.
-
-	process
-		waitForExit;
-		closeAndCleanStreams.
-
-	^ process isSuccess
+	^ false
 ]
 
 { #category : #'as yet unclassified' }
@@ -476,35 +515,30 @@ GSCCore >> setupServer [
 
 { #category : #shell }
 GSCCore >> sudoReadFile: aFilePath [
-	| process sudoPassword cmd args contents |
+	| contents |
 
-	sudoPassword := self getSudoPassword.
-
-	process := self createOSSUnixSubprocess.
-
-	cmd := 'sudo'.
-	args := { '--preserve-env'. '--prompt='. '--stdin'. '--'. 'cat'. aFilePath. }.
-	self log: (cmd, ' ', (args joinUsing: String space)).
-		
-	process
-		command: cmd;
-		arguments: args;
-		redirectStdout;
-		createMissingStandardStreams: true;
-		run.
-		
-	process stdinStream 
-		nextPutAll: sudoPassword;
-		close.
-
-	process
-		waitForExit.
-		
-	contents := process stdoutStream upToEnd.
-		
-	process closeAndCleanStreams.
+	self runSshOSSUnixSubprocess: 'cat' args: { aFilePath } sudo: true onRun: [ :process |
+		process waitForExit.
+		contents := process stdoutStream upToEnd.
+	] onFinish: nil.
 
 	^ contents
+]
+
+{ #category : #shell }
+GSCCore >> sudoWriteFile: aFilePath owner: anOwnerString group: aGroupString mode: aModeString with: aString [
+
+"	self runSudoOSSUnixSubprocess: 'touch """"', aFilePath, '""""' onRun: [ :process |
+		process stdinStream
+			nextPutAll: aString;
+			close
+	] onFinish: nil."
+
+	self runSshOSSUnixSubprocess: 'tee' args: { aFilePath } sudo: true onRun: [ :process |
+		process stdinStream
+			nextPutAll: aString;
+			close
+	] onFinish: nil
 ]
 
 { #category : #helpers }

@@ -34,9 +34,11 @@ GSCShellConsole >> renderBodyOn: html [
 	html form: [ 
 		html textInput on: #cmd of: self.
 		html submitButton
-			callback: [ self doExecute ].
+			callback: [ self doExecute ];
+			with: 'do'.
 		html submitButton
-			callback: [ self doExecuteSudo ]
+			callback: [ self doExecuteSudo ];
+			with: 'sudo'
 			
 	]
 ]

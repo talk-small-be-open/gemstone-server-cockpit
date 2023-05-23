@@ -83,13 +83,26 @@ GSCTextFile >> isExisting [
 
 { #category : #rendering }
 GSCTextFile >> renderBodyOn: html [
-	self isExisting ifTrue: [
-		html preformatted
-			class: 'fileContent';
-			with: self fileContents
-	].
 
-	self renderLabel: 'File path' text: fileReference pathString on: html
+	self renderLabel: 'File path' text: fileReference pathString on: html.
+	
+	html table: [ 
+		html tableRow: [ 
+			html tableHeading: 'IST'.
+			html tableHeading: 'SOLL' ].
+		html tableRow: [ 
+			html tableData: [
+				self isExisting ifTrue: [
+					html preformatted
+						class: 'fileContent';
+						with: self fileContents ].
+			].
+			html tableData: [ 
+				html preformatted
+					class: 'fileContent';
+					with: self contentTemplate contentString ]
+		]
+	]
 ]
 
 { #category : #accessing }

@@ -46,7 +46,7 @@ GSCGsDevKit >> build [
 		file
 			filePath: '/etc/profile.d/Z99-gsdevkit.sh';
 			contentTemplate: (GSCSimpleTemplate source: '
-# Env vars for resres
+# Env vars for GemStone
 export GS_HOME=/opt/GsDevKit_home
 export PATH=$GS_HOME/bin:$PATH
 ')
