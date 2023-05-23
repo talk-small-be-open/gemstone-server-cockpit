@@ -244,18 +244,39 @@ GSCCore >> runAsyncShell: aString onOutput: aBlock [
 
 { #category : #shell }
 GSCCore >> runAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
+	^ self runAsyncShell: aString sudo: false onOutput: aBlock onFinish: aFinishBlock
+]
+
+{ #category : #shell }
+GSCCore >> runAsyncShell: aString sudo: aSudoBoolean onOutput: aBlock onFinish: aFinishBlock [
 
 	self isShellProcessRunning ifTrue: [ self error: 'Another shell process is running' ].
 
 	[
 		
-		self runSshOSSUnixSubprocess: aString args: {  } sudo: false onRun: [ :process | 
+		self runSshOSSUnixSubprocess: aString args: {  } sudo: aSudoBoolean onRun: [ :process | 
+			| lineReader |
 
-			process waitForExitPollingEvery: (Delay forMilliseconds: 500) doing: [ :proc :outStream :errStream |  
-				outStream upToEnd ifNotBlank: [ :output |
-					aBlock value: output lines ].
-				errStream upToEnd ifNotBlank: [ :output |
-					aBlock value: output lines ].
+			lineReader := GSCPipeLinesReadStream new.
+			
+			process waitForExitPollingEvery: (Delay forMilliseconds: 500) doing: [ :proc :outStream :errStream |
+				
+				lineReader consumePipe: outStream.
+				lineReader consumePipe: errStream.
+
+				proc isComplete ifTrue: [ lineReader complete ].
+
+				lineReader lastLine = 'ssuuddoo' ifTrue: [
+					proc stdinStream 
+						nextPutAll: self getSudoPassword;
+						nextPut: Character lf;
+						flush.
+					lineReader removeLastLine.
+				].
+						
+				lineReader nextLines ifNotEmpty: [ :lines | aBlock value: lines ].
+				
+				
 			].
 			
 		] onFinish: aFinishBlock
@@ -302,16 +323,20 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: 
 		a nextPut: '--login'.
 		a nextPut: '-c'."
 
+		a nextPut: 'stty -echo ;'.
+		
 		a nextPut: 'env'.
 		
 		envVars keysAndValuesDo: [ :key :value |
-			a nextPut: (key, '=', value) ].
+			a nextPut: (key, '=', value).
+			a nextPut: 'SUDO_PROMPT=ssuuddoo'.
+		].
 
 		aSudoBoolean ifTrue: [
 			a nextPut: 'sudo'.
 			a nextPut: '--preserve-env'.
-			a nextPut: '--prompt='.
-			a nextPut: '--stdin'.
+"			a nextPut: '--prompt='."
+"			a nextPut: '--stdin'."
 			a nextPut: '--' ].
 
 		a nextPut: aCommandString.
@@ -329,11 +354,11 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: 
 		run.
 		
 	"Sending sudo password into stdin with LF."
-	aSudoBoolean ifTrue: [
+"	aSudoBoolean ifTrue: [
 		process stdinStream 
 			nextPutAll: sudoPassword;
 			nextPut: Character lf;
-			flush ].
+			flush ]."
 
 	"let user do stuff with sudo process. Might be waiting in here for exit."
 	aRunBlock ifNotNil: [
@@ -360,25 +385,7 @@ GSCCore >> runSudoAsyncShell: aString onOutput: aBlock [
 { #category : #shell }
 GSCCore >> runSudoAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
 	
-	self isShellProcessRunning ifTrue: [ self error: 'Another shell process is running' ].
-
-	[
-
-		self runSshOSSUnixSubprocess: aString args: {  } sudo: true onRun: [ :process |
-
-			process waitForExitPollingEvery: (Delay forMilliseconds: 500) doing: [ :proc :outStream :errStream |
-				outStream upToEnd ifNotBlank: [ :output |
-					aBlock value: output lines ].
-				errStream upToEnd ifNotBlank: [ :output |
-					aBlock value: output lines ].
-			].
-
-	"		output := process stdoutStream upToEnd.
-			aCollection addAll: output lines."
-			
-		] onFinish: aFinishBlock
-
-	] forkAt: Processor userInterruptPriority named: 'GSC shell process'
+	^ self runAsyncShell: aString sudo: true onOutput: aBlock onFinish: aFinishBlock
 ]
 
 { #category : #shell }

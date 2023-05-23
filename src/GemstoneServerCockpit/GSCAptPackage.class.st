@@ -18,7 +18,7 @@ GSCAptPackage >> checkMe [
 
 { #category : #'as yet unclassified' }
 GSCAptPackage >> doInstall [
-	self runSudoShellCommand: ('apt install --quiet --yes ', packageName)
+	self runSudoShellCommand: ('apt --quiet --yes install ', packageName)
 ]
 
 { #category : #testing }
