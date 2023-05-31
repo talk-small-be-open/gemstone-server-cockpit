@@ -8,7 +8,8 @@ Class {
 		'temporarySudoPassword',
 		'sudoPasswortTimestamp',
 		'shellSubprocess',
-		'isDevelopment'
+		'isDevelopment',
+		'sudoPrompt'
 	],
 	#classVars : [
 		'Instance'
@@ -266,7 +267,7 @@ GSCCore >> runAsyncShell: aString sudo: aSudoBoolean onOutput: aBlock onFinish: 
 
 				proc isComplete ifTrue: [ lineReader complete ].
 
-				lineReader lastLine = 'ssuuddoo' ifTrue: [
+				lineReader lastLine = sudoPrompt ifTrue: [
 					proc stdinStream 
 						nextPutAll: self getSudoPassword;
 						nextPut: Character lf;
@@ -329,7 +330,7 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: 
 		
 		envVars keysAndValuesDo: [ :key :value |
 			a nextPut: (key, '=', value).
-			a nextPut: 'SUDO_PROMPT=ssuuddoo'.
+			a nextPut: ('SUDO_PROMPT=', sudoPrompt).
 		].
 
 		aSudoBoolean ifTrue: [
@@ -407,6 +408,9 @@ GSCCore >> setSudoPassword: aString [
 { #category : #'as yet unclassified' }
 GSCCore >> setup [
 	| rootConf defaultRootConf |
+
+	sudoPrompt := UUID new asString36.
+
 	rootTool := GSCRoot new.
 	
 	defaultRootConf := GSCRootScheme new buildDefaultConfiguration.

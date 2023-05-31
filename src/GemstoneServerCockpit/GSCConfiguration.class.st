@@ -226,6 +226,8 @@ GSCConfiguration >> schemeClass [
 { #category : #'as yet unclassified' }
 GSCConfiguration >> storeToFile [
 	
+	fileReference parent ensureCreateDirectory.
+	
 	fileReference ensureDelete writeStreamDo: [ :stream |
 		STON writer 
 			on: stream; 
