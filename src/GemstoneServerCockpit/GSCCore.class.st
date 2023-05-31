@@ -430,7 +430,7 @@ GSCCore >> setup [
 	self setupExample. "TODO: setupFromConfigFiles"
 	
 	rootTool init.
-	rootTool check.
+"	rootTool check."
 
 ]
 
