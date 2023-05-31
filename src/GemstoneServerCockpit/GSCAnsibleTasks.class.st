@@ -54,7 +54,7 @@ GSCAnsibleTasks >> ansibleVarsDictionary [
 { #category : #'as yet unclassified' }
 GSCAnsibleTasks >> doPlay [
 	| playbookFile |
-	playbookFile := GSCCore instance temporaryUniqueFile: 'json'.
+	playbookFile := self core temporaryUniqueFile: 'json'.
 
 	playbookFile writeStreamEncoded: 'utf-8' do: [ :s |
 		s << self playbookJson

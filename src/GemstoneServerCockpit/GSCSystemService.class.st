@@ -28,7 +28,7 @@ GSCSystemService >> doStop [
 
 { #category : #starting }
 GSCSystemService >> isRunning [
-	^ GSCCore instance runShellIsSuccess: ('systemctl is-active --quiet ', serviceName)
+	^ self core runShellIsSuccess: ('systemctl is-active --quiet ', serviceName)
 
 ]
 

@@ -191,6 +191,11 @@ GSCTool >> configAt: aConfigKey put: aValue [
 ]
 
 { #category : #'as yet unclassified' }
+GSCTool >> core [
+	^ GSCCore instance
+]
+
+{ #category : #'as yet unclassified' }
 GSCTool >> descendantNeedsAttention [
 	self descendantsDo: [ :each | each needsAttention ifTrue: [ ^ true ] ].
 	
@@ -296,7 +301,7 @@ GSCTool >> parent: anObject [
 GSCTool >> performToolAction: aSelector [
 	^ [ self perform: aSelector ] on: Error do: [ :e |
 		self log: ('ERROR ', e asString).
-		GSCCore instance isDevelopment ifTrue: [ e pass ]
+		self core isDevelopment ifTrue: [ e pass ]
 	]
 ]
 
@@ -386,7 +391,7 @@ GSCTool >> runShellCommand: aString [
 
 { #category : #'as yet unclassified' }
 GSCTool >> runShellCommand: aString then: aBlock [
-	GSCCore instance runAsyncShell: aString onOutput: [ :lines |
+	self core runAsyncShell: aString onOutput: [ :lines |
 		log addAll: lines ] onFinish: [ :success |
 			self refresh.
 			aBlock ifNotNil: [
@@ -401,7 +406,7 @@ GSCTool >> runSudoShellCommand: aString [
 
 { #category : #'as yet unclassified' }
 GSCTool >> runSudoShellCommand: aString then: aBlock [
-	GSCCore instance runSudoAsyncShell: aString onOutput: [ :lines |
+	self core runSudoAsyncShell: aString onOutput: [ :lines |
 		log addAll: lines ] onFinish: [ :success |
 			self refresh.
 			aBlock ifNotNil: [

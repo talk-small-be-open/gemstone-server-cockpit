@@ -56,13 +56,13 @@ GSCTextFile >> fileContents [
 "	^ fileReference contents."
 	
 	"sudo, has always permission"
-	^ GSCCore instance sudoReadFile: fileReference pathString.
+	^ self core sudoReadFile: fileReference pathString.
 ]
 
 { #category : #accessing }
 GSCTextFile >> filePath: aString [
 	
-	fileReference := GSCCore instance realPathForFile: aString.
+	fileReference := self core realPathForFile: aString.
 	
 "	self log: 'File: ', fileReference pathString"
 	

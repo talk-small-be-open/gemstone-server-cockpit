@@ -23,7 +23,7 @@ GSCSnapPackage >> doInstall [
 
 { #category : #testing }
 GSCSnapPackage >> isInstalled [
-	^ GSCCore instance runShellIsSuccess: ('snap list ', packageName)
+	^ self core runShellIsSuccess: ('snap list ', packageName)
 
 ]
 

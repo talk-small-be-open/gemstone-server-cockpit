@@ -109,6 +109,11 @@ GSCCore >> beDevelopment [
 	isDevelopment := true
 ]
 
+{ #category : #'as yet unclassified' }
+GSCCore >> clearSudoPassword [
+	temporarySudoPassword := nil
+]
+
 { #category : #shell }
 GSCCore >> createOSSUnixSubprocess [
 	| process gsHome path |
@@ -255,54 +260,25 @@ GSCCore >> runAsyncShell: aString sudo: aSudoBoolean onOutput: aBlock onFinish: 
 
 	[
 		
-		self runSshOSSUnixSubprocess: aString args: {  } sudo: aSudoBoolean onRun: [ :process | 
-			| lineReader |
-
-			lineReader := GSCPipeLinesReadStream new.
-			
-			process waitForExitPollingEvery: (Delay forMilliseconds: 500) doing: [ :proc :outStream :errStream |
-				
-				lineReader consumePipe: outStream.
-				lineReader consumePipe: errStream.
-
-				proc isComplete ifTrue: [ lineReader complete ].
-
-				lineReader lastLine = sudoPrompt ifTrue: [
-					proc stdinStream 
-						nextPutAll: self getSudoPassword;
-						nextPut: Character lf;
-						flush.
-					lineReader removeLastLine.
-				].
-						
-				lineReader nextLines ifNotEmpty: [ :lines | aBlock value: lines ].
-				
-				
-			].
-			
-		] onFinish: aFinishBlock
-
+		self runSshOSSUnixSubprocess: aString args: {  } sudo: aSudoBoolean autoPassword: true onLines: aBlock onRun: nil onFinish: aFinishBlock
+		
 	] forkAt: Processor userInterruptPriority named: 'GSC shell process'
 ]
 
 { #category : #shell }
 GSCCore >> runShellIsSuccess: aString [ 
 
-	self log: aString.
+	^ self runSshOSSUnixSubprocess: aString args: {  } sudo: false autoPassword: true onLines: nil onRun: nil onFinish: nil
 	
-	^ self createOSSUnixSubprocess
-"		command: aString;"
-		shellCommand: aString;
-		redirectStdout;
-		redirectStderr;
-		runAndWait;
-		isSuccess
+
 ]
 
 { #category : #shell }
-GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: aSudoBoolean onRun: aRunBlock onFinish: aFinishBlock [
+GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: aSudoBoolean autoPassword: aPasswordBoolean onLines: aLinesBlock onRun: aRunBlock onFinish: aFinishBlock [
 
-	| process sudoPassword cmd args envVars |
+	| process sudoPassword cmd args envVars processOutput |
+
+	processOutput := aPasswordBoolean or: [ aLinesBlock notNil ].
 
 	aSudoBoolean ifTrue: [
 		sudoPassword := self getSudoPassword ].
@@ -327,10 +303,11 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: 
 		a nextPut: 'stty -echo ;'.
 		
 		a nextPut: 'env'.
+
+		a nextPut: ('SUDO_PROMPT=', sudoPrompt).
 		
 		envVars keysAndValuesDo: [ :key :value |
 			a nextPut: (key, '=', value).
-			a nextPut: ('SUDO_PROMPT=', sudoPrompt).
 		].
 
 		aSudoBoolean ifTrue: [
@@ -361,6 +338,34 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: 
 			nextPut: Character lf;
 			flush ]."
 
+
+	"read output, for catch sudo prompt, ..."
+	processOutput ifTrue: [
+		| lineReader |
+
+		lineReader := GSCPipeLinesReadStream new.
+		
+		process waitForExitPollingEvery: (Delay forMilliseconds: 500) doing: [ :proc :outStream :errStream |
+			
+			lineReader consumePipe: outStream.
+			lineReader consumePipe: errStream.
+
+			proc isComplete ifTrue: [ lineReader complete ].
+
+			aPasswordBoolean ifTrue: [
+				lineReader lastLine = sudoPrompt ifTrue: [
+					proc stdinStream 
+						nextPutAll: self getSudoPassword;
+						nextPut: Character lf;
+						flush.
+					lineReader removeLastLine.
+			]].
+			
+			aLinesBlock ifNotNil: [
+				lineReader nextLines ifNotEmpty: [ :lines | aLinesBlock value: lines ] ].
+	]].
+	
+
 	"let user do stuff with sudo process. Might be waiting in here for exit."
 	aRunBlock ifNotNil: [
 		aRunBlock value: process ].
@@ -375,7 +380,9 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: 
 	shellSubprocess := nil.
 	
 	aFinishBlock ifNotNil: [ 
-		aFinishBlock value: process isSuccess ]
+		aFinishBlock value: process isSuccess ].
+	
+	^ process isSuccess
 ]
 
 { #category : #shell }
@@ -392,9 +399,7 @@ GSCCore >> runSudoAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
 { #category : #shell }
 GSCCore >> runSudoShellIsSuccess: aString [ 
 
-	self runSshOSSUnixSubprocess: aString args: {  } sudo: true onRun: nil onFinish: [ :success | ^ success ].
-
-	^ false
+	^ self runSshOSSUnixSubprocess: aString args: {  } sudo: true autoPassword: true onLines: nil onRun: nil onFinish: nil
 ]
 
 { #category : #'as yet unclassified' }
@@ -520,15 +525,18 @@ GSCCore >> setupServer [
 	rootTool add: GSCFolder then: [ :folder |
 		folder name: 'Utilities'.
 
-		folder add: GSCShellConsole
-	].
+		folder add: GSCShellConsole.
+		folder add: GSCGeneralTool then: [ :tool |
+			tool actionBlock: [ self clearSudoPassword ].
+			tool title: 'reset sudo'
+	].	].
 ]
 
 { #category : #shell }
 GSCCore >> sudoReadFile: aFilePath [
 	| contents |
 
-	self runSshOSSUnixSubprocess: 'cat' args: { aFilePath } sudo: true onRun: [ :process |
+	self runSshOSSUnixSubprocess: 'cat' args: { aFilePath } sudo: true autoPassword: false onLines: nil onRun: [ :process |
 		process waitForExit.
 		contents := process stdoutStream upToEnd.
 	] onFinish: nil.
@@ -545,7 +553,7 @@ GSCCore >> sudoWriteFile: aFilePath owner: anOwnerString group: aGroupString mod
 			close
 	] onFinish: nil."
 
-	self runSshOSSUnixSubprocess: 'tee' args: { aFilePath } sudo: true onRun: [ :process |
+	self runSshOSSUnixSubprocess: 'tee' args: { aFilePath } sudo: true autoPassword: false onLines: nil onRun: [ :process |
 		process stdinStream
 			nextPutAll: aString;
 			close

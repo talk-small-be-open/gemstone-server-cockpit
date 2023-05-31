@@ -69,7 +69,7 @@ GSCGsDevKit >> doInstallScript [
 
 { #category : #testing }
 GSCGsDevKit >> isInstalled [
-	^ GSCCore instance runShellIsSuccess: ('test -f /opt/GsDevKit_home/bin/.gsdevkitSetup')
+	^ self core runShellIsSuccess: ('test -f /opt/GsDevKit_home/bin/.gsdevkitSetup')
 
 ]
 

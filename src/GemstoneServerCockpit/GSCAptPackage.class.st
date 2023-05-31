@@ -23,7 +23,7 @@ GSCAptPackage >> doInstall [
 
 { #category : #testing }
 GSCAptPackage >> isInstalled [
-	^ GSCCore instance runShellIsSuccess: ('dpkg-query --status ', packageName)
+	^ self core runShellIsSuccess: ('dpkg-query --status ', packageName)
 
 ]
 

@@ -31,7 +31,7 @@ GSCMainCockpit >> isSelectedTool: aTool [
 
 { #category : #'as yet unclassified' }
 GSCMainCockpit >> killShellProcess [
-	GSCCore instance killShellProcess 
+	core killShellProcess 
 ]
 
 { #category : #accessing }
@@ -120,7 +120,7 @@ GSCMainCockpit >> renderPanesOn: html [
 { #category : #rendering }
 GSCMainCockpit >> renderSubprocessOn: html [
 
-	GSCCore instance isShellProcessRunning ifTrue: [ 
+	core isShellProcessRunning ifTrue: [ 
 		html div: 'SHELL RUNS!'.
 		html anchor
 			callback: [ self killShellProcess ];
@@ -151,7 +151,7 @@ GSCMainCockpit >> reset [
 { #category : #'as yet unclassified' }
 GSCMainCockpit >> rootAndSelectedTools [
 	^ OrderedCollection new
-		add: GSCCore instance rootTool;
+		add: core rootTool;
 		addAll: self selectedTools;
 		yourself
 ]
@@ -177,7 +177,7 @@ GSCMainCockpit >> selectedInPane: anIndex [
 GSCMainCockpit >> selectedTools [
 	| this next all |
 
-	this := GSCCore instance rootTool.
+	this := core rootTool.
 	all := OrderedCollection new.
 
 	[
@@ -199,10 +199,15 @@ GSCMainCockpit >> selectedTools [
 GSCMainCockpit >> setSudoPassword [
 	| pw |
 	pw := self request: 'Password?'.
-	GSCCore instance setSudoPassword: pw
+	core setSudoPassword: pw.
+	
+	"Check sudo password"
+"TODO	(core runSudoShellIsSuccess: 'ls /root') ifFalse: [
+		core clearSudoPassword
+	]"
 ]
 
 { #category : #writing }
 GSCMainCockpit >> writeToSubprocess: aString [
-	GSCCore instance writeLineToShellProcess: aString
+	core writeLineToShellProcess: aString
 ]
