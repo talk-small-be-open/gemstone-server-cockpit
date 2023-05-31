@@ -202,9 +202,9 @@ GSCMainCockpit >> setSudoPassword [
 	core setSudoPassword: pw.
 	
 	"Check sudo password"
-"TODO	(core runSudoShellIsSuccess: 'ls /root') ifFalse: [
+	(core runSudoShellIsSuccess: 'cat /etc/sudoers') ifFalse: [
 		core clearSudoPassword
-	]"
+	]
 ]
 
 { #category : #writing }
