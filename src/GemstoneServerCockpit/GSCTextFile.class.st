@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'fileReference',
 		'shouldContent',
-		'contentTemplate'
+		'contentTemplate',
+		'fileContents'
 	],
 	#category : #'GemstoneServerCockpit-Model'
 }
@@ -15,7 +16,11 @@ GSCTextFile >> checkMe [
 
 	self isExisting ifFalse: [ ^ self beNeedsAttention: 'File does not exist' ].
 	
-	self fileContents ~= contentTemplate contentString withUnixLineEndings ifTrue: [ ^ self beNeedsAttention: 'File contents differ' ]
+	self readFileContents.
+	
+	self fileContents ~= contentTemplate contentString withUnixLineEndings ifTrue: [ ^ self beNeedsAttention: 'File contents differ' ].
+	
+	
 ]
 
 { #category : #accessing }
@@ -53,10 +58,7 @@ GSCTextFile >> doWriteFile [
 
 { #category : #accessing }
 GSCTextFile >> fileContents [
-"	^ fileReference contents."
-	
-	"sudo, has always permission"
-	^ self core sudoReadFile: fileReference pathString.
+	^ fileContents
 ]
 
 { #category : #accessing }
@@ -79,6 +81,12 @@ GSCTextFile >> initMe [
 { #category : #testing }
 GSCTextFile >> isExisting [
 	^ fileReference notNil and: [ fileReference exists ]
+]
+
+{ #category : #accessing }
+GSCTextFile >> readFileContents [
+	"sudo, has always permission"
+	fileContents := self core sudoReadFile: fileReference pathString
 ]
 
 { #category : #rendering }

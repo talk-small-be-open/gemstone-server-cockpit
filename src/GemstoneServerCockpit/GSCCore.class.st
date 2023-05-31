@@ -278,7 +278,7 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: 
 
 	| process sudoPassword cmd args envVars processOutput |
 
-	processOutput := aPasswordBoolean or: [ aLinesBlock notNil ].
+	processOutput := aSudoBoolean or: [aPasswordBoolean or: [ aLinesBlock notNil ]].
 
 	aSudoBoolean ifTrue: [
 		sudoPassword := self getSudoPassword ].
@@ -338,6 +338,9 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: 
 			nextPut: Character lf;
 			flush ]."
 
+	"let user do stuff with sudo process. Do NOT wait for process in here, while also processing output, see hereafter"
+	aRunBlock ifNotNil: [
+		aRunBlock value: process ].
 
 	"read output, for catch sudo prompt, ..."
 	processOutput ifTrue: [
@@ -345,30 +348,25 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: 
 
 		lineReader := GSCPipeLinesReadStream new.
 		
-		process waitForExitPollingEvery: (Delay forMilliseconds: 500) doing: [ :proc :outStream :errStream |
+		process waitForExitPollingEvery: (Delay forMilliseconds: 100) doing: [ :proc :outStream :errStream |
 			
 			lineReader consumePipe: outStream.
 			lineReader consumePipe: errStream.
 
 			proc isComplete ifTrue: [ lineReader complete ].
 
-			aPasswordBoolean ifTrue: [
-				lineReader lastLine = sudoPrompt ifTrue: [
-					proc stdinStream 
-						nextPutAll: self getSudoPassword;
-						nextPut: Character lf;
-						flush.
-					lineReader removeLastLine.
-			]].
+			lineReader lastLine = sudoPrompt ifTrue: [
+				proc stdinStream 
+					nextPutAll: self getSudoPassword;
+					nextPut: Character lf;
+					flush.
+				lineReader removeLastLine.
+			].
 			
 			aLinesBlock ifNotNil: [
 				lineReader nextLines ifNotEmpty: [ :lines | aLinesBlock value: lines ] ].
 	]].
 	
-
-	"let user do stuff with sudo process. Might be waiting in here for exit."
-	aRunBlock ifNotNil: [
-		aRunBlock value: process ].
 
 	"do cleanup stuff in any case"
 	process
@@ -534,14 +532,13 @@ GSCCore >> setupServer [
 
 { #category : #shell }
 GSCCore >> sudoReadFile: aFilePath [
-	| contents |
+	| lines |
 
-	self runSshOSSUnixSubprocess: 'cat' args: { aFilePath } sudo: true autoPassword: false onLines: nil onRun: [ :process |
-		process waitForExit.
-		contents := process stdoutStream upToEnd.
-	] onFinish: nil.
+	lines := OrderedCollection new.
 
-	^ contents
+	self runSshOSSUnixSubprocess: 'cat' args: { aFilePath } sudo: true autoPassword: false onLines: [ :newLines | lines addAll: newLines ] onRun: nil onFinish: nil.
+
+	^ lines joinUsing: String lf
 ]
 
 { #category : #shell }

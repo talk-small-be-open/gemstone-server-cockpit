@@ -4,9 +4,9 @@ Class {
 	#instVars : [
 		'lines',
 		'currentLineBuffer',
-		'lastCharacter',
 		'cr',
-		'lf'
+		'lf',
+		'currentCharacter'
 	],
 	#category : #'GemstoneServerCockpit-Misc'
 }
@@ -18,7 +18,8 @@ GSCPipeLinesReadStream >> clearBuffer [
 
 { #category : #'as yet unclassified' }
 GSCPipeLinesReadStream >> complete [
-	self lineComplete
+	self lineComplete.
+
 ]
 
 { #category : #'as yet unclassified' }
@@ -70,12 +71,18 @@ GSCPipeLinesReadStream >> lineComplete [
 	| line |
 	
 	currentLineBuffer ifNil: [ ^ self ].
-	
+
 	line := self currentLineBufferString.
 
 	lines add: line.
 	
 	self clearBuffer
+]
+
+{ #category : #'instance creation' }
+GSCPipeLinesReadStream >> newLine [
+	currentLineBuffer := OrderedCollection new
+
 ]
 
 { #category : #accessing }
@@ -99,22 +106,25 @@ GSCPipeLinesReadStream >> nextLines [
 { #category : #accessing }
 GSCPipeLinesReadStream >> nextPut: aCharacter [
 
-	lastCharacter := aCharacter.
+	| lastCharacter |
 
 	aCharacter ifNil: [ ^ self ].
 
+	lastCharacter := currentCharacter.
+	currentCharacter := aCharacter.
 
 	"ignore lf after cr"
-	(lastCharacter == cr and: [ aCharacter == lf ]) ifTrue: [ ^ self ].
+	(lastCharacter = cr and: [ aCharacter = lf ]) ifTrue: [ ^ self ].
 
-	"At this point we ensure that we have a new line"
-	currentLineBuffer ifNil: [ 
-		currentLineBuffer := OrderedCollection new ].
+	"At this point we ensure that we have a line"
+	self hasBuffered ifFalse: [
+		self newLine ].
 	
 	"newline if cr or lf"
-	(aCharacter == cr or: [ aCharacter == lf ]) ifTrue: [ self lineComplete. ^ self ].
+	(aCharacter = cr or: [ aCharacter = lf ]) ifTrue: [ self lineComplete. self newLine. ^ self ].
 		
 	currentLineBuffer add: aCharacter.
+
 
 ]
 
