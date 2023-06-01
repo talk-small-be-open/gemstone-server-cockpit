@@ -9,7 +9,7 @@ Class {
 
 { #category : #'as yet unclassified' }
 GSCGemstoneStone >> basePath [
-	^ '/opt/GsDevKit_home/server/stones/' asFileReference / self stoneName
+	^ '/opt/GsDevKit_home/server/stones/' asPath / self stoneName
 ]
 
 { #category : #building }

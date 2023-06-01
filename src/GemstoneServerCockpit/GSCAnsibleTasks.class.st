@@ -105,3 +105,8 @@ GSCAnsibleTasks >> playbookJson [
 			newLine: String lf;
 			nextPut: self playbookDictionary ]
 ]
+
+{ #category : #accessing }
+GSCAnsibleTasks >> title [
+	^ 'Ansible script'
+]

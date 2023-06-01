@@ -2,8 +2,8 @@ Class {
 	#name : #GSCConfiguration,
 	#superclass : #Object,
 	#instVars : [
-		'fileReference',
-		'data'
+		'data',
+		'filePath'
 	],
 	#category : #'GemstoneServerCockpit-Model'
 }
@@ -91,7 +91,7 @@ GSCConfiguration >> entriesDo: aTwoArgBlock [
 { #category : #accessing }
 GSCConfiguration >> filePath: aString [
 	
-	fileReference := GSCCore instance realPathForFile: aString.
+	filePath := GSCCore instance realPathForFile: aString.
 	
 ]
 
@@ -145,9 +145,9 @@ GSCConfiguration >> initialize [
 GSCConfiguration >> loadFromFile: aFilePathString [
 	self filePath: aFilePathString.
 	
-	fileReference exists ifFalse: [ ^ self ].
+	filePath asFileReference exists ifFalse: [ ^ self ].
 
-	data := fileReference readStreamDo: [ :stream | 
+	data := filePath asFileReference readStreamDo: [ :stream | 
 		STON reader
 			on: stream;
 			next ]
@@ -226,9 +226,9 @@ GSCConfiguration >> schemeClass [
 { #category : #'as yet unclassified' }
 GSCConfiguration >> storeToFile [
 	
-	fileReference parent ensureCreateDirectory.
+	filePath asFileReference parent ensureCreateDirectory.
 	
-	fileReference ensureDelete writeStreamDo: [ :stream |
+	filePath asFileReference ensureDelete writeStreamDo: [ :stream |
 		STON writer 
 			on: stream; 
 			prettyPrint: true;

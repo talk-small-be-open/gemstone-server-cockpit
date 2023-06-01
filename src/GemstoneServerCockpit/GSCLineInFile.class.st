@@ -24,10 +24,10 @@ GSCLineInFile >> doWriteLine [
 
 	exists ifTrue: [
 		"replace"
-		self runSudoShellCommand: ('sed --in-place=bak "s/^', search, '.*$/', line, '/" ', filePath)
+		self runSudoShellCommand: ('sed --in-place=bak "s/^', search, '.*$/', line, '/" ', filePath pathString)
 	] ifFalse: [
 		"append"
-		self runSudoShellCommand: ('echo "\n', line, '" >> ', filePath)
+		self runSudoShellCommand: ('echo "\n', line, '" >> ', filePath pathString)
 	]
 ]
 
@@ -40,7 +40,7 @@ GSCLineInFile >> filePath [
 { #category : #accessing }
 GSCLineInFile >> filePath: anObject [
 
-	filePath := anObject
+	filePath := self core realPathForFile: anObject
 ]
 
 { #category : #accessing }
@@ -58,7 +58,7 @@ GSCLineInFile >> line: anObject [
 { #category : #rendering }
 GSCLineInFile >> renderBodyOn: html [
 
-	self renderLabel: 'File path' text: filePath on: html.
+	self renderLabel: 'File path' text: filePath pathString on: html.
 	self renderLabel: 'Look for' text: search on: html.
 	self renderLabel: 'Target line' text: line on: html.
 ]
@@ -77,5 +77,5 @@ GSCLineInFile >> search: anObject [
 
 { #category : #accessing }
 GSCLineInFile >> title [
-	^ 'Line in ', filePath
+	^ 'Line in ', filePath pathString
 ]

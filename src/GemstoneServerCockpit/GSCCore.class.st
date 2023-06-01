@@ -131,7 +131,7 @@ GSCCore >> createOSSUnixSubprocess [
 
 { #category : #shell }
 GSCCore >> fileExists: aPathString [
-	^ self runSudoShellIsSuccess: ('test -f "', aPathString, '"')
+	^ self runSudoShellIsSuccess: ('test -f "', (aPathString asPath pathString), '"')
 ]
 
 { #category : #accessing }
@@ -233,17 +233,17 @@ GSCCore >> log: aString [
 
 { #category : #helpers }
 GSCCore >> realPathForFile: aFileReferenceOrString [
-	| fr |
-	fr := aFileReferenceOrString asFileReference.
+	| path |
+	path := aFileReferenceOrString asPath.
 	
 	"OPTIMIZE: I think there is a onliner for that, but did not find it"
 	filesystemRoot isRoot ifFalse: [
 		| relative |
-		relative := fr relativeTo: Path root.
-		^ (filesystemRoot resolvePath: relative) asFileReference.
+		relative := path relativeTo: Path root.
+		^ (filesystemRoot resolvePath: relative) asPath.
 	].
 
-	^ fr
+	^ path
 ]
 
 { #category : #accessing }
@@ -628,12 +628,13 @@ GSCCore >> sudoEnsureDirectory: aDirPath owner: anOwnerString group: aGroupStrin
 { #category : #shell }
 GSCCore >> sudoReadFile: aFilePath [
 
-	| lines |
+	| lines path |
 	lines := OrderedCollection new.
+	path := aFilePath asPath.
 
 	self
 		runSshOSSUnixSubprocess: 'cat'
-		args: { aFilePath }
+		args: { path pathString }
 		sudo: true
 		onLines: [ :newLines | lines addAll: newLines ]
 		onRun: nil
@@ -651,10 +652,13 @@ GSCCore >> sudoWriteFile: aFilePath owner: anOwnerString group: aGroupString mod
 			close
 	] onFinish: nil."
 
+	| path |
+	path := aFilePath asPath pathString.
+
 	"Ging nicht mit tee, weil es nicht exit gemacht hat"
 	self
 		runSshOSSUnixSubprocess: 'sed'
-		args: { '-n'. ('w ', aFilePath) }
+		args: { '-n'. ('w ', path) }
 		sudo: true
 		onLines: nil
 		onRun: [ :process | 
@@ -669,7 +673,7 @@ GSCCore >> sudoWriteFile: aFilePath owner: anOwnerString group: aGroupString mod
 			runSshOSSUnixSubprocess: 'chmod'
 			args: { 
 					aModeString.
-					aFilePath }
+					path }
 			sudo: true
 			onLines: nil
 			onRun: nil
@@ -678,7 +682,7 @@ GSCCore >> sudoWriteFile: aFilePath owner: anOwnerString group: aGroupString mod
 	anOwnerString ifNotBlank: [
 		self
 			runSshOSSUnixSubprocess: 'chown'
-			args: { (anOwnerString, ':', aGroupString). aFilePath }
+			args: { (anOwnerString, ':', aGroupString). path }
 			sudo: true
 			onLines: nil
 			onRun: nil
@@ -687,7 +691,7 @@ GSCCore >> sudoWriteFile: aFilePath owner: anOwnerString group: aGroupString mod
 
 { #category : #helpers }
 GSCCore >> temporaryFolder [
-	^ '/tmp' asFileReference
+	^ '/tmp' asPath
 ]
 
 { #category : #helpers }

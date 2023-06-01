@@ -21,11 +21,13 @@ body {
 
 table { 
 	border-collapse: collapse;
-	td, th {
-		text-align: left;
-		vertical-align: top;
-	}
 }
+
+table td, table th {
+	text-align: left;
+	vertical-align: top;
+}
+
 
 a { 
 	text-decoration: none;

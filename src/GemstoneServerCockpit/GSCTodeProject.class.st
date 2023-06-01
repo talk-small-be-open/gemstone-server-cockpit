@@ -81,3 +81,8 @@ GSCTodeProject >> stoneName [
 GSCTodeProject >> stoneTool [
 	^ self ancestorsDetectKindOf: GSCGemstoneStone
 ]
+
+{ #category : #accessing }
+GSCTodeProject >> title [
+	^ 'tode project'
+]

@@ -42,3 +42,8 @@ GSCShellConsole >> renderBodyOn: html [
 			
 	]
 ]
+
+{ #category : #accessing }
+GSCShellConsole >> title [
+	^ 'Shell console'
+]

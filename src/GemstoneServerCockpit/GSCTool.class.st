@@ -339,9 +339,10 @@ GSCTool >> renderLabel: aString number: aNumber on: html [
 { #category : #rendering }
 GSCTool >> renderLabel: aString text: aString2 on: html [
 
-	html label: aString.
-	html text: ': '.
-	html span: aString2
+	html div: [
+		html label: aString.
+		html text: ': '.
+		html span: aString2 ]
 ]
 
 { #category : #rendering }

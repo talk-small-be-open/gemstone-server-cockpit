@@ -2,13 +2,13 @@ Class {
 	#name : #GSCTextFile,
 	#superclass : #GSCTool,
 	#instVars : [
-		'fileReference',
 		'shouldContent',
 		'contentTemplate',
 		'fileContents',
 		'owner',
 		'group',
-		'mode'
+		'mode',
+		'filePath'
 	],
 	#category : #'GemstoneServerCockpit-Model'
 }
@@ -48,7 +48,7 @@ GSCTextFile >> doShowFile [
 
 { #category : #'tool-actions' }
 GSCTextFile >> doWriteFile [
-	fileReference ifNil: [ self log: 'File path not defined'. ^ self ].
+	filePath ifNil: [ self log: 'File path not defined'. ^ self ].
 	
 "	fileReference parent ensureCreateDirectory.
 	fileReference ensureDelete."
@@ -57,7 +57,7 @@ GSCTextFile >> doWriteFile [
 		s << contentTemplate contentString withUnixLineEndings
 	]."
 
-	self core sudoWriteFile: fileReference pathString owner: owner group: group mode: mode with: contentTemplate contentString withUnixLineEndings.
+	self core sudoWriteFile: filePath owner: owner group: group mode: mode with: contentTemplate contentString withUnixLineEndings.
 
 	self log: 'File created'.
 	
@@ -72,7 +72,7 @@ GSCTextFile >> fileContents [
 { #category : #accessing }
 GSCTextFile >> filePath: aString [
 	
-	fileReference := self core realPathForFile: aString.
+	filePath := self core realPathForFile: aString.
 	
 "	self log: 'File: ', fileReference pathString"
 	
@@ -97,20 +97,20 @@ GSCTextFile >> initialize [
 
 { #category : #testing }
 GSCTextFile >> isExisting [
-	^ fileReference notNil and: [
-		self core fileExists: fileReference pathString ]
+	^ filePath notNil and: [
+		self core fileExists: filePath ]
 ]
 
 { #category : #accessing }
 GSCTextFile >> readFileContents [
 	"sudo, has always permission"
-	fileContents := self core sudoReadFile: fileReference pathString
+	fileContents := self core sudoReadFile: filePath
 ]
 
 { #category : #rendering }
 GSCTextFile >> renderBodyOn: html [
 
-	self renderLabel: 'File path' text: fileReference pathString on: html.
+	self renderLabel: 'File path' text: filePath pathString on: html.
 	
 	html table: [ 
 		html tableRow: [ 
@@ -133,5 +133,5 @@ GSCTextFile >> renderBodyOn: html [
 
 { #category : #accessing }
 GSCTextFile >> title [
-	^ fileReference basename
+	^ filePath basename
 ]
