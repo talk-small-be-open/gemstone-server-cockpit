@@ -19,6 +19,14 @@ body {
 	background-color: green;
 }
 
+table { 
+	border-collapse: collapse;
+	td, th {
+		text-align: left;
+		vertical-align: top;
+	}
+}
+
 a { 
 	text-decoration: none;
 }

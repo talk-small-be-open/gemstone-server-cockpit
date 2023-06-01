@@ -129,6 +129,11 @@ GSCCore >> createOSSUnixSubprocess [
 	^ process
 ]
 
+{ #category : #shell }
+GSCCore >> fileExists: aPathString [
+	^ self runSudoShellIsSuccess: ('test -f "', aPathString, '"')
+]
+
 { #category : #accessing }
 GSCCore >> filesystemRoot [
 
@@ -140,7 +145,8 @@ GSCCore >> filesystemRoot: aString [
 	filesystemRoot := aString asPath.
 	
 	filesystemRoot isRoot ifFalse: [
-		filesystemRoot asFileReference ensureCreateDirectory ]
+		self sudoEnsureDirectory: filesystemRoot owner: self serverUsername group: self serverUsername mode: 'u=rwx,g=rwx,o=rx'
+	]
 ]
 
 { #category : #'as yet unclassified' }
@@ -452,6 +458,11 @@ GSCCore >> runSudoShellIsSuccess: aString [
 		  onFinish: nil
 ]
 
+{ #category : #shell }
+GSCCore >> serverUsername [
+	^ self rootTool configAt: 'server:username'
+]
+
 { #category : #'as yet unclassified' }
 GSCCore >> setSudoPassword: aString [
 	temporarySudoPassword := aString.
@@ -579,6 +590,39 @@ GSCCore >> setupServer [
 			tool actionBlock: [ self clearSudoPassword ].
 			tool title: 'reset sudo'
 	].	].
+]
+
+{ #category : #shell }
+GSCCore >> sudoEnsureDirectory: aDirPath owner: anOwnerString group: aGroupString mode: aModeString [
+
+	"Ging nicht mit tee, weil es nicht exit gemacht hat"
+	self
+		runSshOSSUnixSubprocess: 'mkdir'
+		args: { '-p'. aDirPath }
+		sudo: true
+		onLines: nil
+		onRun: nil
+		onFinish: nil.
+
+	aModeString ifNotBlank: [
+		self
+			runSshOSSUnixSubprocess: 'chmod'
+			args: { 
+					aModeString.
+					aDirPath }
+			sudo: true
+			onLines: nil
+			onRun: nil
+			onFinish: nil ].
+	
+	anOwnerString ifNotBlank: [
+		self
+			runSshOSSUnixSubprocess: 'chown'
+			args: { (anOwnerString, ':', aGroupString). aDirPath }
+			sudo: true
+			onLines: nil
+			onRun: nil
+			onFinish: nil ]
 ]
 
 { #category : #shell }

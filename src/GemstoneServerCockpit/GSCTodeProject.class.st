@@ -21,9 +21,8 @@ GSCTodeProject >> build [
 GSCTodeProject >> checkMe [
 	self beNotNeedsAttention.
 	
-	('/opt/GsDevKit_home/sys/local/server/projects/', self projectName, '.ston') asFileReference exists ifFalse: [
+	(self core fileExists: ('/opt/GsDevKit_home/sys/local/server/projects/', self projectName, '.ston')) ifFalse: [
 		self beNeedsAttention: 'metacello project not installed' ]
-
 ]
 
 { #category : #'as yet unclassified' }

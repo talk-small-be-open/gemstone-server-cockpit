@@ -24,7 +24,7 @@ GSCCertbotCertificates >> certificateName: anObject [
 GSCCertbotCertificates >> checkMe [
 	self beNotNeedsAttention.
 	
-	self pemFilePath asFileReference exists ifFalse: [ self beNeedsAttention: 'PEM certificate file does not exist' ]
+	(self core fileExists: self pemFilePath) ifFalse: [ self beNeedsAttention: 'PEM certificate file does not exist' ]
 
 
 ]

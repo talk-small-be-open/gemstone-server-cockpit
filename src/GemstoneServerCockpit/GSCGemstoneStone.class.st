@@ -45,7 +45,8 @@ GSCGemstoneStone >> build [
 GSCGemstoneStone >> checkMe [
 	self beNotNeedsAttention.
 	
-	('/opt/GsDevKit_home/server/stones/', self stoneName) asFileReference exists ifFalse: [ self beNeedsAttention: 'Stone does not exist' ]
+	(self core fileExists: ('/opt/GsDevKit_home/server/stones/', self stoneName)) ifFalse: [
+		self beNeedsAttention: 'Stone does not exist' ]
 
 ]
 

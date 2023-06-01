@@ -419,6 +419,11 @@ GSCTool >> runTodeCommand: aCommand stone: aStoneName [
 	self runShellCommand: 'todeIt ', aStoneName, ' ', aCommand
 ]
 
+{ #category : #'as yet unclassified' }
+GSCTool >> serverUsername [
+	^ self root configAt: 'server:username'
+]
+
 { #category : #accessing }
 GSCTool >> title [
 	^ self className

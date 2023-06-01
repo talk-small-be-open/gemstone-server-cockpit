@@ -97,7 +97,8 @@ GSCTextFile >> initialize [
 
 { #category : #testing }
 GSCTextFile >> isExisting [
-	^ fileReference notNil and: [ fileReference exists ]
+	^ fileReference notNil and: [
+		self core fileExists: fileReference pathString ]
 ]
 
 { #category : #accessing }

@@ -14,7 +14,8 @@ GSCGsDevKit >> build [
 
 	self add: GSCGeneralTool then: [ :tool |
 		tool checkMeBlock: [
-			'/opt/GsDevKit_home/dev/clients/tode' asFileReference exists ifFalse: [ tool beNeedsAttention: 'tODE client does not exits' ].
+			(tool core fileExists: '/opt/GsDevKit_home/dev/clients/tode') ifFalse: [
+				tool beNeedsAttention: 'tODE client does not exits' ].
 		].
 		tool actionBlock: [ tool runShellCommand: 'createClient tode' ].
 		tool title: 'tODE client'
@@ -69,7 +70,7 @@ GSCGsDevKit >> doInstallScript [
 
 { #category : #testing }
 GSCGsDevKit >> isInstalled [
-	^ self core runShellIsSuccess: ('test -f /opt/GsDevKit_home/bin/.gsdevkitSetup')
+	^ self core fileExists: '/opt/GsDevKit_home/bin/.gsdevkitSetup'
 
 ]
 

@@ -12,7 +12,7 @@ Class {
 GSCGitRepository >> checkMe [
 	self beNotNeedsAttention.
 	
-	self folderPath asFileReference exists ifFalse: [ ^ self beNeedsAttention: 'git repo does not exist' ].
+	(self core fileExists: self folderPath) ifFalse: [ ^ self beNeedsAttention: 'git repo does not exist' ].
 
 ]
 
@@ -35,6 +35,11 @@ GSCGitRepository >> folderPath [
 GSCGitRepository >> folderPath: anObject [
 
 	folderPath := anObject
+]
+
+{ #category : #accessing }
+GSCGitRepository >> title [
+	^ 'git repository'
 ]
 
 { #category : #accessing }

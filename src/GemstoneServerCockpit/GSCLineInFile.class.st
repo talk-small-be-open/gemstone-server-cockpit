@@ -13,14 +13,15 @@ Class {
 GSCLineInFile >> checkMe [
 	self beNotNeedsAttention.
 	
-	(self filePath asFileReference contents lines anySatisfy: [ :each | each = line ]) ifFalse: [ self beNeedsAttention: 'line in file not found' ]
+	((self core sudoReadFile: self filePath) lines anySatisfy: [ :each | each = line ]) ifFalse: [
+		self beNeedsAttention: 'line in file not found' ]
 ]
 
 { #category : #'as yet unclassified' }
 GSCLineInFile >> doWriteLine [
 	| exists |
-	exists := (self filePath asFileReference contents lines anySatisfy: [ :each | each beginsWith: search ]).
-	
+	exists := (self core sudoReadFile: self filePath) lines anySatisfy: [ :each | each beginsWith: search ].
+
 	exists ifTrue: [
 		"replace"
 		self runSudoShellCommand: ('sed --in-place=bak "s/^', search, '.*$/', line, '/" ', filePath)
@@ -54,6 +55,14 @@ GSCLineInFile >> line: anObject [
 	line := anObject
 ]
 
+{ #category : #rendering }
+GSCLineInFile >> renderBodyOn: html [
+
+	self renderLabel: 'File path' text: filePath on: html.
+	self renderLabel: 'Look for' text: search on: html.
+	self renderLabel: 'Target line' text: line on: html.
+]
+
 { #category : #accessing }
 GSCLineInFile >> search [
 
@@ -64,4 +73,9 @@ GSCLineInFile >> search [
 GSCLineInFile >> search: anObject [
 
 	search := anObject
+]
+
+{ #category : #accessing }
+GSCLineInFile >> title [
+	^ 'Line in ', filePath
 ]
