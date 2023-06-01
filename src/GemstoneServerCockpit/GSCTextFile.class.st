@@ -5,7 +5,10 @@ Class {
 		'fileReference',
 		'shouldContent',
 		'contentTemplate',
-		'fileContents'
+		'fileContents',
+		'owner',
+		'group',
+		'mode'
 	],
 	#category : #'GemstoneServerCockpit-Model'
 }
@@ -17,6 +20,9 @@ GSCTextFile >> checkMe [
 	self isExisting ifFalse: [ ^ self beNeedsAttention: 'File does not exist' ].
 	
 	self readFileContents.
+	
+"	self fileContents inspect.
+	contentTemplate contentString withUnixLineEndings inspect."
 	
 	self fileContents ~= contentTemplate contentString withUnixLineEndings ifTrue: [ ^ self beNeedsAttention: 'File contents differ' ].
 	
@@ -44,12 +50,14 @@ GSCTextFile >> doShowFile [
 GSCTextFile >> doWriteFile [
 	fileReference ifNil: [ self log: 'File path not defined'. ^ self ].
 	
-	fileReference parent ensureCreateDirectory.
-	fileReference ensureDelete.
+"	fileReference parent ensureCreateDirectory.
+	fileReference ensureDelete."
 	
-	fileReference writeStreamEncoded: 'utf-8' do: [ :s |
+"	fileReference writeStreamEncoded: 'utf-8' do: [ :s |
 		s << contentTemplate contentString withUnixLineEndings
-	].
+	]."
+
+	self core sudoWriteFile: fileReference pathString owner: owner group: group mode: mode with: contentTemplate contentString withUnixLineEndings.
 
 	self log: 'File created'.
 	
@@ -76,6 +84,15 @@ GSCTextFile >> initMe [
 "	self isExisting ifFalse: [ self log: 'File does not exist' ] ifTrue: [
 		self log: 'Current content is:'.
 		self log: fileReference contents ]"
+]
+
+{ #category : #initialization }
+GSCTextFile >> initialize [
+	super initialize.
+	
+	mode := 'u=rwx,g=rx'.
+	owner := 'root'.
+	group := 'root'.
 ]
 
 { #category : #testing }
