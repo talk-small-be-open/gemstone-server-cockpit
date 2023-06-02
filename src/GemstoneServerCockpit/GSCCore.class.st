@@ -295,9 +295,11 @@ GSCCore >> runShellIsSuccess: aString [
 { #category : #shell }
 GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: aSudoBoolean onLines: aLinesBlock onRun: aRunBlock onFinish: aFinishBlock [
 
-	| process sudoPassword cmd args envVars lineReader catchFirstSudoPrompt runBlockDone fireRunBlock |
+	| process sudoPassword cmd args envVars lineReader catchFirstSudoPrompt runBlockDone fireRunBlock linesBlock |
 
 	runBlockDone := false.
+
+	linesBlock := aLinesBlock ifNil: [ [ :lines | Transcript << lines ] ].
 
 	fireRunBlock := [ :proc |
 		"do this after the main sudo password has been streamed into the pipe. So that runBlock is ready
@@ -333,6 +335,7 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: 
 		a nextPut: '--login'.
 		a nextPut: '-c'."
 
+		"Prevent the input being echoed as output"
 		a nextPut: 'stty -echo ;'.
 		
 		"Used as a container to serialize the real commands"
@@ -415,8 +418,7 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: 
 
 		].
 		
-		aLinesBlock ifNotNil: [
-			lineReader nextLines ifNotEmpty: [ :lines | aLinesBlock value: lines ] ].
+		lineReader nextLines ifNotEmpty: [ :lines | linesBlock value: lines ]
 	].
 	
 
@@ -656,16 +658,19 @@ GSCCore >> sudoWriteFile: aFilePath owner: anOwnerString group: aGroupString mod
 	path := aFilePath asPath pathString.
 
 	"Ging nicht mit tee, weil es nicht exit gemacht hat"
+"		runSshOSSUnixSubprocess: 'sed'
+		args: { '-n'. ('''w ', path, '''') }"
+
 	self
-		runSshOSSUnixSubprocess: 'sed'
-		args: { '-n'. ('w ', path) }
+		runSshOSSUnixSubprocess: 'tee'
+		args: { path }
 		sudo: true
 		onLines: nil
 		onRun: [ :process | 
 			process stdinStream
 				nextPutAll: aString;
-				flush;
-				close ]
+				end;
+				flush.]
 		onFinish: nil.
 
 	aModeString ifNotBlank: [

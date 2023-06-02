@@ -48,6 +48,8 @@ GSCMainCockpit >> reSetup [
 { #category : #rendering }
 GSCMainCockpit >> renderContentOn: html [
 
+	html div class: 'mainTitle'; with: 'GemStone Server Cockpit'.
+	
 	self renderCoreToolbarOn: html.
 	
 	self renderSubprocessOn: html.
@@ -66,29 +68,30 @@ GSCMainCockpit >> renderContentOn: html [
 { #category : #rendering }
 GSCMainCockpit >> renderCoreToolbarOn: html [
 
-	html form: [	
-		core isSudoPasswordSet ifFalse: [
+	html div class: 'coreToolbar'; with: [
+		html form: [	
+			core isSudoPasswordSet ifFalse: [
+				html anchor
+					callback: [ self setSudoPassword ];
+					with: 'Set sudo password ...'
+			].
+
+			html textInput
+				callback: [ :value | core filesystemRoot: value ];
+				with: core filesystemRoot pathString.
+			html submitButton: 'Save'.
+		
+			html space.
 			html anchor
-				callback: [ self setSudoPassword ];
-				with: 'Set sudo password ...'
-		].
+				callback: [ self checkAll ];
+				with: 'check all'.
 
-		html textInput
-			callback: [ :value | core filesystemRoot: value ];
-			with: core filesystemRoot pathString.
-		html submitButton: 'Save'.
-	
-		html space.
-		html anchor
-			callback: [ self checkAll ];
-			with: 'check all'.
+			html space.
+			html anchor
+				callback: [ self reSetup ];
+				with: 're-setup'
 
-		html space.
-		html anchor
-			callback: [ self reSetup ];
-			with: 're-setup'
-
-	]
+		] ]
 ]
 
 { #category : #rendering }

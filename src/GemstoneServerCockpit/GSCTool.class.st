@@ -246,6 +246,11 @@ GSCTool >> doClearLog [
 	self clearLog
 ]
 
+{ #category : #testing }
+GSCTool >> hasChildren [
+	^ children notBlank
+]
+
 { #category : #initialization }
 GSCTool >> init [
 	self initMe.
@@ -331,15 +336,16 @@ GSCTool >> renderBodyOn: html [
 { #category : #rendering }
 GSCTool >> renderLabel: aString number: aNumber on: html [
 
-	html label: aString.
-	html text: ': '.
-	html span: aNumber printString
+	html div class: 'labelAndValue'; with: [
+		html label: aString.
+		html text: ': '.
+		html span: aNumber printString ]
 ]
 
 { #category : #rendering }
 GSCTool >> renderLabel: aString text: aString2 on: html [
 
-	html div: [
+	html div class: 'labelAndValue'; with: [
 		html label: aString.
 		html text: ': '.
 		html span: aString2 ]
@@ -348,20 +354,24 @@ GSCTool >> renderLabel: aString text: aString2 on: html [
 { #category : #rendering }
 GSCTool >> renderListEntryOn: html [
 	html span: self title.
-	self needsAttention ifTrue: [
-		html span: ' !'
-	] ifFalse: [
-		self descendantNeedsAttention ifTrue: [ html span: ' (!)' ]
-	]
+	html span class: 'attributes'; with: [
+		self needsAttention ifTrue: [
+			html span: ' !'
+		] ifFalse: [
+			self descendantNeedsAttention ifTrue: [ html span: ' (!)' ]
+		].
+
+		self hasChildren ifTrue: [ html span: ' >>' ] ]
 ]
 
 { #category : #rendering }
 GSCTool >> renderLogOn: html [
 	log ifNotEmpty: [ 
-		html heading: 'Log'.
-		log do: [ :each |
-			html preformatted: each ]
-	]
+		html div class: 'log'; with: [
+			html heading: 'Log'.
+			log do: [ :each |
+				html preformatted: each ]
+	] ]
 ]
 
 { #category : #rendering }
