@@ -89,6 +89,12 @@ GSCConfiguration >> entriesDo: aTwoArgBlock [
 ]
 
 { #category : #accessing }
+GSCConfiguration >> filePath [
+
+	^ filePath
+]
+
+{ #category : #accessing }
 GSCConfiguration >> filePath: aString [
 	
 	filePath := GSCCore instance realPathForFile: aString.

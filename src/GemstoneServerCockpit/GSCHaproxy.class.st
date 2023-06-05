@@ -54,7 +54,6 @@ defaults
 		errorfile 504 /etc/haproxy/errors/504.http
 
 
-
 frontend stats
     bind 127.0.0.1:8404
     stats enable
@@ -71,11 +70,8 @@ frontend stats
 # 		stick-table type integer size 100K expire 30m store gpc0,http_req_rate(10s)
 
 <?stt me haproxySiteConfigs do: [ :each | ?>
-
 <?stt= each contentString ?>
-
-<?stt ] ?>
-'
+<?stt ] ?>'
 ]
 
 { #category : #'as yet unclassified' }

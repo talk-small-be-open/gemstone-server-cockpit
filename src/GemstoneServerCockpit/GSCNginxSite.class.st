@@ -239,9 +239,7 @@ server {
 		access_log off;
 		return 301 https://$host$request_uri;
 }
-<?stt ] ?>
-
-'
+<?stt ] ?>'
 ]
 
 { #category : #'as yet unclassified' }

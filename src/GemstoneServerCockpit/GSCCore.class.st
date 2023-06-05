@@ -497,6 +497,8 @@ GSCCore >> setup [
 	
 	rootTool config: rootConf.
 	
+	rootTool build.
+		
 	self setupPharo.
 	self setupServer.
 	self setupExample. "TODO: setupFromConfigFiles"

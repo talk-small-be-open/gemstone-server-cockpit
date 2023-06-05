@@ -48,7 +48,7 @@ GSCGeneralTool >> doAction [
 { #category : #accessing }
 GSCGeneralTool >> title [
 
-	^ title
+	^ title ifBlank: [ 'unnamed tool' ]
 ]
 
 { #category : #accessing }

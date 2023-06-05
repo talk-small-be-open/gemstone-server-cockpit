@@ -29,6 +29,7 @@ GSCGemstoneStone >> build [
 
 	"TODO only if not installed already"
 	self add: GSCGeneralTool then: [ :tool |
+		tool title: 'Mount seaside in tode'.
 		tool actionBlock: [ tool runTodeCommand: 'mount @/sys/stone/dirs/Seaside3/tode /home seaside' stone: self stoneName ].
 "TODO		tool checkMeBlock: "
 	].
