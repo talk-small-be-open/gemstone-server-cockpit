@@ -497,6 +497,7 @@ GSCCore >> setup [
 	
 	rootTool config: rootConf.
 	
+	self setupPharo.
 	self setupServer.
 	self setupExample. "TODO: setupFromConfigFiles"
 	
@@ -538,6 +539,11 @@ GSCCore >> setupFromConfigFiles [
 			app := scheme buildApplicationToolInto: rootTool.
 			
 	]]
+]
+
+{ #category : #'as yet unclassified' }
+GSCCore >> setupPharo [
+	GSCHtmlCanvas selectAsDefault
 ]
 
 { #category : #'as yet unclassified' }

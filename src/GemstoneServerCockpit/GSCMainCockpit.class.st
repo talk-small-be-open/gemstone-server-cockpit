@@ -81,12 +81,10 @@ GSCMainCockpit >> renderCoreToolbarOn: html [
 				with: core filesystemRoot pathString.
 			html submitButton: 'Save'.
 		
-			html space.
 			html anchorButton
 				callback: [ self checkAll ];
 				with: 'Check all'.
 
-			html space.
 			html anchorButton
 				callback: [ self reSetup ];
 				with: 'Re-setup'
