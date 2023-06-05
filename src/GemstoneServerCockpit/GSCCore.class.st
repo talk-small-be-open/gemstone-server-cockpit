@@ -625,6 +625,8 @@ GSCCore >> sudoAsyncWriteFile: aFilePath owner: anOwnerString group: aGroupStrin
 					nextPutAll: aString;
 					end;
 					end; "second time, because pty only transforms it to EOF if on a empty line, else it is just an end of line"
+					end;
+					end;
 					flush.]
 			onFinish: nil.
 
