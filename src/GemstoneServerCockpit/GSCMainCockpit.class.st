@@ -132,8 +132,15 @@ GSCMainCockpit >> renderSubprocessOn: html [
 		
 		html form: [ 
 			html textInput
-				callback: [ :value | self writeToSubprocess: value ].
-			html submitButton ]
+				callback: [ :value | self writeLineToSubprocess: value ].
+			html submitButton ].
+		
+		html space.
+		html anchor callback: [ self writeToSubprocess: Character end ]; with: 'send ^D'.
+		html space.
+		html anchor callback: [ self writeToSubprocess: Character enter ]; with: 'send ^C'.
+		html space.
+
 	].
 
 ]
@@ -211,6 +218,11 @@ GSCMainCockpit >> setSudoPassword [
 ]
 
 { #category : #writing }
-GSCMainCockpit >> writeToSubprocess: aString [
+GSCMainCockpit >> writeLineToSubprocess: aString [
 	core writeLineToShellProcess: aString
+]
+
+{ #category : #writing }
+GSCMainCockpit >> writeToSubprocess: aString [
+	core writeToShellProcess: aString
 ]

@@ -336,7 +336,7 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: 
 		a nextPut: '-c'."
 
 		"Prevent the input being echoed as output"
-		a nextPut: 'stty -echo ;'.
+		a nextPut: 'stty icanon isig iexten -echo eof ^D ;'.
 		
 		"Used as a container to serialize the real commands"
 		a nextPut: 'env'.
@@ -724,8 +724,8 @@ GSCCore >> writeLineToShellProcess: aString [
 ]
 
 { #category : #writing }
-GSCCore >> writeToShellProcess: aString [
+GSCCore >> writeToShellProcess: anObject [
 	shellSubprocess stdinStream
-		nextPutAll: aString;
+		<< anObject;
 		flush
 ]
