@@ -26,6 +26,10 @@ BaselineOfGemstoneServerCockpit >> baseline: spec [
 			spec package: 'MCL-Utils-Blankness' with: [
 				spec repository: 'github://talk-small-be-open/utils:master/src'
 			].
+
+			spec package: 'MCL-Utils-CollectionSugar' with: [
+				spec repository: 'github://talk-small-be-open/utils:master/src'
+			].
 				
 			spec package: 'MCLSmalltalkTemplate' with: [
 				spec repository: 'github://talk-small-be-open/utils:master/src'
