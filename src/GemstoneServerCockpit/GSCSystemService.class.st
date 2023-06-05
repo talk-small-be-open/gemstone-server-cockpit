@@ -17,6 +17,16 @@ GSCSystemService >> checkMe [
 ]
 
 { #category : #starting }
+GSCSystemService >> doReload [
+	self runSudoShellCommand: ('service "', serviceName, '" reload')
+]
+
+{ #category : #starting }
+GSCSystemService >> doRestart [
+	self runSudoShellCommand: ('service "', serviceName, '" restart')
+]
+
+{ #category : #starting }
 GSCSystemService >> doStart [
 	self runSudoShellCommand: ('service "', serviceName, '" start')
 ]

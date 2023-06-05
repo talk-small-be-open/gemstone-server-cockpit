@@ -71,7 +71,7 @@ GSCMainCockpit >> renderCoreToolbarOn: html [
 	html div class: 'coreToolbar'; with: [
 		html form: [	
 			core isSudoPasswordSet ifFalse: [
-				html anchor
+				html anchorButton
 					callback: [ self setSudoPassword ];
 					with: 'Set sudo password ...'
 			].
@@ -82,14 +82,14 @@ GSCMainCockpit >> renderCoreToolbarOn: html [
 			html submitButton: 'Save'.
 		
 			html space.
-			html anchor
+			html anchorButton
 				callback: [ self checkAll ];
-				with: 'check all'.
+				with: 'Check all'.
 
 			html space.
-			html anchor
+			html anchorButton
 				callback: [ self reSetup ];
-				with: 're-setup'
+				with: 'Re-setup'
 
 		] ]
 ]
@@ -123,25 +123,30 @@ GSCMainCockpit >> renderPanesOn: html [
 { #category : #rendering }
 GSCMainCockpit >> renderSubprocessOn: html [
 
-	core isShellProcessRunning ifTrue: [ 
-		html div: 'SHELL RUNS!'.
-		html anchor
-			callback: [ self killShellProcess ];
-			with: 'kill'.
-		html script: 'setTimeout(function(){ location.reload() }, 5000);'.
-		
-		html form: [ 
-			html textInput
-				callback: [ :value | self writeLineToSubprocess: value ].
-			html submitButton ].
-		
-		html space.
-		html anchor callback: [ self writeToSubprocess: Character end ]; with: 'send ^D'.
-		html space.
-		html anchor callback: [ self writeToSubprocess: Character enter ]; with: 'send ^C'.
-		html space.
+	core isShellProcessRunning ifTrue: [
+		html div class: 'subprocess'; with: [
+			html div: 'SHELL RUNS!'.
+			html anchorButton
+				callback: [ self killShellProcess ];
+				with: 'Kill Pharo process'.
+			html script: 'setTimeout(function(){ location.reload() }, 5000);'.
+			
+			html form: [ 
+				html textInput
+					callback: [ :value | self writeLineToSubprocess: value ].
+				html submitButton ].
+			
+			html anchorButton callback: [ self writeToSubprocess: Character end ]; with: 'Send Ctrl-D (EOF)'.
+			html space.
+			html anchorButton callback: [ self writeToSubprocess: Character enter ]; with: 'Send Ctrl-C (INT)'.
+			html space.
 
-	].
+		core subprocessTailLines ifNotBlank: [ :lines |
+			html preformatted: [
+				lines do: [ :each | html text: each ] separatedBy: [ html text: Character lf ].
+		]]
+
+		] ].
 
 ]
 

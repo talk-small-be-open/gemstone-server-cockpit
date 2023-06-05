@@ -9,7 +9,8 @@ Class {
 		'sudoPasswortTimestamp',
 		'shellSubprocess',
 		'isDevelopment',
-		'sudoPrompt'
+		'sudoPrompt',
+		'subprocessTailLines'
 	],
 	#classVars : [
 		'Instance'
@@ -302,6 +303,7 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: 
 	runBlockDone := false.
 
 	linesBlock := aLinesBlock ifNil: [ [ :lines | Transcript << lines ] ].
+	subprocessTailLines := OrderedCollection new.
 
 	fireRunBlock := [ :proc |
 		"do this after the main sudo password has been streamed into the pipe. So that runBlock is ready
@@ -422,7 +424,10 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: 
 
 		].
 		
-		lineReader nextLines ifNotEmpty: [ :lines | linesBlock value: lines ]
+		lineReader nextLines ifNotEmpty: [ :lines |
+			subprocessTailLines addAll: lines.
+			subprocessTailLines := subprocessTailLines lastAtMost: 10.
+			linesBlock value: lines ]
 	].
 	
 
@@ -598,6 +603,12 @@ GSCCore >> setupServer [
 	].	].
 ]
 
+{ #category : #accessing }
+GSCCore >> subprocessTailLines [
+
+	^ subprocessTailLines
+]
+
 { #category : #shell }
 GSCCore >> sudoAsyncWriteFile: aFilePath owner: anOwnerString group: aGroupString mode: aModeString with: aString then: aBlock [
 
@@ -614,10 +625,12 @@ GSCCore >> sudoAsyncWriteFile: aFilePath owner: anOwnerString group: aGroupStrin
 		"Ging nicht mit tee, weil es nicht exit gemacht hat"
 	"		runSshOSSUnixSubprocess: 'sed'
 			args: { '-n'. ('''w ', path, '''') }"
+"nicht zuverlässig, hängt			runSshOSSUnixSubprocess: 'tee'
+			args: { path }"
 
 		self
-			runSshOSSUnixSubprocess: 'tee'
-			args: { path }
+			runSshOSSUnixSubprocess: 'sed'
+			args: { '-n'. ('''w ', path, '''') }
 			sudo: true
 			onLines: nil
 			onRun: [ :process | 

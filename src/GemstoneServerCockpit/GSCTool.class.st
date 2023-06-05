@@ -319,11 +319,10 @@ GSCTool >> refresh [
 { #category : #rendering }
 GSCTool >> renderActionsOn: html [
 	self toolActionSelectors do: [ :each |
-		html anchor
-			class: 'toolActionButton';
+		html anchorButton
 			callback: [ self performToolAction: each ];
-			with: each.
-		html break
+			with: [
+				html text: (each allButFirst: 2)].
 	
 	]
 ]
@@ -353,15 +352,17 @@ GSCTool >> renderLabel: aString text: aString2 on: html [
 
 { #category : #rendering }
 GSCTool >> renderListEntryOn: html [
+	self needsAttention ifTrue: [
+		html span: '! '
+	].
+
 	html span: self title.
 	html span class: 'attributes'; with: [
-		self needsAttention ifTrue: [
-			html span: ' !'
-		] ifFalse: [
-			self descendantNeedsAttention ifTrue: [ html span: ' (!)' ]
-		].
-
-		self hasChildren ifTrue: [ html span: ' >>' ] ]
+	
+		self hasChildren ifTrue: [
+			self descendantNeedsAttention
+				ifTrue: [ html span: '! >' ]
+				ifFalse: [ html span: '>' ] ] ]
 ]
 
 { #category : #rendering }
@@ -378,7 +379,8 @@ GSCTool >> renderLogOn: html [
 GSCTool >> renderOn: html [
 	html heading: self title.
 
-	self needsAttention ifTrue: [ html div: 'ATTENTION!!!' ].
+	self needsAttention ifTrue: [ html div class: 'needsAttention'; with: 'Needs attention!' ].
+
 	self renderActionsOn: html.
 	self renderBodyOn: html.
 	self renderLogOn: html.
@@ -442,5 +444,8 @@ GSCTool >> title [
 
 { #category : #'as yet unclassified' }
 GSCTool >> toolActionSelectors [
-	^(self class allSelectorsBelow: GSCTool superclass) select: [:each | (each beginsWith: 'do') and: [ (each at: 3) isUppercase]]
+	| selectors |
+	selectors := (self class allSelectorsBelow: GSCTool superclass) select: [:each |
+		(each beginsWith: 'do') and: [ (each at: 3) isUppercase]].
+	^ selectors sorted
 ]
