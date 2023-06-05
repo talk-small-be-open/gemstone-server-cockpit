@@ -338,7 +338,7 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: 
 		a nextPut: '-c'."
 
 		"Prevent the input being echoed as output"
-		a nextPut: 'stty icanon isig iexten -echo eof ^D intr ^C ;'.
+		a nextPut: 'stty icanon isig iexten iutf8 -echo eof ^D intr ^C ;'.
 		
 		"Used as a container to serialize the real commands"
 		a nextPut: 'env'.
@@ -412,6 +412,8 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: 
 				flush.
 			lineReader removeLastLine.
 
+			(Delay forMilliseconds: 110) wait.
+	
 			"Detect very first initial sudo prompt, and do stuff right after that"
 			catchFirstSudoPrompt ifTrue: [ 
 				catchFirstSudoPrompt := false.
@@ -426,7 +428,7 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: 
 
 	"do cleanup stuff in any case"
 	process
-		waitForExit;
+"vermutlich verantwortlich für nicht stoppende Prozesse, deadlocks. nicht nötig nochmals:		waitForExit;"
 		closeAndCleanStreams.
 
 	"we need to decouple it explicitly here, because the finish block could be
@@ -622,6 +624,7 @@ GSCCore >> sudoAsyncWriteFile: aFilePath owner: anOwnerString group: aGroupStrin
 				process stdinStream
 					nextPutAll: aString;
 					end;
+					end; "second time, because pty only transforms it to EOF if on a empty line, else it is just an end of line"
 					flush.]
 			onFinish: nil.
 
