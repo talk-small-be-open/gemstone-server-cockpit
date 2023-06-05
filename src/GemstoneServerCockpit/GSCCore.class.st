@@ -207,7 +207,7 @@ GSCCore >> isDevelopment [
 
 { #category : #testing }
 GSCCore >> isShellProcessRunning [
-	^ shellSubprocess notNil and: [ shellSubprocess isRunning ]
+	^ shellSubprocess notNil and: [ shellSubprocess isComplete not ]
 ]
 
 { #category : #testing }
@@ -297,6 +297,8 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: 
 
 	| process sudoPassword cmd args envVars lineReader catchFirstSudoPrompt runBlockDone fireRunBlock linesBlock |
 
+	self isShellProcessRunning ifTrue: [ self error: 'Another shell process is running.' ].
+
 	runBlockDone := false.
 
 	linesBlock := aLinesBlock ifNil: [ [ :lines | Transcript << lines ] ].
@@ -336,7 +338,7 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: 
 		a nextPut: '-c'."
 
 		"Prevent the input being echoed as output"
-		a nextPut: 'stty icanon isig iexten -echo eof ^D ;'.
+		a nextPut: 'stty icanon isig iexten -echo eof ^D intr ^C ;'.
 		
 		"Used as a container to serialize the real commands"
 		a nextPut: 'env'.
@@ -595,6 +597,59 @@ GSCCore >> setupServer [
 ]
 
 { #category : #shell }
+GSCCore >> sudoAsyncWriteFile: aFilePath owner: anOwnerString group: aGroupString mode: aModeString with: aString then: aBlock [
+
+	"	self runSudoOSSUnixSubprocess: 'touch """"', aFilePath, '""""' onRun: [ :process |
+		process stdinStream
+			nextPutAll: aString;
+			close
+	] onFinish: nil."
+
+	[
+		| path |
+		path := aFilePath asPath pathString.
+
+		"Ging nicht mit tee, weil es nicht exit gemacht hat"
+	"		runSshOSSUnixSubprocess: 'sed'
+			args: { '-n'. ('''w ', path, '''') }"
+
+		self
+			runSshOSSUnixSubprocess: 'tee'
+			args: { path }
+			sudo: true
+			onLines: nil
+			onRun: [ :process | 
+				process stdinStream
+					nextPutAll: aString;
+					end;
+					flush.]
+			onFinish: nil.
+
+		aModeString ifNotBlank: [
+			self
+				runSshOSSUnixSubprocess: 'chmod'
+				args: { 
+						aModeString.
+						path }
+				sudo: true
+				onLines: nil
+				onRun: nil
+				onFinish: nil ].
+		
+		anOwnerString ifNotBlank: [
+			self
+				runSshOSSUnixSubprocess: 'chown'
+				args: { (anOwnerString, ':', aGroupString). path }
+				sudo: true
+				onLines: nil
+				onRun: nil
+				onFinish: nil ].
+			
+		aBlock value.
+		] forkAt: Processor userInterruptPriority named: 'Write file process'
+]
+
+{ #category : #shell }
 GSCCore >> sudoEnsureDirectory: aDirPath owner: anOwnerString group: aGroupString mode: aModeString [
 
 	"Ging nicht mit tee, weil es nicht exit gemacht hat"
@@ -654,7 +709,11 @@ GSCCore >> sudoWriteFile: aFilePath owner: anOwnerString group: aGroupString mod
 			close
 	] onFinish: nil."
 
+
 	| path |
+
+	self deprecated: 'use async version'.
+
 	path := aFilePath asPath pathString.
 
 	"Ging nicht mit tee, weil es nicht exit gemacht hat"

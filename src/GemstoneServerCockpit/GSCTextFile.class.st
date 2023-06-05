@@ -57,11 +57,11 @@ GSCTextFile >> doWriteFile [
 		s << contentTemplate contentString withUnixLineEndings
 	]."
 
-	self core sudoWriteFile: filePath owner: owner group: group mode: mode with: contentTemplate contentString withUnixLineEndings.
+	self core sudoAsyncWriteFile: filePath owner: owner group: group mode: mode with: contentTemplate contentString withUnixLineEndings then: [
 
-	self log: 'File created'.
+		self log: 'File created'.
 	
-	self refresh
+		self refresh ]
 ]
 
 { #category : #accessing }
@@ -118,10 +118,9 @@ GSCTextFile >> renderBodyOn: html [
 			html tableHeading: 'SOLL' ].
 		html tableRow: [ 
 			html tableData: [
-				self isExisting ifTrue: [
-					html preformatted
-						class: 'fileContent';
-						with: self fileContents ].
+				html preformatted
+					class: 'fileContent';
+					with: self fileContents.
 			].
 			html tableData: [ 
 				html preformatted
