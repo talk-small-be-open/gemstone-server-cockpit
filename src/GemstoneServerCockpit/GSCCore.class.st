@@ -602,21 +602,6 @@ GSCCore >> setupServer [
         "timezone": {
             "name": "Europe/Zurich"
         }
-    },
-    {
-        "name": "Add user group",
-        "group": {
-            "name": "{{remoteUser}}"
-        }
-    },
-    {
-        "name": "Add user",
-        "user": {
-            "name": "{{remoteUser}}",
-            "group": "adm",
-            "groups": "sudo, {{remoteUser}}",
-            "shell": "/bin/bash"
-        }
     }
 ]
 '
@@ -714,6 +699,13 @@ GSCCore >> sudoAsyncWriteFile: aFilePath owner: anOwnerString group: aGroupStrin
 			
 		aBlock value.
 	]
+]
+
+{ #category : #shell }
+GSCCore >> sudoAsyncWriteFile: aFilePath with: aString then: aBlock [
+
+	self sudoAsyncWriteFile: aFilePath owner: nil group: nil mode: nil with: aString then: aBlock
+
 ]
 
 { #category : #shell }

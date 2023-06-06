@@ -51,24 +51,24 @@ GSCAnsibleTasks >> ansibleTasksCollection [
 
 { #category : #'as yet unclassified' }
 GSCAnsibleTasks >> ansibleVarsDictionary [
-	^ self config asDictionary
+	| dict |
+	dict := self config asDictionary.
+	
+	dict at: 'remoteUser' put: self serverUsername.
+	
+	^ dict
 ]
 
 { #category : #'as yet unclassified' }
 GSCAnsibleTasks >> doPlay [
-	| playbookFile |
-	playbookFile := self core temporaryUniqueFile: 'json'.
-
-	playbookFile writeStreamEncoded: 'utf-8' do: [ :s |
-		s << self playbookJson
-	].
-
-	self runShellCommand: ('ansible-playbook ', playbookFile pathString)
+	self core sudoAsyncWriteFile: '/tmp/playbook.json' with: self playbookJson then: [
+		self runShellCommand: 'ansible-playbook /tmp/playbook.json' ]
 ]
 
 { #category : #'as yet unclassified' }
 GSCAnsibleTasks >> doPlayCheckOnly [
-
+	self core sudoAsyncWriteFile: '/tmp/playbook-checkonly.json' with: self playbookJson then: [
+		self runShellCommand: 'ansible-playbook --check /tmp/playbook-checkonly.json' ]
 ]
 
 { #category : #'as yet unclassified' }
