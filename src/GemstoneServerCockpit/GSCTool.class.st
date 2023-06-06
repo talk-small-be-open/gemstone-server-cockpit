@@ -5,7 +5,8 @@ Class {
 		'children',
 		'parent',
 		'log',
-		'needsAttention'
+		'needsAttention',
+		'error'
 	],
 	#category : #'GemstoneServerCockpit-Model'
 }
@@ -150,6 +151,11 @@ GSCTool >> children [
 	^ children
 ]
 
+{ #category : #'as yet unclassified' }
+GSCTool >> clearError [
+	error := nil
+]
+
 { #category : #logging }
 GSCTool >> clearLog [
 	log := OrderedCollection new
@@ -237,6 +243,11 @@ GSCTool >> descendantsSelect: aBlock [
 ]
 
 { #category : #'as yet unclassified' }
+GSCTool >> doCheck [
+	self check
+]
+
+{ #category : #'as yet unclassified' }
 GSCTool >> doCheckMe [
 	self checkMe
 ]
@@ -244,6 +255,16 @@ GSCTool >> doCheckMe [
 { #category : #'as yet unclassified' }
 GSCTool >> doClearLog [
 	self clearLog
+]
+
+{ #category : #accessing }
+GSCTool >> error [
+	^ error
+]
+
+{ #category : #accessing }
+GSCTool >> error: aString [
+	error := aString
 ]
 
 { #category : #testing }
@@ -304,7 +325,15 @@ GSCTool >> parent: anObject [
 
 { #category : #'as yet unclassified' }
 GSCTool >> performToolAction: aSelector [
-	^ [ self perform: aSelector ] on: Error do: [ :e |
+	^ [
+		self clearError.
+		[ self perform: aSelector ] on: GSCMissingSudoPassword do: [ :e |
+			self error: 'This tool needs the sudo password'.
+			"TODO: Request password on the fly? But how? This is not a UI component"
+"			e resume."
+		]
+		
+	] on: Error do: [ :e |
 		self log: ('ERROR ', e asString).
 		self core isDevelopment ifTrue: [ e pass ]
 	]
@@ -369,8 +398,8 @@ GSCTool >> renderListEntryOn: html [
 GSCTool >> renderLogOn: html [
 	log ifNotEmpty: [ 
 		html div class: 'log'; with: [
-			html heading: 'Log'.
-			log do: [ :each |
+			html heading: 'Logtail'.
+			(log lastAtMost: 5) do: [ :each |
 				html preformatted: each ]
 	] ]
 ]
@@ -378,6 +407,8 @@ GSCTool >> renderLogOn: html [
 { #category : #rendering }
 GSCTool >> renderOn: html [
 	html heading: self title.
+
+	error ifNotBlank: [ html div class: 'error'; with: error ].
 
 	self needsAttention ifTrue: [ html div class: 'needsAttention'; with: 'Needs attention!' ].
 
@@ -433,6 +464,11 @@ GSCTool >> runTodeCommand: aCommand stone: aStoneName [
 ]
 
 { #category : #'as yet unclassified' }
+GSCTool >> serverGroupname [
+	^ self serverUsername
+]
+
+{ #category : #'as yet unclassified' }
 GSCTool >> serverUsername [
 	^ self root configAt: 'server:username'
 ]
@@ -448,4 +484,17 @@ GSCTool >> toolActionSelectors [
 	selectors := (self class allSelectorsBelow: GSCTool superclass) select: [:each |
 		(each beginsWith: 'do') and: [ (each at: 3) isUppercase]].
 	^ selectors sorted
+]
+
+{ #category : #'as yet unclassified' }
+GSCTool >> ui [
+	| mainComponent |
+	mainComponent := (WACurrentRequestContext value) session presenter.
+	
+	^ mainComponent
+]
+
+{ #category : #'as yet unclassified' }
+GSCTool >> uiEditText: aString then: aBlock [
+	self ui editText: aString then: aBlock
 ]

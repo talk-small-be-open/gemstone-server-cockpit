@@ -10,7 +10,8 @@ Class {
 		'shellSubprocess',
 		'isDevelopment',
 		'sudoPrompt',
-		'subprocessTailLines'
+		'subprocessTailLines',
+		'subprocessCommandLabel'
 	],
 	#classVars : [
 		'Instance'
@@ -131,6 +132,11 @@ GSCCore >> createOSSUnixSubprocess [
 ]
 
 { #category : #shell }
+GSCCore >> dirExists: aPathString [
+	^ self runSudoShellIsSuccess: ('test -d "', (aPathString asPath pathString), '"')
+]
+
+{ #category : #shell }
 GSCCore >> fileExists: aPathString [
 	^ self runSudoShellIsSuccess: ('test -f "', (aPathString asPath pathString), '"')
 ]
@@ -150,12 +156,23 @@ GSCCore >> filesystemRoot: aString [
 	]
 ]
 
+{ #category : #shell }
+GSCCore >> forkShellBlock: aBlock [
+
+	self isShellProcessRunning ifTrue: [ 
+		self error: 'Another shell process is running'. ^ self ].
+
+	aBlock
+		forkAt: Processor userInterruptPriority
+		named: 'GSC shell process'
+]
+
 { #category : #'as yet unclassified' }
 GSCCore >> getSudoPassword [
 	
 	self autoexpireSudoPassword.
 	
-	temporarySudoPassword ifNil: [ self error: 'You need to give the sudo password' ].
+	temporarySudoPassword ifNil: [ GSCMissingSudoPassword signal: 'You need to give the sudo password' ].
 	
 	"prolong, when in use"
 	self timestampSudoPassword.
@@ -266,19 +283,15 @@ GSCCore >> runAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
 { #category : #shell }
 GSCCore >> runAsyncShell: aString sudo: aSudoBoolean onOutput: aBlock onFinish: aFinishBlock [
 
-	self isShellProcessRunning ifTrue: [ 
-		self error: 'Another shell process is running' ].
-
-	[ 
-	self
-		runSshOSSUnixSubprocess: aString
-		args: {  }
-		sudo: aSudoBoolean
-		onLines: aBlock
-		onRun: nil
-		onFinish: aFinishBlock ]
-		forkAt: Processor userInterruptPriority
-		named: 'GSC shell process'
+	self forkShellBlock: [
+		self
+			runSshOSSUnixSubprocess: aString
+			args: {  }
+			sudo: aSudoBoolean
+			onLines: aBlock
+			onRun: nil
+			onFinish: aFinishBlock
+	]
 ]
 
 { #category : #shell }
@@ -300,6 +313,8 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: 
 
 	self isShellProcessRunning ifTrue: [ self error: 'Another shell process is running.' ].
 
+	subprocessCommandLabel := aCommandString.
+	
 	runBlockDone := false.
 
 	linesBlock := aLinesBlock ifNil: [ [ :lines | Transcript << lines ] ].
@@ -454,7 +469,7 @@ GSCCore >> runSudoAsyncShell: aString onOutput: aBlock [
 { #category : #shell }
 GSCCore >> runSudoAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
 	
-	^ self runAsyncShell: aString sudo: true onOutput: aBlock onFinish: aFinishBlock
+	self runAsyncShell: aString sudo: true onOutput: aBlock onFinish: aFinishBlock
 ]
 
 { #category : #shell }
@@ -612,6 +627,12 @@ GSCCore >> setupServer [
 ]
 
 { #category : #accessing }
+GSCCore >> subprocessCommandLabel [
+
+	^ subprocessCommandLabel
+]
+
+{ #category : #accessing }
 GSCCore >> subprocessTailLines [
 
 	^ subprocessTailLines
@@ -626,7 +647,7 @@ GSCCore >> sudoAsyncWriteFile: aFilePath owner: anOwnerString group: aGroupStrin
 			close
 	] onFinish: nil."
 
-	[
+	self forkShellBlock: [
 		| path |
 		path := aFilePath asPath pathString.
 
@@ -641,14 +662,28 @@ GSCCore >> sudoAsyncWriteFile: aFilePath owner: anOwnerString group: aGroupStrin
 			args: { '-n'. ('''w ', path, '''') }
 			sudo: true
 			onLines: nil
-			onRun: [ :process | 
+			onRun: [ :process |
+				| counter |
 				process stdinStream
-					nextPutAll: aString;
+					nextPutAll: aString withUnixLineEndings;
+					flush;
 					end;
-					end; "second time, because pty only transforms it to EOF if on a empty line, else it is just an end of line"
-					end;
-					end;
-					flush.]
+					end. "second time, because pty only transforms it to EOF if on a empty line, else it is just an end of line"
+
+				counter := 0.
+				[
+					(Delay forMilliseconds: 100) wait.
+					counter := counter + 1.
+					process isComplete not and: [ counter <= 10 ]
+				] whileTrue: [
+					"OPTIMIZE Strangely we need this on real Ubuntu. WTF?!"
+					Transcript crShow: 'end/flush stream ...'.
+					process stdinStream
+						end;
+						flush.
+				]
+
+			]
 			onFinish: nil.
 
 		aModeString ifNotBlank: [
@@ -672,40 +707,54 @@ GSCCore >> sudoAsyncWriteFile: aFilePath owner: anOwnerString group: aGroupStrin
 				onFinish: nil ].
 			
 		aBlock value.
-		] forkAt: Processor userInterruptPriority named: 'Write file process'
+	]
 ]
 
 { #category : #shell }
 GSCCore >> sudoEnsureDirectory: aDirPath owner: anOwnerString group: aGroupString mode: aModeString [
+	self sudoEnsureDirectory: aDirPath owner: anOwnerString group: aGroupString mode: aModeString then: nil
+]
 
-	"Ging nicht mit tee, weil es nicht exit gemacht hat"
-	self
-		runSshOSSUnixSubprocess: 'mkdir'
-		args: { '-p'. aDirPath }
-		sudo: true
-		onLines: nil
-		onRun: nil
-		onFinish: nil.
+{ #category : #shell }
+GSCCore >> sudoEnsureDirectory: aDirPath owner: anOwnerString group: aGroupString mode: aModeString then: aBlock [
 
-	aModeString ifNotBlank: [
-		self
-			runSshOSSUnixSubprocess: 'chmod'
-			args: { 
-					aModeString.
-					aDirPath }
-			sudo: true
-			onLines: nil
-			onRun: nil
-			onFinish: nil ].
+	| path |
+
+	path := aDirPath asPath pathString.
 	
-	anOwnerString ifNotBlank: [
+	self forkShellBlock: [
+		"Ging nicht mit tee, weil es nicht exit gemacht hat"
 		self
-			runSshOSSUnixSubprocess: 'chown'
-			args: { (anOwnerString, ':', aGroupString). aDirPath }
+			runSshOSSUnixSubprocess: 'mkdir'
+			args: { '-p'. path }
 			sudo: true
 			onLines: nil
 			onRun: nil
-			onFinish: nil ]
+			onFinish: nil.
+
+		aModeString ifNotBlank: [
+			self
+				runSshOSSUnixSubprocess: 'chmod'
+				args: { 
+						aModeString.
+						path }
+				sudo: true
+				onLines: nil
+				onRun: nil
+				onFinish: nil ].
+		
+		anOwnerString ifNotBlank: [
+			self
+				runSshOSSUnixSubprocess: 'chown'
+				args: { (anOwnerString, ':', aGroupString). path }
+				sudo: true
+				onLines: nil
+				onRun: nil
+				onFinish: nil ].
+			
+		aBlock ifNotNil: [ aBlock value ]
+			
+	]
 ]
 
 { #category : #shell }

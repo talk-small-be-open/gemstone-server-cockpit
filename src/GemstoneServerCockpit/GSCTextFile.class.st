@@ -41,27 +41,16 @@ GSCTextFile >> contentTemplate: anObject [
 	contentTemplate := anObject
 ]
 
-{ #category : #'tool-actions' }
-GSCTextFile >> doShowFile [
-	self log: contentTemplate contentString
+{ #category : #'as yet unclassified' }
+GSCTextFile >> doEditFile [
+	self uiEditText: self fileContents then: [ :newText |.
+		self writeFileContents: newText
+	]
 ]
 
 { #category : #'tool-actions' }
-GSCTextFile >> doWriteFile [
-	filePath ifNil: [ self log: 'File path not defined'. ^ self ].
-	
-"	fileReference parent ensureCreateDirectory.
-	fileReference ensureDelete."
-	
-"	fileReference writeStreamEncoded: 'utf-8' do: [ :s |
-		s << contentTemplate contentString withUnixLineEndings
-	]."
-
-	self core sudoAsyncWriteFile: filePath owner: owner group: group mode: mode with: contentTemplate contentString withUnixLineEndings then: [
-
-		self log: 'File created'.
-	
-		self refresh ]
+GSCTextFile >> doWriteTemplate [
+	self writeFileContents: contentTemplate contentString
 ]
 
 { #category : #accessing }
@@ -78,12 +67,28 @@ GSCTextFile >> filePath: aString [
 	
 ]
 
+{ #category : #accessing }
+GSCTextFile >> group [
+
+	^ group
+]
+
+{ #category : #accessing }
+GSCTextFile >> group: anObject [
+
+	group := anObject
+]
+
 { #category : #'private - initialization' }
 GSCTextFile >> initMe [
 	super initMe.
 "	self isExisting ifFalse: [ self log: 'File does not exist' ] ifTrue: [
 		self log: 'Current content is:'.
 		self log: fileReference contents ]"
+	
+"	mode := 'u=rwx,g=rx'."
+	owner := self serverUsername.
+	group := self serverGroupname.
 ]
 
 { #category : #initialization }
@@ -102,6 +107,30 @@ GSCTextFile >> isExisting [
 ]
 
 { #category : #accessing }
+GSCTextFile >> mode [
+
+	^ mode
+]
+
+{ #category : #accessing }
+GSCTextFile >> mode: anObject [
+
+	mode := anObject
+]
+
+{ #category : #accessing }
+GSCTextFile >> owner [
+
+	^ owner
+]
+
+{ #category : #accessing }
+GSCTextFile >> owner: anObject [
+
+	owner := anObject
+]
+
+{ #category : #accessing }
 GSCTextFile >> readFileContents [
 	"sudo, has always permission"
 	fileContents := self core sudoReadFile: filePath
@@ -114,8 +143,8 @@ GSCTextFile >> renderBodyOn: html [
 	
 	html table: [ 
 		html tableRow: [ 
-			html tableHeading: 'IST'.
-			html tableHeading: 'SOLL' ].
+			html tableHeading: 'ON DISK'.
+			html tableHeading: 'TEMPLATE' ].
 		html tableRow: [ 
 			html tableData: [
 				html preformatted
@@ -133,4 +162,22 @@ GSCTextFile >> renderBodyOn: html [
 { #category : #accessing }
 GSCTextFile >> title [
 	^ filePath basename
+]
+
+{ #category : #'tool-actions' }
+GSCTextFile >> writeFileContents: aString [
+
+	filePath ifNil: [ self log: 'File path not defined'. ^ self ].
+	
+"	fileReference parent ensureCreateDirectory.
+	fileReference ensureDelete."
+	
+"	fileReference writeStreamEncoded: 'utf-8' do: [ :s |
+		s << contentTemplate contentString withUnixLineEndings
+	]."
+
+	self core sudoEnsureDirectory: filePath parent owner: self serverUsername group: self serverUsername mode: 'u=rwx,g=rwx,o=rx' then: [
+		self core sudoAsyncWriteFile: filePath owner: owner group: group mode: mode with: aString then: [
+			self log: 'File created'.
+			self refresh ] ]
 ]

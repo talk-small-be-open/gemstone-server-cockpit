@@ -18,6 +18,9 @@ input[type=text] {
 	border: 1px solid black;
 	width: 20em;
 }
+textarea { 
+	border: 1px solid black;
+}
 
 input[type=submit], button, a.anchorButton { 
 	border: 1px solid black;

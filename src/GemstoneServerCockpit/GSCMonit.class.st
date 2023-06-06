@@ -10,6 +10,9 @@ GSCMonit >> build [
 	self add: GSCTextFile then: [ :file |
 		file
 			filePath: ('/etc/monit/monitrc');
+			owner: 'root';
+			group: 'root';
+			mode: 'u=gw';
 			contentTemplate: self monitConfigTemplate
 	].
 

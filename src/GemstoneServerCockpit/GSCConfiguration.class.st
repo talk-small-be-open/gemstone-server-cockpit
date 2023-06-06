@@ -247,3 +247,18 @@ GSCConfiguration >> storeToFile: aPathString [
 	self filePath: aPathString.
 	self storeToFile.
 ]
+
+{ #category : #'as yet unclassified' }
+GSCConfiguration >> textString [
+	^ String streamContents: [ :s |
+		STON writer 
+			on: s;
+			prettyPrint: true;
+			newLine: String lf;
+			nextPut: data ]
+]
+
+{ #category : #'as yet unclassified' }
+GSCConfiguration >> textString: aString [
+	data := STON fromString: aString
+]

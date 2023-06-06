@@ -16,7 +16,9 @@ GSCConfigurationEditor >> config: anObject [
 
 { #category : #'as yet unclassified' }
 GSCConfigurationEditor >> doEditConfigFile [
-	"TODO"
+	self uiEditText: editedConfig textString then: [ :newText |.
+		editedConfig textString: newText.
+		editedConfig storeToFile ]
 ]
 
 { #category : #'as yet unclassified' }
