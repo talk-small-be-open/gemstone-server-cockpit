@@ -46,6 +46,9 @@ table th {
  text-align: left;
  vertical-align: top;
 }
+table th {
+	font-weight: bold;
+}
 a {
  text-decoration: none;
 }
@@ -181,6 +184,10 @@ body {
  background-color: white;
 	font-family: monospace;
 }
+div.horizontalScroll { 
+	width: 100%;
+	overflow-x: scroll;
+}
 div.mainTitle {
   font-size: 200%;
   font-weight: bold;
@@ -198,40 +205,6 @@ div.subprocess {
 	bottom: 10%;
 	left: 10%;
 	right: 10%;
-}
-table {
- border-collapse: collapse;
- border: 1px solid black;
-}
-table td,
-table th {
- border: 1px solid black;
- text-align: left;
- vertical-align: top;
-}
-a {
- text-decoration: none;
-}
-a.anchorButton {
-	display: inline-block;
-	background: blue;
-	color: white;
-	border: 1px solid black;
-	padding: 3px;
-	margin: 5px 0;
-}
-a.anchorButton + a.anchorButton {
-	margin-left: 5px;
-}
-
-h1 { 
-	font-size: 150%;
-}
-h2 { 
-	font-size: 130%;
-}
-h3 { 
-	font-size: 120%;
 }
 
 div.main {
@@ -279,6 +252,9 @@ div.toolsPane a.listEntry span.attributes {
 	padding-left: 1em;
 	float: right;
 	color: grey;
+}
+table.fileComparison { 
+	font-size: 66%;
 }
 '
 ]

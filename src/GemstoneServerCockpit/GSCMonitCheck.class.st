@@ -55,6 +55,11 @@ GSCMonitCheck >> doStart [
 ]
 
 { #category : #starting }
+GSCMonitCheck >> doStatus [
+	self runShellCommand: ('monit "', checkName, '" status')
+]
+
+{ #category : #starting }
 GSCMonitCheck >> doStop [
 	self runShellCommand: ('monit "', checkName, '" stop')
 ]

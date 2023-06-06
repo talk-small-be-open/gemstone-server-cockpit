@@ -7,6 +7,9 @@ Class {
 { #category : #building }
 GSCHaproxy >> build [
 
+	self add: GSCAptPackage then: [ :apt |
+		apt packageName: 'haproxy' ].
+	
 	self add: GSCTextFile then: [ :file |
 		file
 			filePath: ('/etc/haproxy/haproxy.cfg');
@@ -17,8 +20,7 @@ GSCHaproxy >> build [
 		service name: 'haproxy'
 	].
 
-	self add: GSCAptPackage then: [ :apt |
-		apt packageName: 'haproxy' ]
+
 ]
 
 { #category : #'as yet unclassified' }

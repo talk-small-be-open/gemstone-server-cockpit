@@ -158,7 +158,7 @@ server {
 
 		server_name <?stt= me nginxDomainsString ?>;
 
-		root <?stt= me webRoot ?>;
+		root <?stt= me webRoot pathString ?>;
 
 		', self sttBlockIdiots, '
 
@@ -244,5 +244,5 @@ server {
 
 { #category : #'as yet unclassified' }
 GSCNginxSite >> webRoot [
-	^ (self configAt: 'server:installationPath'), '/web_root'
+	^ (self configAt: 'server:installationPath') asPath / self appShortCode / 'web_root'
 ]

@@ -120,7 +120,7 @@ GSCCore >> clearSudoPassword [
 GSCCore >> createOSSUnixSubprocess [
 	| process gsHome path |
 	
-	gsHome := (rootTool configAt: 'gemstone:gsHome') ifBlank: [ '/opt/GsDevKit_home' ].
+	gsHome := rootTool gemstoneGsHome pathString.
 	path := Smalltalk os environment at: 'PATH'.
 	
 	process := OSSUnixSubprocess new
@@ -336,8 +336,8 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: 
 	process := self createOSSUnixSubprocess.
 
 	envVars := {
-		'GS_HOME' -> '/opt/GsDevKit_home'.
-		'PATH' -> '/opt/GsDevKit_home/bin:$PATH'
+		'GS_HOME' -> rootTool gemstoneGsHome pathString.
+		'PATH' -> (rootTool gemstoneGsHome pathString, '/bin:$PATH')
 	} asDictionary.
 
 	cmd := 'ssh'.
@@ -571,8 +571,14 @@ GSCCore >> setupServer [
 	rootTool add: GSCFolder then: [ :folder |
 		folder name: 'Software packages'.
 
+		"hardcoded apt packages for the server setup"
 		{'logrotate'. 'ufw'. 'git'. 'htop'. 'unzip'. 'zip'. 'pigz'. 'aptitude'. 'mosh'.
 		'cronic'. 'goaccess'. 'lnav'. 'mailutils' "for ngxblocker to send emails" } do: [ :each |
+			folder add: GSCAptPackage then: [ :apt |
+				apt packageName: each ] ].
+		
+		"additional apt packages from the config"
+		(rootTool configAt: 'server:softwarePackages') do: [ :each |
 			folder add: GSCAptPackage then: [ :apt |
 				apt packageName: each ] ].
 

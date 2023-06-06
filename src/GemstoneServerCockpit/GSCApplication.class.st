@@ -25,6 +25,19 @@ GSCApplication >> build [
 			config: config.
 	].
 
+	self add: GSCFolder then: [ :folder |
+		folder name: 'git repositories'.
+		
+		(self configAt: 'gitRepositories') keysAndValuesDo: [ :key :conf |
+			folder add: GSCGitRepository then: [ :git |
+				git
+					folderPath: (conf at: 'path');
+					branch: (conf at: 'branch');
+					url: (conf at: 'url')
+			]
+		]
+	]
+
 ]
 
 { #category : #accessing }

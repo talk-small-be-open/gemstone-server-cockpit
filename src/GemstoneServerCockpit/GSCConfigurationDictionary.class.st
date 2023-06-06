@@ -1,0 +1,188 @@
+Class {
+	#name : #GSCConfigurationDictionary,
+	#superclass : #Object,
+	#instVars : [
+		'data'
+	],
+	#category : #'GemstoneServerCockpit-Model'
+}
+
+{ #category : #'instance creation' }
+GSCConfigurationDictionary class >> fromDictionary: aDictionary [
+	^ self new
+		data: aDictionary;
+		yourself
+]
+
+{ #category : #arithmetic }
+GSCConfigurationDictionary >> / aString [
+	^ self at: aString
+]
+
+{ #category : #converting }
+GSCConfigurationDictionary >> asDictionary [
+	^ data copy
+]
+
+{ #category : #arithmetic }
+GSCConfigurationDictionary >> at: aPathlikeStructure [
+	| parts dict |
+	parts := self getKeySequence: aPathlikeStructure.
+	
+	dict := self getNestedDictionary: parts allButLast ifAbsent: [ ^ nil ].
+	
+	^ self transformForReadout: (dict at: (parts last asString) ifAbsent: [ nil ])
+]
+
+{ #category : #arithmetic }
+GSCConfigurationDictionary >> at: aSymbol default: aBlock [
+	^ (self at: aSymbol) ifNil: [ 
+		self at: aSymbol put: aBlock value ]
+]
+
+{ #category : #arithmetic }
+GSCConfigurationDictionary >> at: aSymbol ifAbsent: aBlock [
+	^ (self at: aSymbol) ifNil: aBlock
+]
+
+{ #category : #arithmetic }
+GSCConfigurationDictionary >> at: aPathlikeStructure put: aValue [
+	| parts dict |
+	parts := self getKeySequence: aPathlikeStructure.
+	
+	dict := self getNestedDictionary: parts allButLast.
+	
+	^ dict at: (parts last asString) put: aValue
+]
+
+{ #category : #'as yet unclassified' }
+GSCConfigurationDictionary >> copyWith: another [
+	^ self copy overwriteWith: another
+]
+
+{ #category : #accessing }
+GSCConfigurationDictionary >> data: aDictionary [
+	data := self dictionaryClass newFrom: aDictionary
+]
+
+{ #category : #accessing }
+GSCConfigurationDictionary >> dictionaryClass [
+	"keep it Dictionary, since then STON is cleaner, instead of IdentityDictionary.
+	TODO: Maybe OrderedDictionary would work with STON?"
+	^ Dictionary
+]
+
+{ #category : #enumerating }
+GSCConfigurationDictionary >> entriesDo: aTwoArgBlock [
+	"keyPath value"
+	self nodesDo: [ :keyPath :value |
+		value isDictionary ifFalse: [ aTwoArgBlock value: keyPath value: value ]
+	]
+]
+
+{ #category : #arithmetic }
+GSCConfigurationDictionary >> getKeySequence: aPathlikeStructure [
+
+	aPathlikeStructure isString ifTrue: [
+		^ aPathlikeStructure asString findTokens: '.:'
+	].
+
+	aPathlikeStructure isCollection ifTrue: [
+		^ aPathlikeStructure collect: [ :each | each asString ]
+	].
+	
+	self error: 'Wrong format of path'
+
+]
+
+{ #category : #arithmetic }
+GSCConfigurationDictionary >> getNestedDictionary: aKeysCollection [
+	^ self getNestedDictionary: aKeysCollection ifAbsent: nil
+]
+
+{ #category : #arithmetic }
+GSCConfigurationDictionary >> getNestedDictionary: aKeysCollection ifAbsent: aBlock [
+	| current |
+	
+	current := data.
+	aKeysCollection do: [ :each |
+		| next |
+		
+		current isDictionary ifFalse: [ self error: 'Can not access non-dictionary config node' ].
+		
+		aBlock ifNotNil: [ current at: each asString ifAbsent: [ ^ aBlock value ] ].
+		
+		next := current at: each asString ifAbsentPut: [ self dictionaryClass new ].
+		current := next.
+	].
+	
+	^ current
+]
+
+{ #category : #initialization }
+GSCConfigurationDictionary >> initialize [
+	super initialize.
+	
+	data := self dictionaryClass new
+]
+
+{ #category : #enumerating }
+GSCConfigurationDictionary >> keysAndValuesDo: aBlock [
+	data keys sorted do: [ :each |
+		aBlock value: each value: (self at: each) ]
+]
+
+{ #category : #enumerating }
+GSCConfigurationDictionary >> nodesDo: aTwoArgBlock [
+	self recurseIn: data path: OrderedCollection new do: aTwoArgBlock
+]
+
+{ #category : #'as yet unclassified' }
+GSCConfigurationDictionary >> overwriteWith: another [
+	another entriesDo: [ :keyPath :value |
+		self at: keyPath default: value
+	]
+]
+
+{ #category : #copying }
+GSCConfigurationDictionary >> postCopy [
+	super postCopy.
+	
+	"data := data deepCopy."
+	self nodesDo: [ :key :value |
+		self at: key put: value copy
+	]
+]
+
+{ #category : #'as yet unclassified' }
+GSCConfigurationDictionary >> presetFrom: another [
+	another entriesDo: [ :keyPath :value |
+		value ifNotBlank: [
+			self at: keyPath default: value
+		]
+	]
+]
+
+{ #category : #enumerating }
+GSCConfigurationDictionary >> recurseIn: aDictionary path: aKeysCollection do: aTwoArgBlock [
+
+	"aTwoArgBlock takes keyPathInStructure dictionaryAtThisPath"
+	
+	aDictionary keysAndValuesDo: [ :key :value |
+		| newPath |
+		newPath := aKeysCollection copyWith: key.
+
+		aTwoArgBlock value: newPath value: value.
+		
+		value isDictionary ifTrue: [
+			self recurseIn: value path: newPath do: aTwoArgBlock ].
+
+	]
+]
+
+{ #category : #'as yet unclassified' }
+GSCConfigurationDictionary >> transformForReadout: anObject [
+	anObject isDictionary ifTrue: [ ^ GSCConfigurationDictionary fromDictionary: anObject ].
+	
+	^ anObject
+]

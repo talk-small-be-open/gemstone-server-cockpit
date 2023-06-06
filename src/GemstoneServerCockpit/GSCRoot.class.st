@@ -41,6 +41,11 @@ GSCRoot >> config: anObject [
 	config := anObject
 ]
 
+{ #category : #'as yet unclassified' }
+GSCRoot >> gemstoneGsHome [
+	^ ((self configAt: 'gemstone:gsHome') ifBlank: [ '/opt/GsDevKit_home' ]) asPath.
+]
+
 { #category : #testing }
 GSCRoot >> isRoot [
 	^ true

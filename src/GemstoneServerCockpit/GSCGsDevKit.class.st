@@ -8,14 +8,14 @@ Class {
 GSCGsDevKit >> build [
 	self add: GSCGitRepository then: [ :git |
 		git
-			folderPath: '/opt/GsDevKit_home';
+			folderPath: self gsHome;
 			url: self repoUrl
 	].
 
 	self add: GSCGeneralTool then: [ :tool |
 		tool checkMeBlock: [
-			(tool core fileExists: '/opt/GsDevKit_home/dev/clients/tode') ifFalse: [
-				tool beNeedsAttention: 'tODE client does not exits' ].
+			(tool core fileExists: self gsHome / 'dev/clients/tode') ifFalse: [
+				tool beNeedsAttention: 'tODE client does not exist' ].
 		].
 		tool actionBlock: [ tool runShellCommand: 'createClient tode' ].
 		tool title: 'tODE client'
@@ -24,7 +24,7 @@ GSCGsDevKit >> build [
 	"Copy our own STON file for the Seaside project"
 	self add: GSCTextFile then: [ :file |
 		"Why?! Seaside will be loaded from my baseline! But this has some more helper scripts packed for GemStone"
-		file filePath: '/opt/GsDevKit_home/sys/local/server/projects/Seaside3.ston'.
+		file filePath: self gsHome / 'sys/local/server/projects/Seaside3.ston'.
 		file contentTemplate: self seasideStonTemplate
 	].
 
@@ -46,11 +46,11 @@ GSCGsDevKit >> build [
 	self add: GSCTextFile then: [ :file |
 		file
 			filePath: '/etc/profile.d/Z99-gsdevkit.sh';
-			contentTemplate: (GSCSimpleTemplate source: '
+			contentTemplate: (GSCSimpleTemplate source: ('
 # Env vars for GemStone
-export GS_HOME=/opt/GsDevKit_home
+export GS_HOME=', self gsHome pathString, '
 export PATH=$GS_HOME/bin:$PATH
-')
+'))
 	].
 
 ]
@@ -68,9 +68,14 @@ GSCGsDevKit >> doInstallScript [
 	self runShellCommand: 'installServerClient'
 ]
 
+{ #category : #'as yet unclassified' }
+GSCGsDevKit >> gsHome [
+	^ self gemstoneGsHome
+]
+
 { #category : #testing }
 GSCGsDevKit >> isInstalled [
-	^ self core fileExists: '/opt/GsDevKit_home/bin/.gsdevkitSetup'
+	^ self core fileExists: self gemstoneGsHome / 'bin/.gsdevkitSetup'
 
 ]
 

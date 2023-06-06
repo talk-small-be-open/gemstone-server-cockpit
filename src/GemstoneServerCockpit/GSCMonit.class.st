@@ -7,6 +7,9 @@ Class {
 { #category : #building }
 GSCMonit >> build [
 
+	self add: GSCAptPackage then: [ :apt |
+		apt packageName: 'monit' ].
+
 	self add: GSCTextFile then: [ :file |
 		file
 			filePath: ('/etc/monit/monitrc');
@@ -19,9 +22,6 @@ GSCMonit >> build [
 	self add: GSCSystemService then: [ :service |
 		service name: 'monit'
 	].
-
-	self add: GSCAptPackage then: [ :apt |
-		apt packageName: 'monit' ]
 ]
 
 { #category : #'as yet unclassified' }

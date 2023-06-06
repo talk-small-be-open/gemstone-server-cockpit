@@ -1,91 +1,17 @@
 Class {
 	#name : #GSCConfiguration,
-	#superclass : #Object,
+	#superclass : #GSCConfigurationDictionary,
 	#instVars : [
-		'data',
 		'filePath'
 	],
 	#category : #'GemstoneServerCockpit-Model'
 }
 
 { #category : #'instance creation' }
-GSCConfiguration class >> fromDictionary: aDictionary [
-	^ self new
-		data: aDictionary;
-		yourself
-]
-
-{ #category : #'instance creation' }
 GSCConfiguration class >> fromFile: aStringPath [
 	^ self new
 		loadFromFile: aStringPath;
 		yourself
-]
-
-{ #category : #arithmetic }
-GSCConfiguration >> / aString [
-	^ self at: aString
-]
-
-{ #category : #converting }
-GSCConfiguration >> asDictionary [
-	^ data copy
-]
-
-{ #category : #arithmetic }
-GSCConfiguration >> at: aPathlikeStructure [
-	| parts dict |
-	parts := self getKeySequence: aPathlikeStructure.
-	
-	dict := self getNestedDictionary: parts allButLast ifAbsent: [ ^ nil ].
-	
-	^ dict at: (parts last asString) ifAbsent: [ nil ]
-]
-
-{ #category : #arithmetic }
-GSCConfiguration >> at: aSymbol default: aBlock [
-	^ (self at: aSymbol) ifNil: [ 
-		self at: aSymbol put: aBlock value ]
-]
-
-{ #category : #arithmetic }
-GSCConfiguration >> at: aSymbol ifAbsent: aBlock [
-	^ (self at: aSymbol) ifNil: aBlock
-]
-
-{ #category : #arithmetic }
-GSCConfiguration >> at: aPathlikeStructure put: aValue [
-	| parts dict |
-	parts := self getKeySequence: aPathlikeStructure.
-	
-	dict := self getNestedDictionary: parts allButLast.
-	
-	^ dict at: (parts last asString) put: aValue
-]
-
-{ #category : #'as yet unclassified' }
-GSCConfiguration >> copyWith: another [
-	^ self copy overwriteWith: another
-]
-
-{ #category : #accessing }
-GSCConfiguration >> data: aDictionary [
-	data := self dictionaryClass newFrom: aDictionary
-]
-
-{ #category : #accessing }
-GSCConfiguration >> dictionaryClass [
-	"keep it Dictionary, since then STON is cleaner, instead of IdentityDictionary.
-	TODO: Maybe OrderedDictionary would work with STON?"
-	^ Dictionary
-]
-
-{ #category : #enumerating }
-GSCConfiguration >> entriesDo: aTwoArgBlock [
-	"keyPath value"
-	self nodesDo: [ :keyPath :value |
-		value isDictionary ifFalse: [ aTwoArgBlock value: keyPath value: value ]
-	]
 ]
 
 { #category : #accessing }
@@ -101,52 +27,6 @@ GSCConfiguration >> filePath: aString [
 	
 ]
 
-{ #category : #arithmetic }
-GSCConfiguration >> getKeySequence: aPathlikeStructure [
-
-	aPathlikeStructure isString ifTrue: [
-		^ aPathlikeStructure asString findTokens: '.:'
-	].
-
-	aPathlikeStructure isCollection ifTrue: [
-		^ aPathlikeStructure collect: [ :each | each asString ]
-	].
-	
-	self error: 'Wrong format of path'
-
-]
-
-{ #category : #arithmetic }
-GSCConfiguration >> getNestedDictionary: aKeysCollection [
-	^ self getNestedDictionary: aKeysCollection ifAbsent: nil
-]
-
-{ #category : #arithmetic }
-GSCConfiguration >> getNestedDictionary: aKeysCollection ifAbsent: aBlock [
-	| current |
-	
-	current := data.
-	aKeysCollection do: [ :each |
-		| next |
-		
-		current isDictionary ifFalse: [ self error: 'Can not access non-dictionary config node' ].
-		
-		aBlock ifNotNil: [ current at: each asString ifAbsent: [ ^ aBlock value ] ].
-		
-		next := current at: each asString ifAbsentPut: [ self dictionaryClass new ].
-		current := next.
-	].
-	
-	^ current
-]
-
-{ #category : #initialization }
-GSCConfiguration >> initialize [
-	super initialize.
-	
-	data := self dictionaryClass new
-]
-
 { #category : #'as yet unclassified' }
 GSCConfiguration >> loadFromFile: aFilePathString [
 	self filePath: aFilePathString.
@@ -159,37 +39,6 @@ GSCConfiguration >> loadFromFile: aFilePathString [
 			next ]
 ]
 
-{ #category : #enumerating }
-GSCConfiguration >> nodesDo: aTwoArgBlock [
-	self recurseIn: data path: OrderedCollection new do: aTwoArgBlock
-]
-
-{ #category : #'as yet unclassified' }
-GSCConfiguration >> overwriteWith: another [
-	another entriesDo: [ :keyPath :value |
-		self at: keyPath default: value
-	]
-]
-
-{ #category : #copying }
-GSCConfiguration >> postCopy [
-	super postCopy.
-	
-	"data := data deepCopy."
-	self nodesDo: [ :key :value |
-		self at: key put: value copy
-	]
-]
-
-{ #category : #'as yet unclassified' }
-GSCConfiguration >> presetFrom: another [
-	another entriesDo: [ :keyPath :value |
-		value ifNotBlank: [
-			self at: keyPath default: value
-		]
-	]
-]
-
 { #category : #printing }
 GSCConfiguration >> printOn: aStream [
 	aStream << 'Configuration: '.
@@ -200,23 +49,6 @@ GSCConfiguration >> printOn: aStream [
 		prettyPrint: true;
 		newLine: String lf;
 		nextPut: data
-]
-
-{ #category : #enumerating }
-GSCConfiguration >> recurseIn: aDictionary path: aKeysCollection do: aTwoArgBlock [
-
-	"aTwoArgBlock takes keyPathInStructure dictionaryAtThisPath"
-	
-	aDictionary keysAndValuesDo: [ :key :value |
-		| newPath |
-		newPath := aKeysCollection copyWith: key.
-
-		aTwoArgBlock value: newPath value: value.
-		
-		value isDictionary ifTrue: [
-			self recurseIn: value path: newPath do: aTwoArgBlock ].
-
-	]
 ]
 
 { #category : #'as yet unclassified' }

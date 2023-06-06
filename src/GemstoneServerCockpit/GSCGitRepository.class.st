@@ -3,10 +3,23 @@ Class {
 	#superclass : #GSCTool,
 	#instVars : [
 		'url',
-		'folderPath'
+		'folderPath',
+		'branch'
 	],
 	#category : #'GemstoneServerCockpit-Model'
 }
+
+{ #category : #accessing }
+GSCGitRepository >> branch [
+
+	^ branch
+]
+
+{ #category : #accessing }
+GSCGitRepository >> branch: anObject [
+
+	branch := anObject
+]
 
 { #category : #'as yet unclassified' }
 GSCGitRepository >> checkMe [
@@ -43,11 +56,13 @@ GSCGitRepository >> folderPath: anObject [
 GSCGitRepository >> renderBodyOn: html [
 	self renderLabel: 'URL' text: url on: html.
 	self renderLabel: 'Target' text: folderPath pathString on: html.
+	self renderLabel: 'Branch' text: branch on: html.
+
 ]
 
 { #category : #accessing }
 GSCGitRepository >> title [
-	^ 'git repository'
+	^ 'git ', (url ifBlank: [ 'repository' ])
 ]
 
 { #category : #accessing }

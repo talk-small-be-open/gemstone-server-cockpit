@@ -41,16 +41,19 @@ GSCWebApplicationSchemeV1 >> buildDefaultConfiguration [
 	
 	conf := GSCEasyConfigurationBuilder new.
 
+	"Meta - about the project"
 	conf project
 		shortCode: 'MyWebApp';
 		name: 'My web application';
 		email: 'andreas.brodbeck@mindclue.ch'.
 
+	"Source code repository"
 	conf application
 		gitUrl: '';
 		gitBranch: 'master'.
 
-	(conf project gitRepositories base)
+	"Files in repositories"
+	(conf gitRepositories base)
 		path: '/opt/webapp/main';
 		url: '';
 		branch: 'master'.

@@ -10,7 +10,8 @@ Class {
 
 { #category : #'as yet unclassified' }
 GSCMainCockpit >> checkAll [
-	core rootTool check
+	core forkShellBlock: [
+		core rootTool check ]
 	
 ]
 
@@ -89,11 +90,6 @@ GSCMainCockpit >> renderCoreToolbarOn: html [
 					callback: [ self setSudoPassword ];
 					with: 'Set sudo password ...'
 			].
-
-			html textInput
-				callback: [ :value | core filesystemRoot: value ];
-				with: core filesystemRoot pathString.
-			html submitButton: 'Save'.
 		
 			html anchorButton
 				callback: [ self checkAll ];
@@ -101,7 +97,13 @@ GSCMainCockpit >> renderCoreToolbarOn: html [
 
 			html anchorButton
 				callback: [ self reSetup ];
-				with: 'Re-setup'
+				with: 'Re-setup'.
+
+			html span: ' File root: '.
+			html textInput
+				callback: [ :value | core filesystemRoot: value ];
+				with: core filesystemRoot pathString.
+			html submitButton: 'Save'.
 
 		] ]
 ]

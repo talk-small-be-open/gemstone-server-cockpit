@@ -8,7 +8,8 @@ Class {
 		'owner',
 		'group',
 		'mode',
-		'filePath'
+		'filePath',
+		'title'
 	],
 	#category : #'GemstoneServerCockpit-Model'
 }
@@ -141,27 +142,34 @@ GSCTextFile >> renderBodyOn: html [
 
 	self renderLabel: 'File path' text: filePath pathString on: html.
 	
-	html table: [ 
-		html tableRow: [ 
-			html tableHeading: 'ON DISK'.
-			html tableHeading: 'TEMPLATE' ].
-		html tableRow: [ 
-			html tableData: [
-				html preformatted
-					class: 'fileContent';
-					with: self fileContents.
-			].
-			html tableData: [ 
-				html preformatted
-					class: 'fileContent';
-					with: self contentTemplate contentString ]
-		]
-	]
+	html div class: 'horizontalScroll'; with: [
+		html table class: 'fileComparison'; with: [ 
+			html tableRow: [ 
+				html tableHeading: 'ON DISK'.
+				html tableHeading: 'TEMPLATE' ].
+			html tableRow: [ 
+				html tableData: [
+					html preformatted
+						class: 'fileContent';
+						with: self fileContents.
+				].
+				html tableData: [ 
+					html preformatted
+						class: 'fileContent';
+						with: self contentTemplate contentString ]
+			]
+		] ]
 ]
 
 { #category : #accessing }
 GSCTextFile >> title [
-	^ filePath basename
+	^ title ifBlank: [ filePath basename ]
+]
+
+{ #category : #accessing }
+GSCTextFile >> title: anObject [
+
+	title := anObject
 ]
 
 { #category : #'tool-actions' }

@@ -13,7 +13,7 @@ GSCTodeProject >> build [
 	self add: GSCGitRepository then: [ :git |
 		git
 			url: gitUrl;
-			folderPath: ('/opt/GsDevKit_home/shared/repos/', self projectName)
+			folderPath: (self gemstoneGsHome / 'shared/repos' / self projectName)
 	]
 ]
 
@@ -21,7 +21,7 @@ GSCTodeProject >> build [
 GSCTodeProject >> checkMe [
 	self beNotNeedsAttention.
 	
-	(self core fileExists: ('/opt/GsDevKit_home/sys/local/server/projects/', self projectName, '.ston')) ifFalse: [
+	(self core fileExists: (self gemstoneGsHome / 'sys/local/server/projects' / self projectName , 'ston')) ifFalse: [
 		self beNeedsAttention: 'metacello project not installed' ]
 ]
 
@@ -56,7 +56,7 @@ GSCTodeProject >> gitUrl: anObject [
 
 { #category : #'as yet unclassified' }
 GSCTodeProject >> localRepoPath [
-	^ '/opt/GsDevKit_home/shared/repos/', self projectName
+	^ self gemstoneGsHome / 'shared/repos' / self projectName
 
 ]
 
@@ -84,5 +84,5 @@ GSCTodeProject >> stoneTool [
 
 { #category : #accessing }
 GSCTodeProject >> title [
-	^ 'tode project'
+	^ 'tode project entry'
 ]

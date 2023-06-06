@@ -61,7 +61,7 @@ GSCGemstoneGem >> monitCheckName [
 GSCGemstoneGem >> monitConfigTemplate [
 	^ GSCSttTemplate tool: self sttString: '
 # GEM ON PORT <?stt= me portNumber ?>
-check process <?stt= me monitCheckName ?> with pidfile /opt/GsDevKit_home/server/stones/<?stt= me stoneName ?>/logs/seaside<?stt= me portNumber ?>_server-<?stt= me portNumber ?>.pid
+check process <?stt= me monitCheckName ?> with pidfile <?stt= me gemstoneGsHome pathString ?>/server/stones/<?stt= me stoneName ?>/logs/seaside<?stt= me portNumber ?>_server-<?stt= me portNumber ?>.pid
 	DEPENDS ON gemstone_netldi
 	ONREBOOT START
 	GROUP gemstone_gems

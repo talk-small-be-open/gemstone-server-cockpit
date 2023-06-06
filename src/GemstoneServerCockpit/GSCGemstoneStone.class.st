@@ -9,7 +9,7 @@ Class {
 
 { #category : #'as yet unclassified' }
 GSCGemstoneStone >> basePath [
-	^ '/opt/GsDevKit_home/server/stones/' asPath / self stoneName
+	^ self gemstoneGsHome / 'server/stones' / self stoneName
 ]
 
 { #category : #building }
@@ -23,6 +23,7 @@ GSCGemstoneStone >> build [
 
 	self add: GSCTextFile then: [ :file |
 		file
+			title: 'stone.conf file';
 			filePath: (self basePath / (self stoneName, '.conf'));
 			contentTemplate: self gemConfTemplate
 	].
@@ -46,7 +47,7 @@ GSCGemstoneStone >> build [
 GSCGemstoneStone >> checkMe [
 	self beNotNeedsAttention.
 	
-	(self core fileExists: ('/opt/GsDevKit_home/server/stones/', self stoneName)) ifFalse: [
+	(self core fileExists: (self gemstoneGsHome / 'server/stones' / self stoneName)) ifFalse: [
 		self beNeedsAttention: 'Stone does not exist' ]
 
 ]
