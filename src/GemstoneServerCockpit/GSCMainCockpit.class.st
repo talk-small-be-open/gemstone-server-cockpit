@@ -372,13 +372,13 @@ GSCMainCockpit >> renderPanesOn: html [
 { #category : #rendering }
 GSCMainCockpit >> renderSubprocessOn: html [
 
-	core isShellProcessRunning ifTrue: [
+	core isShellProcessPresent ifTrue: [
 		html div class: 'subprocess'; with: [
-			html heading level2; with: 'SHELL RUNS!'.
+			html heading level2; with: 'SHELL COMMAND IS RUNNING!'.
 			html div: core subprocessCommandLabel.
 			html anchorButton
 				callback: [ self killShellProcess ];
-				with: 'Kill Pharo process'.
+				with: 'Hard abort'.
 			html script: 'setTimeout(function(){ location.reload() }, 1899);'.
 			
 			html form: [ 
@@ -391,7 +391,7 @@ GSCMainCockpit >> renderSubprocessOn: html [
 			html anchorButton callback: [ self writeToSubprocess: Character enter ]; with: 'Send Ctrl-C (INT)'.
 			html space.
 
-		html heading level3; with: 'Log'.
+		html heading level3; with: 'Last log entries'.
 		core subprocessTailLines ifNotBlank: [ :lines |
 			html preformatted: [
 				lines do: [ :each | html text: each ] separatedBy: [ html text: Character lf ].

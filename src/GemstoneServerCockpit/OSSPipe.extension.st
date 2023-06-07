@@ -7,3 +7,8 @@ OSSPipe >> end [
 	pipe did not end it, strangely!"
 	self nextPut: Character end
 ]
+
+{ #category : #'*GemstoneServerCockpit' }
+OSSPipe >> lf [
+	self nextPut: Character lf
+]

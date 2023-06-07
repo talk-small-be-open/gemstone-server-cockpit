@@ -224,6 +224,11 @@ GSCCore >> isDevelopment [
 ]
 
 { #category : #testing }
+GSCCore >> isShellProcessPresent [
+	^ shellSubprocess notNil
+]
+
+{ #category : #testing }
 GSCCore >> isShellProcessRunning [
 	^ shellSubprocess notNil and: [ shellSubprocess isComplete not ]
 ]
@@ -318,7 +323,9 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: 
 	runBlockDone := false.
 
 	linesBlock := aLinesBlock ifNil: [ [ :lines | Transcript << lines ] ].
-	subprocessTailLines := OrderedCollection new.
+
+	subprocessTailLines ifNil: [
+		subprocessTailLines := OrderedCollection new ].
 
 	fireRunBlock := [ :proc |
 		"do this after the main sudo password has been streamed into the pipe. So that runBlock is ready
@@ -639,8 +646,10 @@ GSCCore >> sudoAsyncWriteFile: aFilePath owner: anOwnerString group: aGroupStrin
 	] onFinish: nil."
 
 	self forkShellBlock: [
-		| path |
+		| path fileContent endsWithLf |
 		path := aFilePath asPath pathString.
+		fileContent := aString withUnixLineEndings.
+		endsWithLf := fileContent last = Character lf.
 
 		"Ging nicht mit tee, weil es nicht exit gemacht hat"
 	"		runSshOSSUnixSubprocess: 'sed'
@@ -654,13 +663,24 @@ GSCCore >> sudoAsyncWriteFile: aFilePath owner: anOwnerString group: aGroupStrin
 			sudo: true
 			onLines: nil
 			onRun: [ :process |
-				| counter |
-				process stdinStream
-					nextPutAll: aString withUnixLineEndings;
-					flush;
+				| counter stdin |
+				
+				stdin := process stdinStream.
+				
+				stdin
+					nextPutAll: fileContent;
+					flush.
+				
+				endsWithLf ifFalse: [
+					stdin lf
+				].
+	
+				stdin
 					end;
-					end. "second time, because pty only transforms it to EOF if on a empty line, else it is just an end of line"
+					end; "strange: second time, because pty only transforms it to EOF if on a empty line, else it is just an end of line"
+					flush.
 
+				"Go sure that the pipe ends. Send additional endings if stalled"
 				counter := 0.
 				[
 					(Delay forMilliseconds: 100) wait.
@@ -669,7 +689,7 @@ GSCCore >> sudoAsyncWriteFile: aFilePath owner: anOwnerString group: aGroupStrin
 				] whileTrue: [
 					"OPTIMIZE Strangely we need this on real Ubuntu. WTF?!"
 					Transcript crShow: 'end/flush stream ...'.
-					process stdinStream
+					stdin
 						end;
 						flush.
 				]
