@@ -311,6 +311,11 @@ GSCTool >> log: aMessage [
 	log add: aMessage
 ]
 
+{ #category : #'as yet unclassified' }
+GSCTool >> logTail [
+	^ log copyWithoutBlanks lastAtMost: 10
+]
+
 { #category : #testing }
 GSCTool >> needsAttention [
 	^ needsAttention
@@ -404,7 +409,7 @@ GSCTool >> renderLogOn: html [
 	log ifNotEmpty: [ 
 		html div class: 'log'; with: [
 			html heading: 'Logtail'.
-			(log lastAtMost: 5) do: [ :each |
+			self logTail do: [ :each |
 				html preformatted: each ]
 	] ]
 ]

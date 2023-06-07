@@ -62,13 +62,13 @@ GSCAnsibleTasks >> ansibleVarsDictionary [
 { #category : #'as yet unclassified' }
 GSCAnsibleTasks >> doPlay [
 	self core sudoAsyncWriteFile: '/tmp/playbook.json' with: self playbookJson then: [
-		self runShellCommand: 'ansible-playbook /tmp/playbook.json' ]
+		self runSudoShellCommand: 'ansible-playbook /tmp/playbook.json' ]
 ]
 
 { #category : #'as yet unclassified' }
 GSCAnsibleTasks >> doPlayCheckOnly [
 	self core sudoAsyncWriteFile: '/tmp/playbook-checkonly.json' with: self playbookJson then: [
-		self runShellCommand: 'ansible-playbook --check /tmp/playbook-checkonly.json' ]
+		self runSudoShellCommand: 'ansible-playbook --check /tmp/playbook-checkonly.json' ]
 ]
 
 { #category : #'as yet unclassified' }
