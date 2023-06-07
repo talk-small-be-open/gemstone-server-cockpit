@@ -15,7 +15,7 @@ GSCHaproxy >> build [
 	
 	self add: GSCTextFile then: [ :file |
 		file
-			filePath: ('/etc/haproxy/haproxy.cfg');
+			filePath: self configFilePath;
 			contentTemplate: self haproxyConfigTemplate
 	].
 
@@ -25,6 +25,16 @@ GSCHaproxy >> build [
 
 "	self add: GSCExternalWebTool then: [ :web |
 		web url: '/ha-status' ]"
+]
+
+{ #category : #'as yet unclassified' }
+GSCHaproxy >> configFilePath [
+	^ '/etc/haproxy/haproxy.cfg' asPath
+]
+
+{ #category : #rendering }
+GSCHaproxy >> doCheckSyntax [
+	self core runSudoShellCommand: 'haproxy -c -- ', self configFilePath pathString
 ]
 
 { #category : #rendering }

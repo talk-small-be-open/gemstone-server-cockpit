@@ -21,6 +21,12 @@ GSCGemstoneStone >> build [
 			configTemplate: self monitConfigTemplate
 	].
 
+	monitCheck := self add: GSCMonitCheck then: [ :check |
+		check
+			checkName: self netldiMonitCheckName;
+			configTemplate: self netldiMonitConfigTemplate
+	].
+
 	self add: GSCTextFile then: [ :file |
 		file
 			title: 'stone.conf file';
@@ -107,14 +113,38 @@ GSCGemstoneStone >> monitConfigTemplate [
 check process <?stt= me monitCheckName ?> matching "^/opt/.*/sys/stoned <?stt= me stoneName ?> .*$"
 			ONREBOOT START
 			MODE ACTIVE
-			start program = "$GS_HOME/bin/startStone <?stt= me stoneName ?>" as uid "<?stt= me configAt: #server:username ?>" gid "adm"
-			stop program = "$GS_HOME/bin/stopStone <?stt= me stoneName ?>" as uid "<?stt= me configAt: #server:username ?>" gid "adm"
+			start program = "$GS_HOME/bin/startStone <?stt= me stoneName ?>" as uid "<?stt= me serverUsername ?>" gid "adm"
+			stop program = "$GS_HOME/bin/stopStone <?stt= me stoneName ?>" as uid "<?stt= me serverUsername ?>" gid "adm"
  			if 7 restarts within 10 cycles then stop
 #			if totalmem > 700 Mb then alert
 			if cpu > 60% for 4 cycles then alert
 '
 
 
+]
+
+{ #category : #'as yet unclassified' }
+GSCGemstoneStone >> netldiMonitCheckName [
+	^ (self appShortCode, '_gemstone_netldi')
+]
+
+{ #category : #'as yet unclassified' }
+GSCGemstoneStone >> netldiMonitConfigTemplate [
+
+	"TBD Maybe starting needs the USER and HOME env vars?!"
+
+	^ GSCSttTemplate tool: self sttString: '
+# NETLDI
+check process <?stt= me netldiMonitCheckName ?> matching "^/opt/.*/sys/netldid <?stt= me stoneName ?>_ldi .*$"
+			ONREBOOT START
+			DEPENDS ON <?stt= me monitCheckName ?>
+			MODE ACTIVE
+			start program = "$GS_HOME/bin/startNetldi <?stt= me stoneName ?>" as uid "<?stt= me serverUsername ?>" gid "adm"
+			stop program = "/$GS_HOME/bin/stopNetldi <?stt= me stoneName ?>" as uid "<?stt= me serverUsername ?>" gid "adm" with timeout 90 seconds
+ 			if 7 restarts within 10 cycles then stop
+#			if totalmem > 700 Mb then alert
+			if cpu > 60% for 4 cycles then alert
+'
 ]
 
 { #category : #'as yet unclassified' }

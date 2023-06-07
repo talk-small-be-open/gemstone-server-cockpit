@@ -50,7 +50,8 @@ table th {
 	font-weight: bold;
 }
 a {
- text-decoration: none;
+	text-decoration: none;
+	color: blue;
 }
 a.anchorButton {
 	display: inline-block;
@@ -226,6 +227,9 @@ div.lowerPane a.toolActionButton {
 
 div.lowerPane div.labelAndValue {
   margin: 1em 0;
+}
+div.lowerPane div.log { 
+	margin-bottom: 1em;
 }
 
 div.toolsPanes {

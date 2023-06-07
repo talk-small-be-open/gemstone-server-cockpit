@@ -411,8 +411,12 @@ GSCTool >> renderLogOn: html [
 		html div class: 'log'; with: [
 			html heading: 'Logtail'.
 			self logTail do: [ :each |
-				html preformatted: each ]
-	] ]
+				html preformatted: each ] ].
+		
+		html anchor
+			callback: [ self showFullLog ];
+			with: 'Show full ...'
+	]
 ]
 
 { #category : #rendering }
@@ -484,6 +488,11 @@ GSCTool >> serverUsername [
 	^ self root configAt: 'server:username'
 ]
 
+{ #category : #'as yet unclassified' }
+GSCTool >> showFullLog [
+	self uiViewText: log joinUsingLf
+]
+
 { #category : #accessing }
 GSCTool >> title [
 	^ self className
@@ -508,4 +517,19 @@ GSCTool >> ui [
 { #category : #'as yet unclassified' }
 GSCTool >> uiEditText: aString then: aBlock [
 	self ui editText: aString then: aBlock
+]
+
+{ #category : #'as yet unclassified' }
+GSCTool >> uiShowFullscreen: aRenderable [
+	self ui showFullscreen: aRenderable
+]
+
+{ #category : #'as yet unclassified' }
+GSCTool >> uiViewText: aString [
+	^ self uiViewText: aString then: [  ]
+]
+
+{ #category : #'as yet unclassified' }
+GSCTool >> uiViewText: aString then: aBlock [
+	self ui viewText: aString then: aBlock
 ]

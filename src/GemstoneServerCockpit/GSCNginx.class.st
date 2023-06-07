@@ -62,7 +62,7 @@ server {
 
 { #category : #'as yet unclassified' }
 GSCNginx >> doCheckSyntax [
-	self runSudoShellCommand: 'nginx -T'
+	self runSudoShellCommand: 'nginx -t'
 ]
 
 { #category : #'as yet unclassified' }

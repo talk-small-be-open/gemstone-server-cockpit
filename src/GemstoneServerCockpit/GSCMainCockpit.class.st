@@ -473,11 +473,26 @@ GSCMainCockpit >> setSudoPassword [
 	]
 ]
 
+{ #category : #'as yet unclassified' }
+GSCMainCockpit >> showFullscreen: aRenderable [
+	self show: aRenderable
+]
+
 { #category : #updating }
 GSCMainCockpit >> updateRoot: anHtmlRoot [
 	super updateRoot: anHtmlRoot.
 	
 	anHtmlRoot title: 'GSC GemStone Server Cockpit'
+]
+
+{ #category : #'as yet unclassified' }
+GSCMainCockpit >> viewText: aString then: aBlock [
+	| editor |
+	editor := (GSCTextViewer content: aString).
+	
+	self show: editor onAnswer: [:answer |
+		aBlock value
+	]
 ]
 
 { #category : #writing }

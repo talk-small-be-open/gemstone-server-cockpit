@@ -62,7 +62,7 @@ GSCGemstoneGem >> monitConfigTemplate [
 	^ GSCSttTemplate tool: self sttString: '
 # GEM ON PORT <?stt= me portNumber ?>
 check process <?stt= me monitCheckName ?> with pidfile <?stt= me gemstoneGsHome pathString ?>/server/stones/<?stt= me stoneName ?>/logs/seaside<?stt= me portNumber ?>_server-<?stt= me portNumber ?>.pid
-	DEPENDS ON gemstone_netldi
+	DEPENDS ON <?stt= me stoneTool netldiMonitCheckName ?>
 	ONREBOOT START
 	GROUP gemstone_gems
 	MODE ACTIVE
@@ -88,6 +88,11 @@ GSCGemstoneGem >> renderBodyOn: html [
 { #category : #'as yet unclassified' }
 GSCGemstoneGem >> stoneName [
 	^ self appShortCode
+]
+
+{ #category : #'as yet unclassified' }
+GSCGemstoneGem >> stoneTool [
+	^ self appFindTool: GSCGemstoneStone
 ]
 
 { #category : #accessing }
