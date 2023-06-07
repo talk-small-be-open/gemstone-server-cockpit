@@ -664,7 +664,7 @@ GSCCore >> sudoAsyncWriteFile: aFilePath owner: anOwnerString group: aGroupStrin
 
 		self
 			runSshOSSUnixSubprocess: 'sed'
-			args: { '-n'. ('''s/\x0// w ', path, '''') }
+			args: { '-n'. ('''s/\x0//g; w ', path, '''') }
 			sudo: true
 			onLines: nil
 			onRun: [ :process |
