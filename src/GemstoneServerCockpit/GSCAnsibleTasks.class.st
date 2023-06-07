@@ -84,10 +84,10 @@ GSCAnsibleTasks >> initialize [
 ]
 
 { #category : #'as yet unclassified' }
-GSCAnsibleTasks >> playbookDictionary [
-	| dict |
+GSCAnsibleTasks >> playbookData [
+	| play |
 	
-	dict := {
+	play := {
 		'name' -> 'Playbook generated from GSC'.
 		'hosts' -> 'localhost'.
 		'become_user' -> 'root'.
@@ -97,7 +97,7 @@ GSCAnsibleTasks >> playbookDictionary [
 		'tasks' -> self ansibleTasksCollection.
 	} asD.
 
-	^ dict
+	^ { play }
 ]
 
 { #category : #'as yet unclassified' }
@@ -106,7 +106,7 @@ GSCAnsibleTasks >> playbookJson [
 		(STON jsonWriter on: s)
 			prettyPrint: true;
 			newLine: String lf;
-			nextPut: self playbookDictionary ]
+			nextPut: self playbookData ]
 ]
 
 { #category : #accessing }

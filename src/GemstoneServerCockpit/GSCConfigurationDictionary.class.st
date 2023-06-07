@@ -52,7 +52,7 @@ GSCConfigurationDictionary >> at: aPathlikeStructure put: aValue [
 	
 	dict := self getNestedDictionary: parts allButLast.
 	
-	^ dict at: (parts last asString) put: aValue
+	^ self transformForReadout: (dict at: (parts last asString) put: aValue)
 ]
 
 { #category : #'as yet unclassified' }
@@ -185,4 +185,9 @@ GSCConfigurationDictionary >> transformForReadout: anObject [
 	anObject isDictionary ifTrue: [ ^ GSCConfigurationDictionary fromDictionary: anObject ].
 	
 	^ anObject
+]
+
+{ #category : #accessing }
+GSCConfigurationDictionary >> values [
+	^ data values
 ]
