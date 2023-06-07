@@ -62,9 +62,13 @@ backend <?stt= me appShortCode ?>_gems
 #		http-check send
 
 		<?stt me gemPorts do: [ :each | ?>
-		server gem<?stt= each asString ?> 127.0.0.1:<?stt= each asString ?>
-		<?stt ] ?>
+		server gem<?stt= each asString ?> 127.0.0.1:<?stt= each asString ?><?stt ] ?>
 '
+]
+
+{ #category : #rendering }
+GSCHaproxySite >> renderBodyOn: html [
+	html paragraph: 'site config file will be included in master config file of nginx.'
 ]
 
 { #category : #accessing }

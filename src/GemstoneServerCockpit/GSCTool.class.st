@@ -357,13 +357,14 @@ GSCTool >> refresh [
 
 { #category : #rendering }
 GSCTool >> renderActionsOn: html [
-	self toolActionSelectors do: [ :each |
-		html anchorButton
-			callback: [ self performToolAction: each ];
-			with: [
-				html text: (each allButFirst: 2)].
-	
-	]
+	html div: [
+		self toolActionSelectors do: [ :each |
+			html anchorButton
+				callback: [ self performToolAction: each ];
+				with: [
+					html text: (each allButFirst: 2)].
+		
+	] ]
 ]
 
 { #category : #rendering }
@@ -440,7 +441,7 @@ GSCTool >> rootFindTools: aClass [
 
 { #category : #'as yet unclassified' }
 GSCTool >> runShellCommand: aString [
-	^ self runShellCommand: aString then: nil
+	self runShellCommand: aString then: nil
 ]
 
 { #category : #'as yet unclassified' }
@@ -455,7 +456,7 @@ GSCTool >> runShellCommand: aString then: aBlock [
 
 { #category : #'as yet unclassified' }
 GSCTool >> runSudoShellCommand: aString [
-	^ self runSudoShellCommand: aString then: nil
+	self runSudoShellCommand: aString then: nil
 ]
 
 { #category : #'as yet unclassified' }

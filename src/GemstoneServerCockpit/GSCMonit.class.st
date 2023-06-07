@@ -13,9 +13,7 @@ GSCMonit >> build [
 	self add: GSCTextFile then: [ :file |
 		file
 			filePath: ('/etc/monit/monitrc');
-			owner: 'root';
-			group: 'root';
-			mode: 'u=gw';
+			beRootOwned;
 			contentTemplate: self monitConfigTemplate
 	].
 
@@ -27,6 +25,31 @@ GSCMonit >> build [
 { #category : #'as yet unclassified' }
 GSCMonit >> doReload [
 	self runSudoShellCommand: 'monit reload'
+]
+
+{ #category : #starting }
+GSCMonit >> doReport [
+	self runSudoShellCommand: ('monit report')
+]
+
+{ #category : #starting }
+GSCMonit >> doStartAll [
+	self runSudoShellCommand: ('monit start all')
+]
+
+{ #category : #starting }
+GSCMonit >> doStopAll [
+	self runSudoShellCommand: ('monit stop all')
+]
+
+{ #category : #starting }
+GSCMonit >> doSummary [
+	self runSudoShellCommand: ('monit summary')
+]
+
+{ #category : #'as yet unclassified' }
+GSCMonit >> doSyntaxCheck [
+	self runSudoShellCommand: 'monit -t'
 ]
 
 { #category : #building }

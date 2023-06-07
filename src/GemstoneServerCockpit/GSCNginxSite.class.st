@@ -14,9 +14,22 @@ GSCNginxSite >> build [
 
 	self add: GSCTextFile then: [ :file |
 		file
-			filePath: ('/etc/nginx/sites-available/', self appShortCode, '.vhost');
+			beRootOwned;
+			filePath: ('/etc/nginx/sites-available/', self siteFileName);
 			contentTemplate: self vhostConfigTemplate
 	].
+]
+
+{ #category : #'as yet unclassified' }
+GSCNginxSite >> doDisableSite [
+	self runSudoShellCommand: 'rm /etc/nginx/sites-enabled/', self siteFileName
+	"TODO: Reload nginx here?"
+]
+
+{ #category : #'as yet unclassified' }
+GSCNginxSite >> doEnableSite [
+	self runSudoShellCommand: 'ln -s /etc/nginx/sites-available/', self siteFileName, ' /etc/nginx/sites-enabled/'
+	"TODO: Reload nginx here?"
 ]
 
 { #category : #'as yet unclassified' }
@@ -32,6 +45,11 @@ GSCNginxSite >> haproxyPortNumber [
 { #category : #'as yet unclassified' }
 GSCNginxSite >> nginxDomainsString [
 	^ self domains joinUsing: String space
+]
+
+{ #category : #'as yet unclassified' }
+GSCNginxSite >> siteFileName [
+	^ self appShortCode, '.vhost'
 ]
 
 { #category : #'as yet unclassified' }
@@ -94,8 +112,8 @@ GSCNginxSite >> sttListenPort [
 listen 443 ssl http2;
 listen [::]:443 ssl http2;
 
-ssl_certificate /etc/letsencrypt/live/via/fullchain.pem;
-ssl_certificate_key /etc/letsencrypt/live/via/privkey.pem;
+ssl_certificate /etc/letsencrypt/live/<?stt= me appShortCode ?>/fullchain.pem;
+ssl_certificate_key /etc/letsencrypt/live/<?stt= me appShortCode ?>/privkey.pem;
 include /etc/letsencrypt/options-ssl-nginx.conf;
 ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 
@@ -229,7 +247,6 @@ server {
 		  internal;
 		}
 }
-
 
 <?stt me useSsl ifTrue: [ ?>
 # Redirect HTTP->HTTPS

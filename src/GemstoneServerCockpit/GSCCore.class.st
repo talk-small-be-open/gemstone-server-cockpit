@@ -657,9 +657,14 @@ GSCCore >> sudoAsyncWriteFile: aFilePath owner: anOwnerString group: aGroupStrin
 "nicht zuverlässig, hängt			runSshOSSUnixSubprocess: 'tee'
 			args: { path }"
 
+		"sed
+		- filter out NULL chars (dont know where the hell they are appended from!)
+		- write to file
+		"
+
 		self
 			runSshOSSUnixSubprocess: 'sed'
-			args: { '-n'. ('''w ', path, '''') }
+			args: { '-n'. ('''s/\x0// w ', path, '''') }
 			sudo: true
 			onLines: nil
 			onRun: [ :process |
@@ -776,21 +781,28 @@ GSCCore >> sudoEnsureDirectory: aDirPath owner: anOwnerString group: aGroupStrin
 ]
 
 { #category : #shell }
-GSCCore >> sudoReadFile: aFilePath [
+GSCCore >> sudoReadCommand: aCommand args: aCollection [
 
-	| lines path |
+	| lines |
 	lines := OrderedCollection new.
-	path := aFilePath asPath.
 
 	self
-		runSshOSSUnixSubprocess: 'cat'
-		args: { path pathString }
+		runSshOSSUnixSubprocess: aCommand
+		args: aCollection
 		sudo: true
 		onLines: [ :newLines | lines addAll: newLines ]
 		onRun: nil
 		onFinish: nil.
 
-	^ lines joinUsing: String lf
+	^ lines joinUsingLf
+]
+
+{ #category : #shell }
+GSCCore >> sudoReadFile: aFilePath [
+	| path |
+	path := aFilePath asPath.
+
+	^ self sudoReadCommand: 'cat' args: { path pathString }
 ]
 
 { #category : #shell }

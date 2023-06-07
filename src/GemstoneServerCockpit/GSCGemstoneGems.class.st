@@ -43,5 +43,5 @@ GSCGemstoneGems >> startPort [
 
 { #category : #accessing }
 GSCGemstoneGems >> title [
-	^ 'Gems cluster'
+	^ 'Gem web workers'
 ]

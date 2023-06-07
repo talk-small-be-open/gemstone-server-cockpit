@@ -15,6 +15,13 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
+GSCTextFile >> beRootOwned [
+	owner := 'root'.
+	group := 'root'.
+	mode := 'u=rw,g=rw'
+]
+
+{ #category : #'as yet unclassified' }
 GSCTextFile >> checkMe [
 	self beNotNeedsAttention.
 

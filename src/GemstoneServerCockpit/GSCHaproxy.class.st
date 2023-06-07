@@ -1,6 +1,9 @@
 Class {
 	#name : #GSCHaproxy,
 	#superclass : #GSCTool,
+	#instVars : [
+		'statusHtml'
+	],
 	#category : #'GemstoneServerCockpit-Model'
 }
 
@@ -20,7 +23,13 @@ GSCHaproxy >> build [
 		service name: 'haproxy'
 	].
 
+"	self add: GSCExternalWebTool then: [ :web |
+		web url: '/ha-status' ]"
+]
 
+{ #category : #rendering }
+GSCHaproxy >> doViewWebStatus [
+	statusHtml := self core sudoReadCommand: 'curl' args: { '--silent'. 'http://127.0.0.1:8404/stats'. }.
 ]
 
 { #category : #'as yet unclassified' }
@@ -33,10 +42,6 @@ global
 		user haproxy
 		group haproxy
 		daemon
-
-		# For debugging on the commandline with socket access (see http://cbonte.github.io/haproxy-dconv/1.8/management.html#9.3)
-		#stats socket /var/run/haproxy.sock mode 600 level admin
-    #stats timeout 2m
 
 defaults
 		log			global
@@ -55,7 +60,6 @@ defaults
 		errorfile 503 /etc/haproxy/errors/503.http
 		errorfile 504 /etc/haproxy/errors/504.http
 
-
 frontend stats
     bind 127.0.0.1:8404
     stats enable
@@ -65,20 +69,20 @@ frontend stats
 		option dontlog-normal
     # stats admin if LOCALHOST
 
-# # Pseudo backend to store rates
-# backend Abuse
-#     # stick-table type ip size 100K expire 30m store gpc0,http_req_rate(10s)
-# 		# better: IP taken from XFF
-# 		stick-table type integer size 100K expire 30m store gpc0,http_req_rate(10s)
-
 <?stt me haproxySiteConfigs do: [ :each | ?>
-<?stt= each contentString ?>
-<?stt ] ?>'
+<?stt= each contentString ?><?stt ] ?>'
 ]
 
 { #category : #'as yet unclassified' }
 GSCHaproxy >> haproxySiteConfigs [
 	^ (self rootFindTools: GSCHaproxySite) collect: [ :each | each haproxyConfigTemplate ]
+]
+
+{ #category : #rendering }
+GSCHaproxy >> renderBodyOn: html [
+	html iframe
+		style: 'width: 100%; height: 1000px';
+		contents: [ :h | h html: statusHtml ]
 ]
 
 { #category : #accessing }

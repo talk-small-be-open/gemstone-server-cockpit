@@ -32,6 +32,11 @@ GSCSystemService >> doStart [
 ]
 
 { #category : #starting }
+GSCSystemService >> doStatus [
+	self runSudoShellCommand: ('service "', serviceName, '" status')
+]
+
+{ #category : #starting }
 GSCSystemService >> doStop [
 	self runSudoShellCommand: ('service "', serviceName, '" stop')
 ]

@@ -21,10 +21,48 @@ GSCNginx >> build [
 			name: 'nginx'
 	].
 
+	self add: GSCTextFile then: [ :file |
+		file
+			title: 'default vhost';
+			filePath: ('/etc/nginx/sites-available/default');
+			contentTemplate: self defaultVhostConfigTemplate
+	].
 	
 "TODO
   - name: User {{remoteUser}} is in group www-data (uploaded files permission)
 "
+]
+
+{ #category : #'as yet unclassified' }
+GSCNginx >> defaultVhostConfigTemplate [
+	^ GSCSimpleTemplate source: '
+# Reject access with just the IP. We do not want bots or other dark forces to annoy us
+server {
+		listen 80 default_server;
+		listen [::]:80 default_server;
+
+		#{% if resres.useSsl %}
+		#		
+		#listen 443 ssl http2 default_server;
+		#listen [::]:443 ssl http2 default_server;
+
+		#ssl_certificate /etc/letsencrypt/live/resres/fullchain.pem;
+		#ssl_certificate_key /etc/letsencrypt/live/resres/privkey.pem;
+		#include /etc/letsencrypt/options-ssl-nginx.conf;
+		#ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+		#{% endif %}
+
+		server_name _;
+
+		return 444; # Special code from nginx, just fails and does not return anything to caller
+}
+'
+]
+
+{ #category : #'as yet unclassified' }
+GSCNginx >> doCheckSyntax [
+	self runSudoShellCommand: 'nginx -T'
 ]
 
 { #category : #'as yet unclassified' }
@@ -112,6 +150,12 @@ http {
 
 }
 '
+]
+
+{ #category : #rendering }
+GSCNginx >> renderBodyOn: html [
+"	html iframe
+		contents: [ :h | h paragraph: 'HIIII' ]"
 ]
 
 { #category : #accessing }

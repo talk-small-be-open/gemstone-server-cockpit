@@ -46,30 +46,30 @@ GSCMonitCheck >> configTemplate: anObject [
 
 { #category : #starting }
 GSCMonitCheck >> doMonitor [
-	self runShellCommand: ('monit "', checkName, '" monitor')
+	self runSudoShellCommand: ('monit monitor "', checkName, '"')
 ]
 
 { #category : #starting }
 GSCMonitCheck >> doStart [
-	self runShellCommand: ('monit "', checkName, '" start')
+	self runSudoShellCommand: ('monit start "', checkName, '"')
 ]
 
 { #category : #starting }
 GSCMonitCheck >> doStatus [
-	self runShellCommand: ('monit "', checkName, '" status')
+	self runSudoShellCommand: ('monit status "', checkName, '"')
 ]
 
 { #category : #starting }
 GSCMonitCheck >> doStop [
-	self runShellCommand: ('monit "', checkName, '" stop')
+	self runSudoShellCommand: ('monit stop "', checkName, '"')
 ]
 
 { #category : #starting }
 GSCMonitCheck >> doUnmonitor [
-	self runShellCommand: ('monit "', checkName, '" unmonitor')
+	self runSudoShellCommand: ('monit unmonitor "', checkName, '"')
 ]
 
 { #category : #accessing }
 GSCMonitCheck >> title [
-	^ 'monit check ', checkName
+	^ 'Monit check ', checkName
 ]
