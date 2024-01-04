@@ -12,22 +12,15 @@ GSCGsDevKit >> build [
 			url: self repoUrl
 	].
 
-	self add: GSCGeneralTool then: [ :tool |
-		tool checkMeBlock: [
-			(tool core fileExists: self gsHome / 'dev/clients/tode') ifFalse: [
-				tool beNeedsAttention: 'tODE client does not exist' ].
-		].
-		tool actionBlock: [ tool runShellCommand: 'createClient tode' ].
-		tool title: 'tODE client'
-	].
-
-	"Copy our own STON file for the Seaside project"
 	self add: GSCTextFile then: [ :file |
-		"Why?! Seaside will be loaded from my baseline! But this has some more helper scripts packed for GemStone"
-		file filePath: self gsHome / 'sys/local/server/projects/Seaside3.ston'.
-		file contentTemplate: self seasideStonTemplate
+		file
+			filePath: '/etc/profile.d/Z99-gsdevkit.sh';
+			contentTemplate: (GSCSimpleTemplate source: ('
+# Env vars for GemStone
+export GS_HOME=', self gsHome pathString, '
+export PATH=$GS_HOME/bin:$PATH
+'))
 	].
-
 
 	"Use a bit more than 2GB of max shared memory, since the 'Limited' GemStone license will give us 2GB"
 	self add: GSCLineInFile then: [ :lif |
@@ -43,15 +36,24 @@ GSCGsDevKit >> build [
 			line: ('kernel.shmall=', (2.5*1024*1024*1024 / 4) ceiling asInteger asString)
 	].
 
-	self add: GSCTextFile then: [ :file |
-		file
-			filePath: '/etc/profile.d/Z99-gsdevkit.sh';
-			contentTemplate: (GSCSimpleTemplate source: ('
-# Env vars for GemStone
-export GS_HOME=', self gsHome pathString, '
-export PATH=$GS_HOME/bin:$PATH
-'))
+
+	self add: GSCGeneralTool then: [ :tool |
+		tool checkMeBlock: [
+			(tool core dirExists: self gsHome / 'dev/clients/tode') ifFalse: [
+				tool beNeedsAttention: 'tODE client does not exist' ].
+		].
+		tool actionBlock: [ tool runShellCommand: 'createClient tode' ].
+		tool title: 'tODE client'
 	].
+
+	"Copy our own STON file for the Seaside project"
+	self add: GSCTextFile then: [ :file |
+		"Why?! Seaside will be loaded from my baseline! But this has some more helper scripts packed for GemStone"
+		file filePath: self gsHome / 'sys/local/server/projects/Seaside3.ston'.
+		file contentTemplate: self seasideStonTemplate
+	].
+
+
 
 ]
 

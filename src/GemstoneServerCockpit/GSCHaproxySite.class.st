@@ -68,7 +68,7 @@ backend <?stt= me appShortCode ?>_gems
 
 { #category : #rendering }
 GSCHaproxySite >> renderBodyOn: html [
-	html paragraph: 'site config file will be included in master config file of nginx.'
+	html paragraph: 'site config file will be included in master config file of HAproxy.'
 ]
 
 { #category : #accessing }

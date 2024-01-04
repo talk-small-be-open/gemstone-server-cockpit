@@ -1,3 +1,12 @@
+"
+Helper for convenience. Builds a dictionary configuration structure by dynamically storing values, which are set by non-existent setter methods. Uses DNU.
+
+Example:
+	
+	me thisValue: 'one'.
+	me thatOtherValue: 'two'.
+	me whateverElseYouNeedInYourConfigDictionary: 123.
+"
 Class {
 	#name : #GSCEasyConfigurationBuilder,
 	#superclass : #Object,

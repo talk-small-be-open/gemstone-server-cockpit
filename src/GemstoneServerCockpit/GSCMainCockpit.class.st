@@ -15,6 +15,11 @@ GSCMainCockpit >> checkAll [
 	
 ]
 
+{ #category : #accessing }
+GSCMainCockpit >> currentTool [
+	^ self selectedTools atLast: 1 ifAbsent: [ nil ]
+]
+
 { #category : #'as yet unclassified' }
 GSCMainCockpit >> editText: aString then: aBlock [
 	| editor |
@@ -28,13 +33,18 @@ GSCMainCockpit >> editText: aString then: aBlock [
 ]
 
 { #category : #initialization }
+GSCMainCockpit >> gotoHome [
+	selectedToolChain := IdentityDictionary new.
+]
+
+{ #category : #initialization }
 GSCMainCockpit >> initialize [
 	super initialize.
 	
 	core := GSCCore instance.
 "	selectedTools := OrderedCollection new."
 	
-	self reset
+	self gotoHome
 ]
 
 { #category : #testing }
@@ -47,15 +57,10 @@ GSCMainCockpit >> killShellProcess [
 	core killShellProcess 
 ]
 
-{ #category : #accessing }
-GSCMainCockpit >> lastSelectedTool [
-	^ self selectedTools atLast: 1 ifAbsent: [ nil ]
-]
-
 { #category : #'as yet unclassified' }
 GSCMainCockpit >> reSetup [
-
-	core setup
+	(self confirm: 'This will destroy all non-saved configurations and reload the config from the files. Continue?') ifTrue: [
+		core setup ]
 ]
 
 { #category : #rendering }
@@ -66,7 +71,8 @@ GSCMainCockpit >> renderContentOn: html [
 	html div class: 'mainTitle'; with: 'GemStone Server Cockpit'.
 	
 	self renderCoreToolbarOn: html.
-	
+"	self renderRootToolbarOn: html."
+
 	self renderSubprocessOn: html.
 
 	html div class: 'main'; with: [ 
@@ -92,30 +98,42 @@ GSCMainCockpit >> renderCoreToolbarOn: html [
 			].
 		
 			html anchorButton
+				callback: [ self gotoHome ];
+				with: 'Home'.
+
+			html anchorButton
 				callback: [ self checkAll ];
 				with: 'Check all'.
 
 			html anchorButton
 				callback: [ self reSetup ];
-				with: 'Re-setup'.
+				with: 'Re-Config'.
 
-			html span: ' File root: '.
+			html span: ' Base path: '.
 			html textInput
 				callback: [ :value | core filesystemRoot: value ];
 				with: core filesystemRoot pathString.
+			core filesystemRoot isRoot ifFalse: [ html span: ' NON-ROOT! ' ].
 			html submitButton: 'Save'.
 
-		] ]
+		].
+
+
+	]
 ]
 
 { #category : #rendering }
 GSCMainCockpit >> renderLogoOn: html [
 	html span
 		class: 'gscLogo';
-		style: 'position: absolute; right: 10px; top: 10px; width: 100px;';
+		style: 'position: absolute; right: 10px; top: 10px;';
 		with: [
-			html span: 'Gessy - digs & barks'.
-			html html: '
+			html div: 'GSC "Jessy"'.
+			html div: 'digs & barks'.
+			html div
+				style: 'width: 75px';
+				with: [
+					html html: '
 <svg
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns="http://www.w3.org/2000/svg"
@@ -340,7 +358,7 @@ GSCMainCockpit >> renderLogoOn: html [
   </metadata>
 </svg>
 '
-]
+]]
 ]
 
 { #category : #rendering }
@@ -363,10 +381,21 @@ GSCMainCockpit >> renderPane: anIndex list: aCollection on: html [
 { #category : #rendering }
 GSCMainCockpit >> renderPanesOn: html [
 	html div class: 'toolsPanes'; with: [
-		self rootAndSelectedTools withIndexDo: [ :each :index |
-			self renderPane: index list: each children on: html.
+		self selectedTools withIndexDo: [ :each :index |
+			| paneNumber |
+			paneNumber := index.
+			self renderPane: paneNumber list: each children on: html.
 		]
 	]
+]
+
+{ #category : #rendering }
+GSCMainCockpit >> renderRootToolbarOn: html [
+	html div: [
+		self rootTool renderOn: html ]
+	
+"oder nur renderActionsOn: html"
+
 ]
 
 { #category : #rendering }
@@ -404,22 +433,14 @@ GSCMainCockpit >> renderSubprocessOn: html [
 { #category : #rendering }
 GSCMainCockpit >> renderTheToolOn: html [
 	html div: [
-		self lastSelectedTool ifNotNil: [ :tool |
+		self currentTool ifNotNil: [ :tool |
 			tool renderOn: html ]
 	]
 ]
 
-{ #category : #initialization }
-GSCMainCockpit >> reset [
-	selectedToolChain := IdentityDictionary new.
-]
-
-{ #category : #'as yet unclassified' }
-GSCMainCockpit >> rootAndSelectedTools [
-	^ OrderedCollection new
-		add: core rootTool;
-		addAll: self selectedTools;
-		yourself
+{ #category : #accessing }
+GSCMainCockpit >> rootTool [
+	^ core rootTool
 ]
 
 { #category : #'as yet unclassified' }
@@ -436,20 +457,23 @@ GSCMainCockpit >> selectTool: aChildTool [
 
 { #category : #'as yet unclassified' }
 GSCMainCockpit >> selectedInPane: anIndex [
-	^ self selectedTools at: anIndex ifAbsent: [ nil ]
+	^ self selectedTools at: anIndex + 1 ifAbsent: [ nil ]
 ]
 
 { #category : #accessing }
 GSCMainCockpit >> selectedTools [
 	| this next all |
 
+	"By definition, the root tool is always selected. Its the start, the home."
+
 	this := core rootTool.
 	all := OrderedCollection new.
-
+	
 	[
+		all add: this.
 		next := selectedToolChain at: this ifAbsent: [ nil ].
 		next ifNotNil: [
-			all add: next.
+"			all add: next."
 			this := next.
 		].
 

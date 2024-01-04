@@ -8,6 +8,13 @@ Class {
 	#category : #'GemstoneServerCockpit-Model'
 }
 
+{ #category : #'as yet unclassified' }
+GSCConfigurationEditor >> checkMe [
+	self beNotNeedsAttention.
+
+	editedConfig isFileDirty ifTrue: [ ^ self beNeedsAttention: 'File differs from config, maybe save it?' ]
+]
+
 { #category : #accessing }
 GSCConfigurationEditor >> config: anObject [
 

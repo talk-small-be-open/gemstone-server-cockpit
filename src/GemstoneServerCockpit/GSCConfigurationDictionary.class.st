@@ -21,7 +21,7 @@ GSCConfigurationDictionary >> / aString [
 
 { #category : #converting }
 GSCConfigurationDictionary >> asDictionary [
-	^ data copy
+	^ self dataCopy
 ]
 
 { #category : #arithmetic }
@@ -62,7 +62,18 @@ GSCConfigurationDictionary >> copyWith: another [
 
 { #category : #accessing }
 GSCConfigurationDictionary >> data: aDictionary [
-	data := self dictionaryClass newFrom: aDictionary
+	data := self dictionaryClass new.
+	self recurseCopyDataFrom: aDictionary to: data
+]
+
+{ #category : #copying }
+GSCConfigurationDictionary >> dataCopy [
+	| newDict |
+
+	newDict := self dictionaryClass new.
+	self recurseCopyDataFrom: data to: newDict.
+
+	^ newDict
 ]
 
 { #category : #accessing }
@@ -70,6 +81,14 @@ GSCConfigurationDictionary >> dictionaryClass [
 	"keep it Dictionary, since then STON is cleaner, instead of IdentityDictionary.
 	TODO: Maybe OrderedDictionary would work with STON?"
 	^ Dictionary
+]
+
+{ #category : #accessing }
+GSCConfigurationDictionary >> entriesCount [
+	| counter |
+	counter := 0.
+	self entriesDo: [ :key :value | counter := counter + 1 ].
+	^ counter
 ]
 
 { #category : #enumerating }
@@ -104,6 +123,8 @@ GSCConfigurationDictionary >> getNestedDictionary: aKeysCollection [
 GSCConfigurationDictionary >> getNestedDictionary: aKeysCollection ifAbsent: aBlock [
 	| current |
 	
+	"Get the inner dictionary object at pathlike location aKeysCollection"
+	
 	current := data.
 	aKeysCollection do: [ :each |
 		| next |
@@ -126,6 +147,18 @@ GSCConfigurationDictionary >> initialize [
 	data := self dictionaryClass new
 ]
 
+{ #category : #testing }
+GSCConfigurationDictionary >> isEqualConfig: anotherConfig [
+
+	self entriesCount = anotherConfig entriesCount ifFalse: [ ^ false ].
+
+	self entriesDo: [ :keyPath :value |
+		((anotherConfig at: keyPath) = value) ifFalse: [ ^ false ].
+	].
+
+	^ true
+]
+
 { #category : #enumerating }
 GSCConfigurationDictionary >> keysAndValuesDo: aBlock [
 	data keys sorted do: [ :each |
@@ -146,12 +179,18 @@ GSCConfigurationDictionary >> overwriteWith: another [
 
 { #category : #copying }
 GSCConfigurationDictionary >> postCopy [
+	| originalData |
+	
 	super postCopy.
 	
 	"data := data deepCopy."
-	self nodesDo: [ :key :value |
+"	self nodesDo: [ :key :value |
 		self at: key put: value copy
-	]
+	]."
+
+	originalData := data.
+	data := self dictionaryClass new.
+	self recurseCopyDataFrom: originalData to: data.
 ]
 
 { #category : #'as yet unclassified' }
@@ -160,6 +199,24 @@ GSCConfigurationDictionary >> presetFrom: another [
 		value ifNotBlank: [
 			self at: keyPath default: value
 		]
+	]
+]
+
+{ #category : #enumerating }
+GSCConfigurationDictionary >> recurseCopyDataFrom: aSourceDictionary to: aTargetDictionary [
+	"Copy the nested dictionary structure"
+
+	aSourceDictionary keysAndValuesDo: [ :key :value |
+		value isDictionary
+			ifTrue: [
+				| newDict |
+				newDict := self dictionaryClass new.
+				aTargetDictionary at: key put: newDict.
+				self recurseCopyDataFrom: value to: newDict.
+			]
+			ifFalse: [
+				aTargetDictionary at: key put: value copy
+			]
 	]
 ]
 

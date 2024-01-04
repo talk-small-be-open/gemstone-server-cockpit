@@ -14,6 +14,14 @@ GSCConfiguration class >> fromFile: aStringPath [
 		yourself
 ]
 
+{ #category : #'as yet unclassified' }
+GSCConfiguration >> createScheme [
+	| scheme |
+	scheme := self schemeClass new.
+	scheme config: self.
+	^ scheme
+]
+
 { #category : #accessing }
 GSCConfiguration >> filePath [
 
@@ -28,15 +36,35 @@ GSCConfiguration >> filePath: aString [
 ]
 
 { #category : #'as yet unclassified' }
+GSCConfiguration >> getDataFromFile: aFilePathString [
+	
+	| dictionary |
+	aFilePathString asFileReference exists ifFalse: [ ^ nil ].
+
+	dictionary := aFilePathString asFileReference readStreamDo: [ :stream |
+		STON reader
+			on: stream;
+			next ].
+		
+	^ dictionary
+]
+
+{ #category : #testing }
+GSCConfiguration >> isFileDirty [
+	| onDisk |
+	filePath ifBlank: [ ^ false ].
+	
+	onDisk := self class fromFile: filePath.
+	^ (onDisk isEqualConfig: self) not
+]
+
+{ #category : #'as yet unclassified' }
 GSCConfiguration >> loadFromFile: aFilePathString [
 	self filePath: aFilePathString.
 	
 	filePath asFileReference exists ifFalse: [ ^ self ].
 
-	data := filePath asFileReference readStreamDo: [ :stream | 
-		STON reader
-			on: stream;
-			next ]
+	data := self getDataFromFile: filePath
 ]
 
 { #category : #printing }
@@ -58,7 +86,7 @@ GSCConfiguration >> schemeClass [
 	| className |
 	className := self at: #applicationScheme ifAbsent: [ 'GSCWebApplicationSchemeV1' ].
 	
-	Smalltalk at: className asSymbol.
+	^ Smalltalk at: className asSymbol
 ]
 
 { #category : #'as yet unclassified' }

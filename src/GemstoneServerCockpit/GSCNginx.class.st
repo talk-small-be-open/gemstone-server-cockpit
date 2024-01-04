@@ -160,5 +160,5 @@ GSCNginx >> renderBodyOn: html [
 
 { #category : #accessing }
 GSCNginx >> title [
-	^ 'NGINX Webserver'
+	^ 'NGINX web server'
 ]

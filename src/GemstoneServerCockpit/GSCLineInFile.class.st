@@ -18,6 +18,11 @@ GSCLineInFile >> checkMe [
 ]
 
 { #category : #'as yet unclassified' }
+GSCLineInFile >> doShowFile [
+	self uiViewText: (self core sudoReadFile: filePath)
+]
+
+{ #category : #'as yet unclassified' }
 GSCLineInFile >> doWriteLine [
 	| exists |
 	exists := (self core sudoReadFile: self filePath) lines anySatisfy: [ :each | each beginsWith: search ].

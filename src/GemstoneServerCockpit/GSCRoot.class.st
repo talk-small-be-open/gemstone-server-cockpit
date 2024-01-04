@@ -41,6 +41,26 @@ GSCRoot >> config: anObject [
 	config := anObject
 ]
 
+{ #category : #accessing }
+GSCRoot >> doAddApplication [
+	| schemeClass scheme conf |
+
+	"TODO: Let choose version"
+	schemeClass := GSCWebApplicationSchemeV1.
+
+	"TODO: Name it."
+
+	scheme := schemeClass new.
+	conf := GSCConfiguration fromFile: ('/etc/gsc/applications/new.conf').
+"	conf at: 'project:shortCode' put: 'NewWebApp'.
+	conf at: 'project:name' put: 'New Web Application'."
+
+	scheme config: conf.
+	
+	"app := "
+	scheme buildApplicationToolInto: self
+]
+
 { #category : #'as yet unclassified' }
 GSCRoot >> gemstoneGsHome [
 	^ ((self configAt: 'gemstone:gsHome') ifBlank: [ '/opt/GsDevKit_home' ]) asPath.
@@ -54,4 +74,9 @@ GSCRoot >> isRoot [
 { #category : #accessing }
 GSCRoot >> root [
 	^ self
+]
+
+{ #category : #accessing }
+GSCRoot >> title [
+	^ 'Home'
 ]

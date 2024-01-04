@@ -261,9 +261,12 @@ GSCCore >> realPathForFile: aFileReferenceOrString [
 	
 	"OPTIMIZE: I think there is a onliner for that, but did not find it"
 	filesystemRoot isRoot ifFalse: [
-		| relative |
-		relative := path relativeTo: Path root.
-		^ (filesystemRoot resolvePath: relative) asPath.
+		"check if already on that prefixed path. Not 100% if we should do that here.
+		But this avoids multi-prefixed pathes, operating with pathes"
+		(filesystemRoot contains: path) ifFalse: [
+			| relative |
+			relative := path relativeTo: Path root.
+			^ (filesystemRoot resolvePath: relative) asPath ].
 	].
 
 	^ path
@@ -523,7 +526,9 @@ GSCCore >> setup [
 		
 	self setupPharo.
 	self setupServer.
-	self setupExample. "TODO: setupFromConfigFiles"
+	self setupApplicationsFromConfigFiles.
+	
+	"self setupExample."
 	
 	rootTool init.
 "	rootTool check."
@@ -531,13 +536,29 @@ GSCCore >> setup [
 ]
 
 { #category : #'as yet unclassified' }
-GSCCore >> setupExample [
+GSCCore >> setupApplicationsFromConfigFiles [
+	| confDir |
+	confDir := (GSCCore instance realPathForFile: '/etc/gsc/applications') asFileReference.
+	confDir exists ifTrue: [
+		(confDir filesMatching: '*.conf') do: [ :each |
+			| conf scheme app |
+			conf := GSCConfiguration fromFile: each pathString.
+
+			scheme := conf createScheme.
+			
+			app := scheme buildApplicationToolInto: rootTool.
+			
+	]]
+]
+
+{ #category : #'as yet unclassified' }
+GSCCore >> setupExampleApplications [
 	
 
 	1 to: 5 do: [ :index |
 		| app scheme conf |
 		scheme := GSCWebApplicationSchemeV1 new.
-		conf := GSCConfiguration fromFile: ('/etc/gsc/conf.d/example', index asString, '.conf').
+		conf := GSCConfiguration fromFile: ('/etc/gsc/applications/example', index asString, '.conf').
 		conf at: 'project:shortCode' put: ('ExampleApp', index asString).
 		conf at: 'project:name' put: ('Example Webapp ', index asString).
 
@@ -546,23 +567,6 @@ GSCCore >> setupExample [
 		app := scheme buildApplicationToolInto: rootTool.
 		
 	]
-]
-
-{ #category : #'as yet unclassified' }
-GSCCore >> setupFromConfigFiles [
-	| confDir |
-	confDir := '/etc/gsc/conf.d' asFileReference.
-	confDir exists ifTrue: [
-		(confDir filesMatching: '*.conf') do: [ :each |
-			| conf scheme app |
-			conf := GSCConfiguration fromFile: each pathString.
-
-			scheme := conf schemeClass new.
-			scheme config: conf.
-			
-			app := scheme buildApplicationToolInto: rootTool.
-			
-	]]
 ]
 
 { #category : #'as yet unclassified' }
@@ -576,7 +580,7 @@ GSCCore >> setupServer [
 "	filesystemRoot := '/tmp/gsc_test_file_root' asPath."
 
 	rootTool add: GSCFolder then: [ :folder |
-		folder name: 'Software packages'.
+		folder name: 'Server software'.
 
 		"hardcoded apt packages for the server setup"
 		{'logrotate'. 'ufw'. 'git'. 'htop'. 'unzip'. 'zip'. 'pigz'. 'aptitude'. 'mosh'.
