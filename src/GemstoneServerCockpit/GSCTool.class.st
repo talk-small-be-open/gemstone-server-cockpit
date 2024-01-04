@@ -355,6 +355,16 @@ GSCTool >> refresh [
 	self checkMe.
 ]
 
+{ #category : #adding }
+GSCTool >> removeTool: aTool [
+
+	aTool parent: nil.
+
+	children remove: aTool.
+	
+	^ aTool
+]
+
 { #category : #rendering }
 GSCTool >> renderActionsOn: html [
 	html div: [

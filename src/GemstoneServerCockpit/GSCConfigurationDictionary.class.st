@@ -173,7 +173,7 @@ GSCConfigurationDictionary >> nodesDo: aTwoArgBlock [
 { #category : #'as yet unclassified' }
 GSCConfigurationDictionary >> overwriteWith: another [
 	another entriesDo: [ :keyPath :value |
-		self at: keyPath default: value
+		self at: keyPath put: value
 	]
 ]
 
@@ -196,9 +196,8 @@ GSCConfigurationDictionary >> postCopy [
 { #category : #'as yet unclassified' }
 GSCConfigurationDictionary >> presetFrom: another [
 	another entriesDo: [ :keyPath :value |
-		value ifNotBlank: [
-			self at: keyPath default: value
-		]
+"		value ifNotBlank: ["
+		self at: keyPath default: value
 	]
 ]
 

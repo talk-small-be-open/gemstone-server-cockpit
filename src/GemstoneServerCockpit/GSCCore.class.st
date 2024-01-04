@@ -347,7 +347,8 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: 
 
 	envVars := {
 		'GS_HOME' -> rootTool gemstoneGsHome pathString.
-		'PATH' -> (rootTool gemstoneGsHome pathString, '/bin:$PATH')
+		'PATH' -> (rootTool gemstoneGsHome pathString, '/bin:$PATH').
+		'TERM' -> 'dumb'. "Some applications like 'service' have complained about non-capable terminal. We explicitely set to dumb."
 	} asDictionary.
 
 	cmd := 'ssh'.

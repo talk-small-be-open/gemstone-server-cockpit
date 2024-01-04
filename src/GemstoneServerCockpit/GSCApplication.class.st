@@ -56,6 +56,13 @@ GSCApplication >> config: anObject [
 	config := anObject
 ]
 
+{ #category : #'as yet unclassified' }
+GSCApplication >> doReConfig [
+"	(self uiConfirm: 'Really fully rebuild this application from its config file?') ifTrue: [ "
+		self recreateMyself
+"	]"
+]
+
 { #category : #testing }
 GSCApplication >> isBeta [
 	^ true "TODO"
@@ -65,6 +72,17 @@ GSCApplication >> isBeta [
 { #category : #'as yet unclassified' }
 GSCApplication >> longName [
 	^ self configAt: 'project:name'
+]
+
+{ #category : #'as yet unclassified' }
+GSCApplication >> recreateMyself [
+	"TODO: Warn if config unsaved?"
+	
+	"Remove/delete myself"
+	self parent removeTool: self.
+	
+	"Add a new application like myself, with my config"
+	config createScheme buildApplicationToolInto: self core rootTool
 ]
 
 { #category : #rendering }
