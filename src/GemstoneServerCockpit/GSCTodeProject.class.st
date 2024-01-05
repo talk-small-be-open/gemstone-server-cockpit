@@ -30,7 +30,7 @@ GSCTodeProject >> checkMe [
 
 { #category : #'as yet unclassified' }
 GSCTodeProject >> doCreateEntry [
-	self runTodeCommand: 'project entry --baseline=', self projectName, ' --repo=\"filetree://', self localRepoPath, '/src\" /sys/local/server/projects' stone: self stoneName.
+	self runTodeCommand: 'project entry --baseline=', self metacelloName, ' --repo=\"filetree://', self localRepoPath, '/src\" /sys/local/server/projects' stone: self stoneName.
 
 ]
 
@@ -84,7 +84,7 @@ GSCTodeProject >> gitUrl: anObject [
 
 { #category : #'as yet unclassified' }
 GSCTodeProject >> localRepoPath [
-	^ self gemstoneGsHome / 'shared/repos' / self projectName
+	^ self gemstoneGsHome / 'shared/repos' / self projectName asLowercase
 
 ]
 
@@ -97,6 +97,11 @@ GSCTodeProject >> metacelloLoadList [
 GSCTodeProject >> metacelloLoadList: anObject [
 
 	metacelloLoadList := anObject
+]
+
+{ #category : #'as yet unclassified' }
+GSCTodeProject >> metacelloName [
+	^ self projectName capitalized
 ]
 
 { #category : #accessing }
