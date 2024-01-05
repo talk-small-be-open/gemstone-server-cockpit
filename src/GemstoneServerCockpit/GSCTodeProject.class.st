@@ -30,7 +30,7 @@ GSCTodeProject >> checkMe [
 
 { #category : #'as yet unclassified' }
 GSCTodeProject >> doCreateEntry [
-	self runTodeCommand: 'project entry --baseline=', self metacelloName, ' --repo=\"filetree://', self localRepoPath, '/src\" /sys/local/server/projects' stone: self stoneName.
+	self runTodeCommand: ('project entry --baseline=', self metacelloName, ' --repo=\"filetree://', self localRepoPath pathString, '/src\" /sys/local/server/projects') stone: self stoneName.
 
 ]
 
