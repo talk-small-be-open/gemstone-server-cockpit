@@ -54,7 +54,7 @@ GSCGemstoneStone >> build [
 GSCGemstoneStone >> checkMe [
 	self beNotNeedsAttention.
 	
-	(self core dirExists: (self gemstoneGsHome / 'server/stones' / self stoneName)) ifFalse: [
+	(self core fileExists: (self gemstoneGsHome / 'server/stones' / self stoneName / 'extents/extent0.dbf' )) ifFalse: [
 		self beNeedsAttention: 'Stone does not exist' ]
 
 ]
