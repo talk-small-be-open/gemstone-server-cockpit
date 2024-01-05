@@ -12,7 +12,7 @@ Class {
 GSCConfigurationEditor >> checkMe [
 	self beNotNeedsAttention.
 
-	editedConfig isFileDirty ifTrue: [ ^ self beNeedsAttention: 'File differs from config, maybe save it?' ]
+	editedConfig isFileDifferent ifTrue: [ ^ self beNeedsAttention: 'File differs from config, maybe save it?' ]
 ]
 
 { #category : #accessing }
@@ -22,10 +22,15 @@ GSCConfigurationEditor >> config: anObject [
 ]
 
 { #category : #'as yet unclassified' }
-GSCConfigurationEditor >> doEditConfigFile [
+GSCConfigurationEditor >> doEditConfig [
 	self uiEditText: editedConfig textString then: [ :newText |.
 		editedConfig textString: newText.
 		editedConfig storeToFile ]
+]
+
+{ #category : #'as yet unclassified' }
+GSCConfigurationEditor >> doReloadConfigFile [
+	editedConfig loadFromFile
 ]
 
 { #category : #'as yet unclassified' }

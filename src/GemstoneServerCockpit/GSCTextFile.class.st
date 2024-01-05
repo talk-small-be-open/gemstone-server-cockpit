@@ -63,6 +63,8 @@ GSCTextFile >> doWriteTemplate [
 
 { #category : #accessing }
 GSCTextFile >> fileContents [
+	fileContents ifNil: [ self readFileContents ].
+	
 	^ fileContents
 ]
 

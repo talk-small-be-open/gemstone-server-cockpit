@@ -12,7 +12,7 @@ Class {
 { #category : #accessing }
 GSCGitRepository >> branch [
 
-	^ branch
+	^ branch ifBlank: [ 'master' ]
 ]
 
 { #category : #accessing }
@@ -37,7 +37,7 @@ GSCGitRepository >> doCloneFromGitRepo [
 	self runSudoShellCommand: ('mkdir -p ', path) then: [
 		self runSudoShellCommand: ('chown ', (self serverUsername), ' ', path) then: [
 
-			self runShellCommand: ('git clone ', self url, ' ', path) ] ]
+			self runShellCommand: ('git clone --branch ', self branch, ' ', self url, ' ', path) ] ]
 ]
 
 { #category : #accessing }

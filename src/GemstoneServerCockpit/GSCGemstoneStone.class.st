@@ -44,8 +44,9 @@ GSCGemstoneStone >> build [
 
 	self add: GSCTodeProject then: [ :project |
 		project
-			projectName: self appShortCode;
-			gitUrl: (self configAt: 'application:gitUrl').
+			projectName: (self configAt: 'sourceCode:metacelloName'); "self appShortCode;"
+			gitBranch: (self configAt: 'sourceCode:gitBranch');
+			gitUrl: (self configAt: 'sourceCode:gitUrl').
 	]
 ]
 

@@ -50,7 +50,7 @@ GSCConfiguration >> getDataFromFile: aFilePathString [
 ]
 
 { #category : #testing }
-GSCConfiguration >> isFileDirty [
+GSCConfiguration >> isFileDifferent [
 	| onDisk |
 	filePath ifBlank: [ ^ false ].
 	
@@ -59,12 +59,17 @@ GSCConfiguration >> isFileDirty [
 ]
 
 { #category : #'as yet unclassified' }
-GSCConfiguration >> loadFromFile: aFilePathString [
-	self filePath: aFilePathString.
-	
+GSCConfiguration >> loadFromFile [
 	filePath asFileReference exists ifFalse: [ ^ self ].
 
 	data := self getDataFromFile: filePath
+]
+
+{ #category : #'as yet unclassified' }
+GSCConfiguration >> loadFromFile: aFilePathString [
+	self filePath: aFilePathString.
+	
+	self loadFromFile
 ]
 
 { #category : #printing }
@@ -120,5 +125,5 @@ GSCConfiguration >> textString [
 
 { #category : #'as yet unclassified' }
 GSCConfiguration >> textString: aString [
-	data := STON fromString: aString
+	[ data := STON fromString: aString ] on: STONReaderError do: [ "TODO Show parse error" ]
 ]

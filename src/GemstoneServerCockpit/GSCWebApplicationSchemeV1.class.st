@@ -18,7 +18,9 @@ GSCWebApplicationSchemeV1 >> buildApplicationToolInto: aRootTool [
 		a config: config copy
 	].
 	
-	app add: GSCNginxSite.
+	app add: GSCNginxSite. "then: [ :site |
+		site web
+	]."
 
 	app add: GSCHaproxySite.
 	
@@ -48,8 +50,9 @@ GSCWebApplicationSchemeV1 >> buildDefaultConfiguration [
 		email: 'andreas.brodbeck@mindclue.ch'.
 
 	"Source code repository"
-	conf application
+	conf sourceCode
 		gitUrl: '';
+		metacelloName: 'WebApp';
 		gitBranch: 'master'.
 
 	"Files in repositories"
@@ -68,10 +71,11 @@ GSCWebApplicationSchemeV1 >> buildDefaultConfiguration [
 		keyfile: nil.
 
 	conf web
+		webRoot: '/opt/webapp/main/web_root';
 		useSsl: false;
 		appUrlPaths: {'app'. 'admin'};
 		domains: {'www.example.com'. };
-		workersCount: 5;
+		workersCount: 3;
 		nginxIncludeFile: ''.
 
 	conf mail

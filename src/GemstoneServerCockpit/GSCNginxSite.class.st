@@ -261,5 +261,6 @@ server {
 
 { #category : #'as yet unclassified' }
 GSCNginxSite >> webRoot [
-	^ (self configAt: 'server:installationPath') asPath / self appShortCode / 'web_root'
+"	^ (self configAt: 'server:installationPath') asPath / self appShortCode / 'web_root'"
+	^ (self configAt: 'web:webRoot') asPath
 ]

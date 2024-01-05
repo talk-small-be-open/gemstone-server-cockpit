@@ -3,7 +3,9 @@ Class {
 	#superclass : #GSCTool,
 	#instVars : [
 		'gitUrl',
-		'projectName'
+		'gitBranch',
+		'projectName',
+		'metacelloLoadList'
 	],
 	#category : #'GemstoneServerCockpit-Model'
 }
@@ -13,7 +15,8 @@ GSCTodeProject >> build [
 	self add: GSCGitRepository then: [ :git |
 		git
 			url: gitUrl;
-			folderPath: (self gemstoneGsHome / 'shared/repos' / self projectName)
+			branch: gitBranch;
+			folderPath: self localRepoPath
 	]
 ]
 
@@ -22,7 +25,7 @@ GSCTodeProject >> checkMe [
 	self beNotNeedsAttention.
 	
 	(self core fileExists: (self gemstoneGsHome / 'sys/local/server/projects' / self projectName , 'ston')) ifFalse: [
-		self beNeedsAttention: 'metacello project not installed' ]
+		self beNeedsAttention: 'Metacello project not installed' ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -38,8 +41,33 @@ GSCTodeProject >> doGet [
 
 { #category : #'as yet unclassified' }
 GSCTodeProject >> doLoad [
-	self runTodeCommand: ('project load --loads="\`#(''default'')\`" ', self projectName) stone: self stoneName
+	| loadString |
+	
+	loadString := String streamContents: [ :s |
+		s << '\`#('.
+		
+		self metacelloLoadList do: [ :each |
+			s nextPut: $'.
+			s << each.
+			s nextPut: $'.
+		] separatedBy: [ s space ].
+		s << ')\`'.
+	].
+	
+	self runTodeCommand: ('project load --loads="', loadString, '" ', self projectName) stone: self stoneName
 
+]
+
+{ #category : #accessing }
+GSCTodeProject >> gitBranch [
+
+	^ gitBranch
+]
+
+{ #category : #accessing }
+GSCTodeProject >> gitBranch: anObject [
+
+	gitBranch := anObject
 ]
 
 { #category : #accessing }
@@ -58,6 +86,17 @@ GSCTodeProject >> gitUrl: anObject [
 GSCTodeProject >> localRepoPath [
 	^ self gemstoneGsHome / 'shared/repos' / self projectName
 
+]
+
+{ #category : #accessing }
+GSCTodeProject >> metacelloLoadList [
+	^ metacelloLoadList ifBlank: [ #('default') ]
+]
+
+{ #category : #accessing }
+GSCTodeProject >> metacelloLoadList: anObject [
+
+	metacelloLoadList := anObject
 ]
 
 { #category : #accessing }
