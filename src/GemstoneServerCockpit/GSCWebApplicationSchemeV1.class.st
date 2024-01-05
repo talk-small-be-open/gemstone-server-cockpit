@@ -50,7 +50,7 @@ GSCWebApplicationSchemeV1 >> buildDefaultConfiguration [
 		email: 'andreas.brodbeck@mindclue.ch'.
 
 	"Source code repository"
-	conf sourceCode
+	conf sourceCode base
 		gitUrl: '';
 		metacelloName: 'WebApp';
 		gitBranch: 'master'.

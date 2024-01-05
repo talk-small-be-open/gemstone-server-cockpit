@@ -452,7 +452,7 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: 
 		
 		lineReader nextLines ifNotEmpty: [ :lines |
 			subprocessTailLines addAll: lines.
-			subprocessTailLines := subprocessTailLines lastAtMost: 10.
+			subprocessTailLines := subprocessTailLines lastAtMost: 200.
 			linesBlock value: lines ]
 	].
 	

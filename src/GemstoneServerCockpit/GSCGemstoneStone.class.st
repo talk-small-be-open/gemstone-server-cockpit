@@ -41,12 +41,13 @@ GSCGemstoneStone >> build [
 "TODO		tool checkMeBlock: "
 	].
 
-
-	self add: GSCTodeProject then: [ :project |
-		project
-			projectName: (self configAt: 'sourceCode:metacelloName'); "self appShortCode;"
-			gitBranch: (self configAt: 'sourceCode:gitBranch');
-			gitUrl: (self configAt: 'sourceCode:gitUrl').
+	(self configAt: 'sourceCode') keysAndValuesDo: [ :key :conf |
+		self add: GSCTodeProject then: [ :project |
+			project
+				projectName: (conf at: 'metacelloName');
+				gitBranch: (conf at: 'gitBranch');
+				gitUrl: (conf at: 'gitUrl').
+		]
 	]
 ]
 
