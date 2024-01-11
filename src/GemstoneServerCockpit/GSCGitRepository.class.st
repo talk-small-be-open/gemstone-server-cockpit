@@ -25,7 +25,7 @@ GSCGitRepository >> branch: anObject [
 GSCGitRepository >> checkMe [
 	self beNotNeedsAttention.
 	
-	(self core dirExists: self folderPath) ifFalse: [ ^ self beNeedsAttention: 'git repo does not exist' ].
+	(self core dirExists: (self folderPath / '.git') ) ifFalse: [ ^ self beNeedsAttention: 'git repo does not exist' ].
 
 ]
 

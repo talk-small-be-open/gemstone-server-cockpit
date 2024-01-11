@@ -73,7 +73,7 @@ GSCAnsibleTasks >> doPlayCheckOnly [
 
 { #category : #'as yet unclassified' }
 GSCAnsibleTasks >> doShowPlaybook [
-	self log: self playbookJson
+	self uiViewText: self playbookJson
 ]
 
 { #category : #initialization }

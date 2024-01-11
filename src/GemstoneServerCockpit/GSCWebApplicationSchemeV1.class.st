@@ -33,6 +33,11 @@ GSCWebApplicationSchemeV1 >> buildApplicationToolInto: aRootTool [
 	
 	app add: GSCGemstoneGems.
 	
+	
+	app add: GSCAnsibleTasks then: [ :ansible |
+		ansible addTasksJson: (config at: 'ansibleTasksJson')
+	].
+	
 	^ app
 ]
 
@@ -56,6 +61,7 @@ GSCWebApplicationSchemeV1 >> buildDefaultConfiguration [
 		gitBranch: 'master'.
 
 	"Files in repositories"
+	"TODO: In Config so etwas wie eine Vorlage/Kommentar machen können!"
 	(conf gitRepositories base)
 		path: '/opt/webapp/main';
 		url: '';
@@ -80,6 +86,8 @@ GSCWebApplicationSchemeV1 >> buildDefaultConfiguration [
 
 	conf mail
 		smtpRelayhost: nil.
+		
+	conf ansibleTasksJson: '[ { } ]'.
 
 	^ conf asGscConfiguration
 ]

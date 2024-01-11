@@ -207,6 +207,10 @@ div.subprocess {
 	left: 10%;
 	right: 10%;
 }
+div.subprocess pre.lastLogEntries { 
+	max-height: 50vh;
+	overflow-y: auto;
+}
 
 div.main {
  display: flex;
