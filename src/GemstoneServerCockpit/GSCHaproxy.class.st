@@ -52,6 +52,7 @@ global
 		user haproxy
 		group haproxy
 		daemon
+		unix-bind user root group www-data mode 660
 
 defaults
 		log			global

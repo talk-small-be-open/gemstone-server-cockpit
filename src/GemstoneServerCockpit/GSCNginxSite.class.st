@@ -135,7 +135,7 @@ add_header Cache-Control "no-store, no-cache, must-revalidate, max-age=0, proxy-
 add_header Content-Security-Policy "connect-src https: ''self'' wss://$host;";
 
 # proxy_pass http://127.0.0.1:<?stt= me haproxyPortNumber ?>;
-proxy_pass http://unix:/tmp/haproxy_<?stt= me appShortCode ?>.socket:/;
+proxy_pass http://unix:/tmp/haproxy_<?stt= me appShortCode ?>.socket:;
 proxy_socket_keepalive on;
 
 # For upstream keepalive to work properly
