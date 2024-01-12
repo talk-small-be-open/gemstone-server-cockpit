@@ -97,8 +97,10 @@ GSCTextFile >> initMe [
 		self log: fileReference contents ]"
 	
 "	mode := 'u=rwx,g=rx'."
-	owner := self serverUsername.
-	group := self serverGroupname.
+	owner ifBlank: [
+		owner := self serverUsername ].
+	group ifBlank: [
+		group := self serverGroupname ].
 ]
 
 { #category : #initialization }
