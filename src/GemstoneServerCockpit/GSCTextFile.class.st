@@ -18,7 +18,7 @@ Class {
 GSCTextFile >> beRootOwned [
 	owner := 'root'.
 	group := 'root'.
-	mode := 'u=rw,g=rw'
+	mode := 'u=rw'
 ]
 
 { #category : #'as yet unclassified' }
@@ -105,9 +105,7 @@ GSCTextFile >> initMe [
 GSCTextFile >> initialize [
 	super initialize.
 	
-	mode := 'u=rwx,g=rx'.
-	owner := 'root'.
-	group := 'root'.
+	self beRootOwned
 ]
 
 { #category : #testing }

@@ -93,6 +93,11 @@ GEM_MAX_SMALLTALK_STACK_DEPTH = 5000;
 '
 ]
 
+{ #category : #accessing }
+GSCGemstoneStone >> gsHome [
+	^ self gemstoneGsHome pathString
+]
+
 { #category : #testing }
 GSCGemstoneStone >> hasKeyfile [
 	^ self keyfilePath notBlank
@@ -115,8 +120,8 @@ GSCGemstoneStone >> monitConfigTemplate [
 check process <?stt= me monitCheckName ?> matching "^/opt/.*/sys/stoned <?stt= me stoneName ?> .*$"
 			ONREBOOT START
 			MODE ACTIVE
-			start program = "$GS_HOME/bin/startStone <?stt= me stoneName ?>" as uid "<?stt= me serverUsername ?>" gid "adm"
-			stop program = "$GS_HOME/bin/stopStone <?stt= me stoneName ?>" as uid "<?stt= me serverUsername ?>" gid "adm"
+			start program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> <?stt= me gsHome ?>/bin/startStone <?stt= me stoneName ?>''" as uid "<?stt= me serverUsername ?>" gid "adm"
+			stop program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> <?stt= me gsHome ?>/bin/stopStone <?stt= me stoneName ?>''" as uid "<?stt= me serverUsername ?>" gid "adm"
  			if 7 restarts within 10 cycles then stop
 #			if totalmem > 700 Mb then alert
 			if cpu > 60% for 4 cycles then alert
@@ -141,8 +146,8 @@ check process <?stt= me netldiMonitCheckName ?> matching "^/opt/.*/sys/netldid <
 			ONREBOOT START
 			DEPENDS ON <?stt= me monitCheckName ?>
 			MODE ACTIVE
-			start program = "$GS_HOME/bin/startNetldi <?stt= me stoneName ?>" as uid "<?stt= me serverUsername ?>" gid "adm"
-			stop program = "/$GS_HOME/bin/stopNetldi <?stt= me stoneName ?>" as uid "<?stt= me serverUsername ?>" gid "adm" with timeout 90 seconds
+			start program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> <?stt= me gsHome ?>/bin/startNetldi <?stt= me stoneName ?>''" as uid "<?stt= me serverUsername ?>" gid "adm"
+			stop program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> <?stt= me gsHome ?>/bin/stopNetldi <?stt= me stoneName ?>''" as uid "<?stt= me serverUsername ?>" gid "adm" with timeout 90 seconds
  			if 7 restarts within 10 cycles then stop
 #			if totalmem > 700 Mb then alert
 			if cpu > 60% for 4 cycles then alert

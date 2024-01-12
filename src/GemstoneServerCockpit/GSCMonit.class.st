@@ -14,6 +14,7 @@ GSCMonit >> build [
 		file
 			filePath: ('/etc/monit/monitrc');
 			beRootOwned;
+			mode: '0700';
 			contentTemplate: self monitConfigTemplate
 	].
 
