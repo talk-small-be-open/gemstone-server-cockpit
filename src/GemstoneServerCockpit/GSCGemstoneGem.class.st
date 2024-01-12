@@ -71,10 +71,10 @@ check process <?stt= me monitCheckName ?> with pidfile <?stt= me gsHome ?>/serve
 	ONREBOOT START
 	GROUP gemstone_gems
 	MODE ACTIVE
-	start program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> <?stt= me gsHome ?>/bin/todeIt <?stt= me stoneName ?> /home/seaside/gemServer --restart=seaside<?stt= me portNumber ?>'' " as uid "<?stt= me configAt: #server:username ?>" gid "adm"
-	stop program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> <?stt= me gsHome ?>/bin/todeIt <?stt= me stoneName ?> /home/seaside/gemServer --stop=seaside<?stt= me portNumber ?>'' " as uid "<?stt= me configAt: #server:username ?>" gid "adm" with timeout 90 seconds
+	start program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> <?stt= me gsHome ?>/bin/todeIt <?stt= me stoneName ?> /home/seaside/gemServer --restart=seaside<?stt= me portNumber ?>'' " as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>"
+	stop program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> <?stt= me gsHome ?>/bin/todeIt <?stt= me stoneName ?> /home/seaside/gemServer --stop=seaside<?stt= me portNumber ?>'' " as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>" with timeout 90 seconds
 	if 7 restarts within 10 cycles then stop
-	if failed url http://127.0.0.1:<?stt= me portNumber ?>/ping and content == "OK" for 2 cycles then alert
+#	if failed url http://127.0.0.1:<?stt= me portNumber ?>/ping and content == "OK" for 2 cycles then alert
 #	if totalmem > 700 Mb then alert
 	if cpu > 60% for 4 cycles then alert
 '
