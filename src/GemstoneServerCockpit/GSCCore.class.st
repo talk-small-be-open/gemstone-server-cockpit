@@ -513,24 +513,35 @@ GSCCore >> setup [
 
 	sudoPrompt := UUID new asString36.
 
-	rootTool := GSCRoot new.
-	
 	defaultRootConf := GSCRootScheme new buildDefaultConfiguration.
 	
+	"Get root config from external file"
 	rootConf := GSCConfiguration fromFile: ('/etc/gsc/gsc.conf').
+
+	"pre-load with the default configuration"
 	rootConf presetFrom: defaultRootConf.
+	
+	"Store it back to the file (could have added some new default values)"
 	rootConf storeToFile.
 	
+	"Create the root node of the tool tree"
+	rootTool := GSCRoot new.
 	rootTool config: rootConf.
-	
 	rootTool build.
 		
+	"Do soms stuff inside Pharo to set things right"
 	self setupPharo.
+	
+	"build the tool tree according to the config"
+	"Build tools for the Linux server infrastructure"
 	self setupServer.
+	
+	"Build tools for the one or many applications, taken from their conf files"
 	self setupApplicationsFromConfigFiles.
 	
 	"self setupExample."
 	
+	"Initialize the tool tree, after the instatiation of the whole tree"
 	rootTool init.
 "	rootTool check."
 
@@ -783,6 +794,11 @@ GSCCore >> sudoEnsureDirectory: aDirPath owner: anOwnerString group: aGroupStrin
 		aBlock ifNotNil: [ aBlock value ]
 			
 	]
+]
+
+{ #category : #'as yet unclassified' }
+GSCCore >> sudoReadCommand: aCommand [
+	^ self sudoReadCommand: aCommand args: #()
 ]
 
 { #category : #shell }

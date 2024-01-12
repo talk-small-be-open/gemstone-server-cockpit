@@ -16,6 +16,11 @@ Class {
 	#category : #'GemstoneServerCockpit-Model'
 }
 
+{ #category : #accessing }
+GSCEasyConfigurationBuilder >> __ [
+	^ self comment
+]
+
 { #category : #converting }
 GSCEasyConfigurationBuilder >> asGscConfiguration [
 	^ GSCConfiguration fromDictionary: self asNestedDictionary
@@ -57,6 +62,16 @@ GSCEasyConfigurationBuilder >> at: aKey put: aValue [
 { #category : #initialization }
 GSCEasyConfigurationBuilder >> clear [
 	values := IdentityDictionary new
+]
+
+{ #category : #accessing }
+GSCEasyConfigurationBuilder >> comment [
+	^ self at: '__comment'
+]
+
+{ #category : #accessing }
+GSCEasyConfigurationBuilder >> comment: aString [
+	^ self at: '__comment' put: aString
 ]
 
 { #category : #'reflective operations' }

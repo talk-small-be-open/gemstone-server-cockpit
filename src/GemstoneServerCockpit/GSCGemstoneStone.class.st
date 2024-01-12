@@ -41,7 +41,7 @@ GSCGemstoneStone >> build [
 "TODO		tool checkMeBlock: "
 	].
 
-	(self configAt: 'sourceCode') keysAndValuesDo: [ :key :conf |
+	(self configAt: 'sourceCode') dataDo: [ :key :conf |
 		self add: GSCTodeProject then: [ :project |
 			project
 				projectName: (conf at: 'metacelloName');

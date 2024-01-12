@@ -6,7 +6,8 @@ Class {
 		'parent',
 		'log',
 		'needsAttention',
-		'error'
+		'error',
+		'facts'
 	],
 	#category : #'GemstoneServerCockpit-Model'
 }
@@ -157,6 +158,11 @@ GSCTool >> clearError [
 ]
 
 { #category : #logging }
+GSCTool >> clearFacts [
+	facts := Dictionary new
+]
+
+{ #category : #logging }
 GSCTool >> clearLog [
 	log := OrderedCollection new
 ]
@@ -267,6 +273,16 @@ GSCTool >> error: aString [
 	error := aString
 ]
 
+{ #category : #accessing }
+GSCTool >> factAt: aName [
+	^ facts at: aName ifAbsent: [ nil ]
+]
+
+{ #category : #accessing }
+GSCTool >> factAt: aName put: aValue [
+	facts at: aName put: aValue
+]
+
 { #category : #'config-access' }
 GSCTool >> gemstoneGsHome [
 	^ self root gemstoneGsHome
@@ -290,6 +306,7 @@ GSCTool >> initChildren [
 
 { #category : #initialization }
 GSCTool >> initMe [
+	"subclasses"
 ]
 
 { #category : #initialization }
@@ -298,6 +315,7 @@ GSCTool >> initialize [
 	
 	children := OrderedCollection new.
 	self clearLog.
+	self clearFacts.
 	needsAttention := false
 ]
 
@@ -383,6 +401,16 @@ GSCTool >> renderBodyOn: html [
 ]
 
 { #category : #rendering }
+GSCTool >> renderFactsOn: html [
+	facts ifNotBlank: [
+		facts keysAndValuesDo: [ :key :value |
+			html table: [ 
+				html tableRow: [ 
+					html tableHeading: key.
+					html tableData: value ] ] ] ]
+]
+
+{ #category : #rendering }
 GSCTool >> renderLabel: aString number: aNumber on: html [
 
 	html div class: 'labelAndValue'; with: [
@@ -438,6 +466,7 @@ GSCTool >> renderOn: html [
 	self needsAttention ifTrue: [ html div class: 'needsAttention'; with: 'Needs attention!' ].
 
 	self renderActionsOn: html.
+	self renderFactsOn: html.
 	self renderBodyOn: html.
 	self renderLogOn: html.
 

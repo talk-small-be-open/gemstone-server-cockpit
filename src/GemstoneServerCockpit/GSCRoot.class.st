@@ -66,6 +66,17 @@ GSCRoot >> gemstoneGsHome [
 	^ ((self configAt: 'gemstone:gsHome') ifBlank: [ '/opt/GsDevKit_home' ]) asPath.
 ]
 
+{ #category : #accessing }
+GSCRoot >> hostname [
+	^ self factAt: 'hostname'
+]
+
+{ #category : #'private - initialization' }
+GSCRoot >> initMe [
+	self factAt: 'hostname' put: (
+		self core sudoReadCommand: 'hostname' ).
+]
+
 { #category : #testing }
 GSCRoot >> isRoot [
 	^ true

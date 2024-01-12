@@ -7,6 +7,11 @@ Class {
 	#category : #'GemstoneServerCockpit-Model'
 }
 
+{ #category : #'as yet unclassified' }
+GSCConfigurationDictionary class >> commentPrefix [
+	^ '__'
+]
+
 { #category : #'instance creation' }
 GSCConfigurationDictionary class >> fromDictionary: aDictionary [
 	^ self new
@@ -74,6 +79,14 @@ GSCConfigurationDictionary >> dataCopy [
 	self recurseCopyDataFrom: data to: newDict.
 
 	^ newDict
+]
+
+{ #category : #enumerating }
+GSCConfigurationDictionary >> dataDo: aBlockWithKeyAndValue [
+	"Official method to enumerate through real data, without the comments"
+	self keysAndValuesDo: [ :key :value |
+		(self isCommentKey: key) ifFalse: [
+			aBlockWithKeyAndValue value: key value: value ] ]
 ]
 
 { #category : #accessing }
@@ -145,6 +158,11 @@ GSCConfigurationDictionary >> initialize [
 	super initialize.
 	
 	data := self dictionaryClass new
+]
+
+{ #category : #testing }
+GSCConfigurationDictionary >> isCommentKey: aString [
+	^ aString beginsWith: self class commentPrefix
 ]
 
 { #category : #testing }
@@ -225,14 +243,16 @@ GSCConfigurationDictionary >> recurseIn: aDictionary path: aKeysCollection do: a
 	"aTwoArgBlock takes keyPathInStructure dictionaryAtThisPath"
 	
 	aDictionary keysAndValuesDo: [ :key :value |
-		| newPath |
-		newPath := aKeysCollection copyWith: key.
+"		(self isCommentKey: key) ifFalse: ["
+			| newPath |
+			
+			newPath := aKeysCollection copyWith: key.
 
-		aTwoArgBlock value: newPath value: value.
-		
-		value isDictionary ifTrue: [
-			self recurseIn: value path: newPath do: aTwoArgBlock ].
-
+			aTwoArgBlock value: newPath value: value.
+			
+			value isDictionary ifTrue: [
+				self recurseIn: value path: newPath do: aTwoArgBlock ].
+"		]"
 	]
 ]
 

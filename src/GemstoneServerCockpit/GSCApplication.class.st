@@ -32,7 +32,7 @@ GSCApplication >> build [
 	self add: GSCFolder then: [ :folder |
 		folder name: 'git repositories'.
 		
-		(self configAt: 'gitRepositories') keysAndValuesDo: [ :key :conf |
+		(self configAt: 'gitRepositories') dataDo: [ :key :conf |
 			folder add: GSCGitRepository then: [ :git |
 				git
 					folderPath: (conf at: 'path');

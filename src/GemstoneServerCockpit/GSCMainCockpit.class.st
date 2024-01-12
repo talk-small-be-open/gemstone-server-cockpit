@@ -70,6 +70,8 @@ GSCMainCockpit >> renderContentOn: html [
 
 	html div class: 'mainTitle'; with: 'GemStone Server Cockpit'.
 	
+	html div: self rootTool hostname.
+	
 	self renderCoreToolbarOn: html.
 "	self renderRootToolbarOn: html."
 

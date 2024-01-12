@@ -62,7 +62,7 @@ GSCWebApplicationSchemeV1 >> buildDefaultConfiguration [
 
 	"Files in repositories"
 	"TODO: In Config so etwas wie eine Vorlage/Kommentar machen können!"
-	(conf gitRepositories base)
+	(conf gitRepositories __example)
 		path: '/opt/webapp/main';
 		url: '';
 		branch: 'master'.
