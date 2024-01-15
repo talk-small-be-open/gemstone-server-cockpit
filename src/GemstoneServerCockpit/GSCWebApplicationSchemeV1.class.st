@@ -37,6 +37,12 @@ GSCWebApplicationSchemeV1 >> buildApplicationToolInto: aRootTool [
 	app add: GSCAnsibleTasks then: [ :ansible |
 		ansible addTasksJson: (config at: 'ansibleTasksJson')
 	].
+
+	"additional apt packages from the config"
+	(config at: 'softwarePackages') do: [ :each |
+		app add: GSCAptPackage then: [ :apt |
+			apt packageName: each ] ].
+
 	
 	^ app
 ]
@@ -88,6 +94,8 @@ GSCWebApplicationSchemeV1 >> buildDefaultConfiguration [
 		smtpRelayhost: nil.
 		
 	conf ansibleTasksJson: '[ { } ]'.
+
+	conf softwarePackages: #().
 
 	^ conf asGscConfiguration
 ]
