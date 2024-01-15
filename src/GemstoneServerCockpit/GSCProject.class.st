@@ -5,7 +5,7 @@ Class {
 		'config',
 		'folder'
 	],
-	#category : #GemstoneServerCockpit
+	#category : #'GemstoneServerCockpit-Obsolete'
 }
 
 { #category : #'as yet unclassified' }

@@ -8,10 +8,7 @@ Commands:
 Class {
 	#name : #GSCCommandLineHandler,
 	#superclass : #CommandLineHandler,
-	#instVars : [
-		'gscProject'
-	],
-	#category : #GemstoneServerCockpit
+	#category : #'GemstoneServerCockpit-Misc'
 }
 
 { #category : #accessing }
@@ -26,64 +23,45 @@ GSCCommandLineHandler class >> description [
 
 { #category : #activation }
 GSCCommandLineHandler >> activate [
-	| config |
 
-	self activateHelp
-		ifTrue: [ ^ self ].
+	self activateHelp ifTrue: [ ^ self ].
 	
-	config := self readGscConfigFile.
+"	config := self readGscConfigFile."
 
-	gscProject := GSCProject config: config.
+"	gscProject := GSCProject config: config."
 	
 	"Set some init data, because we run from command line"
-	gscProject folder: FileSystem workingDirectory.
+"	gscProject folder: FileSystem workingDirectory."
 
-	gscProject handleCommandline: self.
+"	gscProject handleCommandline: self."
 
-]
 
-{ #category : #accessing }
-GSCCommandLineHandler >> gscProject [
+	(self hasOption: 'url') ifTrue: [
+		self stdout 
+			nextPutAll: GSCCore instance applicationUrl;
+			lf.
+		^ self exitSuccess ].
 
-	^ gscProject
-]
+	(self hasOption: 'install') ifTrue: [
+		GSCCore install.
+		^ self exitSuccess ].
 
-{ #category : #accessing }
-GSCCommandLineHandler >> gscProject: anObject [
+		
+"	(self hasOption: 'createansible') ifTrue: [
+		self createAnsibleFiles.
+		^ self exitSuccess ]."
 
-	gscProject := anObject
+"	(self hasOption: 'deploy') ifTrue: [
+		self deploy.
+		^ self exitSuccess ]."
+
+	"no args? do nothing, stay open, should be UI"
+"	self hasArguments
+		ifTrue: [ ^ self exitFailure ]
+		ifFalse: [ self openGui ]"
 ]
 
 { #category : #'as yet unclassified' }
 GSCCommandLineHandler >> openGui [
 	GSCProjectCockpitGui open
-]
-
-{ #category : #execution }
-GSCCommandLineHandler >> readGscConfigFile [
-	"Install the source file given by aFileReference"
-	| codeImporter fileReference configurator |
-
-	fileReference := './project.st' asFileReference.
-	configurator := GSCConfigurator new.
-	Smalltalk at: #GSC put: configurator.
-	
-	fileReference exists ifFalse: [ self error: 'no file' ].
-	
-"	self outputStreamDo: [ :s | s << (fileReference pathString) ]."
-		
-	"parse the code given in the source file"
-	fileReference readStreamEncoded: 'utf8' do: [ :stream |
-"		| stream |
-		stream := ZnCharacterReadStream on: binary encoding: 'utf8'."
-"		["
-			codeImporter := CodeImporter fileStream: stream.
-			codeImporter logSource: false.
-			codeImporter evaluateDeclarations.
-"		]"
-"		on: Error, OCSemanticWarning, OCSemanticError
-		do: [ :e | ""tbd"" ]"
-	].
-
-	^configurator
 ]

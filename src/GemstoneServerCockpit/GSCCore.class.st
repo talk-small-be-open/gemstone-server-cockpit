@@ -100,6 +100,11 @@ GSCCore >> OLDrunAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
 ]
 
 { #category : #'as yet unclassified' }
+GSCCore >> applicationUrl [
+	^ self seasideApplication url
+]
+
+{ #category : #'as yet unclassified' }
 GSCCore >> autoexpireSudoPassword [
 
 	(sudoPasswortTimestamp isNil or: [ sudoPasswortTimestamp < (DateAndTime now - 2 hours)]) ifTrue: [ 
@@ -134,6 +139,15 @@ GSCCore >> createOSSUnixSubprocess [
 { #category : #shell }
 GSCCore >> dirExists: aPathString [
 	^ self runSudoShellIsSuccess: ('test -d "', (aPathString asPath pathString), '"')
+]
+
+{ #category : #'as yet unclassified' }
+GSCCore >> ensureWebserver [
+	"Webserver starten"
+	| webserver |
+	webserver := ZnZincServerAdaptor default.
+	(webserver isNil or: [ webserver isRunning not ]) ifTrue: [
+		self startWebserver ]
 ]
 
 { #category : #shell }
@@ -191,6 +205,9 @@ GSCCore >> initialize [
 { #category : #actions }
 GSCCore >> install [
 	self installSeasideComponents.
+
+	self ensureWebserver.
+
 	self setup.
 ]
 
@@ -495,6 +512,11 @@ GSCCore >> runSudoShellIsSuccess: aString [
 		  onFinish: nil
 ]
 
+{ #category : #'as yet unclassified' }
+GSCCore >> seasideApplication [
+	^ WAAdmin defaultDispatcher handlerAt: self instanceId asString
+]
+
 { #category : #shell }
 GSCCore >> serverUsername [
 	^ self rootTool configAt: 'server:username'
@@ -638,6 +660,15 @@ GSCCore >> setupServer [
 			tool actionBlock: [ self clearSudoPassword ].
 			tool title: 'reset sudo'
 	].	].
+]
+
+{ #category : #'as yet unclassified' }
+GSCCore >> startWebserver [
+	"Webserver starten"
+	| port |
+	port := 8650 "Looks like: 8GSC".
+	ZnZincServerAdaptor startOn: port.
+
 ]
 
 { #category : #accessing }

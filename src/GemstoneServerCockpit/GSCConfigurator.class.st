@@ -1,5 +1,5 @@
 Class {
 	#name : #GSCConfigurator,
 	#superclass : #GSCEasyConfigurationBuilder,
-	#category : #GemstoneServerCockpit
+	#category : #'GemstoneServerCockpit-Obsolete'
 }

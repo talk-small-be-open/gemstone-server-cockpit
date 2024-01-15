@@ -5,7 +5,7 @@ Class {
 		'menu',
 		'output'
 	],
-	#category : #GemstoneServerCockpit
+	#category : #'GemstoneServerCockpit-Misc'
 }
 
 { #category : #'user interface' }

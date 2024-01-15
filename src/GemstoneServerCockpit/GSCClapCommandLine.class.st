@@ -5,7 +5,7 @@ Class {
 		'outStream',
 		'gscProject'
 	],
-	#category : #GemstoneServerCockpit
+	#category : #'GemstoneServerCockpit-Obsolete'
 }
 
 { #category : #'as yet unclassified' }

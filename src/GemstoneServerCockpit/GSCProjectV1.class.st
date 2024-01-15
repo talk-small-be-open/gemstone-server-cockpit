@@ -1,7 +1,7 @@
 Class {
 	#name : #GSCProjectV1,
 	#superclass : #GSCProject,
-	#category : #GemstoneServerCockpit
+	#category : #'GemstoneServerCockpit-Obsolete'
 }
 
 { #category : #'as yet unclassified' }
