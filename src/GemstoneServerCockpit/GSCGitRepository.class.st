@@ -40,6 +40,14 @@ GSCGitRepository >> doCloneFromGitRepo [
 			self runShellCommand: ('git clone --branch ', self branch, ' ', self url, ' ', path) ] ]
 ]
 
+{ #category : #'as yet unclassified' }
+GSCGitRepository >> doPull [
+	| path |
+	path := self folderPath pathString.
+	
+	self runShellCommand: ('git -C "', path, '" pull')
+]
+
 { #category : #accessing }
 GSCGitRepository >> folderPath [
 
