@@ -544,7 +544,7 @@ GSCCore >> setup [
 	rootConf presetFrom: defaultRootConf.
 	
 	"Store it back to the file (could have added some new default values)"
-	rootConf storeToFile.
+"?Why	rootConf storeToFile."
 	
 	"Create the root node of the tool tree"
 	rootTool := GSCRoot new.
