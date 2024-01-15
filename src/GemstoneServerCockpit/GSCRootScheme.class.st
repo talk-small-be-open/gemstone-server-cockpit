@@ -15,7 +15,8 @@ GSCRootScheme >> buildDefaultConfiguration [
 		username: 'ubuntu';
 		installationPath: '/opt/webapp';
 		adminEmail: '';
-		softwarePackages: #(vim).
+		aptPackages: #(vim);
+		snapPackages: #().
 
 	conf gemstone
 		gsHome: '/opt/GsDevKit_home'.

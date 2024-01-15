@@ -39,10 +39,14 @@ GSCWebApplicationSchemeV1 >> buildApplicationToolInto: aRootTool [
 	].
 
 	"additional apt packages from the config"
-	(config at: 'softwarePackages') do: [ :each |
+	(config at: 'aptPackages') do: [ :each |
 		app add: GSCAptPackage then: [ :apt |
 			apt packageName: each ] ].
 
+	"additional apt packages from the config"
+	(config at: 'snapPackages') do: [ :each |
+		app add: GSCSnapPackage then: [ :apt |
+			apt packageName: each ] ].
 	
 	^ app
 ]
@@ -95,7 +99,8 @@ GSCWebApplicationSchemeV1 >> buildDefaultConfiguration [
 		
 	conf ansibleTasksJson: '[ { } ]'.
 
-	conf softwarePackages: #().
+	conf aptPackages: #().
+	conf snapPackages: #().
 
 	^ conf asGscConfiguration
 ]

@@ -601,7 +601,7 @@ GSCCore >> setupServer [
 				apt packageName: each ] ].
 		
 		"additional apt packages from the config"
-		(rootTool configAt: 'server:softwarePackages') do: [ :each |
+		(rootTool configAt: 'server:aptPackages') do: [ :each |
 			folder add: GSCAptPackage then: [ :apt |
 				apt packageName: each ] ].
 
