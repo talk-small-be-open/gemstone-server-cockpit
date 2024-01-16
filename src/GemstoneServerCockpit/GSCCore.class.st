@@ -271,6 +271,33 @@ GSCCore >> log: aString [
 	Transcript crShow: aString
 ]
 
+{ #category : #'as yet unclassified' }
+GSCCore >> readCommand: aCommand [
+	^ self readCommand: aCommand args: #()
+]
+
+{ #category : #'as yet unclassified' }
+GSCCore >> readCommand: aCommand args: aCollection [
+	^ self readCommand: aCommand sudo: false args: aCollection
+]
+
+{ #category : #shell }
+GSCCore >> readCommand: aCommand sudo: aBoolean args: aCollection [
+
+	| lines |
+	lines := OrderedCollection new.
+
+	self
+		runSshOSSUnixSubprocess: aCommand
+		args: aCollection
+		sudo: aBoolean
+		onLines: [ :newLines | lines addAll: newLines ]
+		onRun: nil
+		onFinish: nil.
+
+	^ lines joinUsingLf
+]
+
 { #category : #helpers }
 GSCCore >> realPathForFile: aFileReferenceOrString [
 	| path |
@@ -834,19 +861,7 @@ GSCCore >> sudoReadCommand: aCommand [
 
 { #category : #shell }
 GSCCore >> sudoReadCommand: aCommand args: aCollection [
-
-	| lines |
-	lines := OrderedCollection new.
-
-	self
-		runSshOSSUnixSubprocess: aCommand
-		args: aCollection
-		sudo: true
-		onLines: [ :newLines | lines addAll: newLines ]
-		onRun: nil
-		onFinish: nil.
-
-	^ lines joinUsingLf
+	^ self readCommand: aCommand sudo: true args: aCollection
 ]
 
 { #category : #shell }

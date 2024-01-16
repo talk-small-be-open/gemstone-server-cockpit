@@ -36,22 +36,22 @@ GSCCommandLineHandler >> activate [
 "	gscProject handleCommandline: self."
 
 
-	(self hasOption: 'url') ifTrue: [
+	(self subCommand = 'url') ifTrue: [
 		self stdout 
 			nextPutAll: GSCCore instance applicationUrl;
 			lf.
 		^ self exitSuccess ].
 
-	(self hasOption: 'install') ifTrue: [
+	(self subCommand = 'install') ifTrue: [
 		GSCCore install.
 		^ self exitSuccess ].
 
 		
-"	(self hasOption: 'createansible') ifTrue: [
+"	(self subCommand = 'createansible') ifTrue: [
 		self createAnsibleFiles.
 		^ self exitSuccess ]."
 
-"	(self hasOption: 'deploy') ifTrue: [
+"	(self subCommand = 'deploy') ifTrue: [
 		self deploy.
 		^ self exitSuccess ]."
 
@@ -64,4 +64,12 @@ GSCCommandLineHandler >> activate [
 { #category : #'as yet unclassified' }
 GSCCommandLineHandler >> openGui [
 	GSCProjectCockpitGui open
+]
+
+{ #category : #accessing }
+GSCCommandLineHandler >> subCommand [
+	| firstArg |
+	firstArg := self argumentAt: 1.
+"	self checkSubCommand: firstArg."
+	^ firstArg
 ]

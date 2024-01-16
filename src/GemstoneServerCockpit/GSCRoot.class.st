@@ -74,7 +74,7 @@ GSCRoot >> hostname [
 { #category : #'private - initialization' }
 GSCRoot >> initMe [
 	self factAt: 'hostname' put: (
-		self core sudoReadCommand: 'hostname' ).
+		self core readCommand: 'hostname' ).
 ]
 
 { #category : #testing }
