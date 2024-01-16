@@ -37,7 +37,7 @@ BaselineOfGemstoneServerCockpit >> baseline: spec [
 	
 			spec
 				package: 'GemstoneServerCockpit' with: [
-					spec requires: #('Seaside3' 'OSSubprocess' "'RenoirSt'" 'MCL-Utils-Blankness' 'MCLSmalltalkTemplate') ].
+					spec requires: #('Seaside3' 'OSSubprocess' "'RenoirSt'" 'MCL-Utils-Blankness' 'MCL-Utils-CollectionSugar' 'MCLSmalltalkTemplate') ].
 		].
 	
 	spec

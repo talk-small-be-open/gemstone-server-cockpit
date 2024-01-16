@@ -37,14 +37,16 @@ GSCCommandLineHandler >> activate [
 
 
 	(self subCommand = 'url') ifTrue: [
-		self stdout 
-			nextPutAll: GSCCore instance applicationUrl;
-			lf.
-		^ self exitSuccess ].
+		^ self doUrl
+	].
 
 	(self subCommand = 'install') ifTrue: [
-		GSCCore install.
-		^ self exitSuccess ].
+		^ self doInstall
+	].
+
+	(self subCommand = 'update') ifTrue: [
+		^ self doUpdate
+	].
 
 		
 "	(self subCommand = 'createansible') ifTrue: [
@@ -59,6 +61,27 @@ GSCCommandLineHandler >> activate [
 "	self hasArguments
 		ifTrue: [ ^ self exitFailure ]
 		ifFalse: [ self openGui ]"
+]
+
+{ #category : #'as yet unclassified' }
+GSCCommandLineHandler >> doInstall [
+	GSCCore install.
+	^ self exitSuccess 
+]
+
+{ #category : #'as yet unclassified' }
+GSCCommandLineHandler >> doUpdate [
+	GSCCore update.
+	^ self exitSuccess 
+]
+
+{ #category : #'as yet unclassified' }
+GSCCommandLineHandler >> doUrl [
+	self stdout 
+		nextPutAll: GSCCore instance applicationUrl;
+		lf.
+
+	^ self exitSuccess
 ]
 
 { #category : #'as yet unclassified' }

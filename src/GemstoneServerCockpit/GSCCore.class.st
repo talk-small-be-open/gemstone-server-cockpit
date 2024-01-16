@@ -50,6 +50,11 @@ GSCCore class >> startUp: isComingUp [
 	]
 ]
 
+{ #category : #actions }
+GSCCore class >> update [
+	self instance update
+]
+
 { #category : #shell }
 GSCCore >> OLDrunAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
 	self isShellProcessRunning ifTrue: [ self error: 'Another shell process is running' ].
@@ -226,7 +231,7 @@ GSCCore >> installSeasideComponents [
 
 	app exceptionHandler: WADebugErrorHandler.
 
-	WAAdmin defaultDispatcher defaultName: appPath
+"nicht, weil versteckt	WAAdmin defaultDispatcher defaultName: appPath"
 ]
 
 { #category : #'as yet unclassified' }
@@ -943,6 +948,13 @@ GSCCore >> temporaryUniqueFile: anExtensionString [
 { #category : #'as yet unclassified' }
 GSCCore >> timestampSudoPassword [
 	sudoPasswortTimestamp := DateAndTime now
+]
+
+{ #category : #actions }
+GSCCore >> update [
+	Metacello registry
+		baseline: 'GemstoneServerCockpit';
+		load
 ]
 
 { #category : #writing }
