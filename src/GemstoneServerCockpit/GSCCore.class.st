@@ -46,7 +46,7 @@ GSCCore class >> instance [
 GSCCore class >> startUp: isComingUp [
 	isComingUp ifTrue: [
 		"Automatic read in the config files on the server"
-		self instance setup
+"		self instance setup"
 	]
 ]
 
