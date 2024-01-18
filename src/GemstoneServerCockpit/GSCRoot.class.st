@@ -2,7 +2,7 @@ Class {
 	#name : #GSCRoot,
 	#superclass : #GSCTool,
 	#instVars : [
-		'config'
+		'scheme'
 	],
 	#category : #'GemstoneServerCockpit-Model'
 }
@@ -24,7 +24,7 @@ GSCRoot >> build [
 	self add: GSCConfigurationEditor then: [ :editor |
 		editor
 			title: 'Root config';
-			config: config.
+			config: self config.
 	].
 
 ]
@@ -32,13 +32,7 @@ GSCRoot >> build [
 { #category : #accessing }
 GSCRoot >> config [
 
-	^ config
-]
-
-{ #category : #accessing }
-GSCRoot >> config: anObject [
-
-	config := anObject
+	^ scheme config
 ]
 
 { #category : #accessing }
@@ -85,6 +79,18 @@ GSCRoot >> isRoot [
 { #category : #accessing }
 GSCRoot >> root [
 	^ self
+]
+
+{ #category : #accessing }
+GSCRoot >> scheme [
+
+	^ scheme
+]
+
+{ #category : #accessing }
+GSCRoot >> scheme: anObject [
+
+	scheme := anObject
 ]
 
 { #category : #accessing }

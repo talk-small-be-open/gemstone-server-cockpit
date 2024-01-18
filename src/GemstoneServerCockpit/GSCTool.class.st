@@ -170,8 +170,7 @@ GSCTool >> clearLog [
 
 { #category : #accessing }
 GSCTool >> config [
-	^ self application ifNil: [ self root config ] ifNotNil: [ :app |
-		app config ]
+	^ self scheme config
 ]
 
 { #category : #accessing }
@@ -516,6 +515,12 @@ GSCTool >> runSudoShellCommand: aString then: aBlock [
 { #category : #'as yet unclassified' }
 GSCTool >> runTodeCommand: aCommand stone: aStoneName [
 	self runShellCommand: 'todeIt ', aStoneName, ' ', aCommand
+]
+
+{ #category : #accessing }
+GSCTool >> scheme [
+	^ self application ifNil: [ self root scheme ] ifNotNil: [ :app |
+		app scheme ]
 ]
 
 { #category : #'as yet unclassified' }

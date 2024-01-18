@@ -73,7 +73,6 @@ GSCGemstoneStone >> gemConfTemplate [
 #
 
 # SHR_PAGE_CACHE_SIZE_KB should always be > GEM_TEMPOBJ_CACHE_SIZE
-# Problems with limited license key. Could not get 2G of shared. SHR_PAGE_CACHE_SIZE_KB = 2000000;
 <?stt me hasKeyfile ifTrue: [ ?>
 KEYFILE = <?stt= me keyfilePath ?>;
 SHR_PAGE_CACHE_SIZE_KB = 2GB;
@@ -115,19 +114,9 @@ GSCGemstoneStone >> monitCheckName [
 
 { #category : #'as yet unclassified' }
 GSCGemstoneStone >> monitConfigTemplate [
-	^ GSCSttTemplate tool: self sttString: '
-# STONE
-check process <?stt= me monitCheckName ?> matching "^/opt/.*/sys/stoned <?stt= me stoneName ?> .*$"
-			ONREBOOT START
-			MODE ACTIVE
-			start program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> <?stt= me gsHome ?>/bin/startStone <?stt= me stoneName ?>''" as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>"
-			stop program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> <?stt= me gsHome ?>/bin/stopStone <?stt= me stoneName ?>''" as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>"
- 			if 7 restarts within 10 cycles then stop
-#			if totalmem > 700 Mb then alert
-			if cpu > 60% for 4 cycles then alert
-'
-
-
+	^ self scheme templateStoneMonitConfig
+		tool: self;
+		yourself
 ]
 
 { #category : #'as yet unclassified' }
@@ -137,21 +126,9 @@ GSCGemstoneStone >> netldiMonitCheckName [
 
 { #category : #'as yet unclassified' }
 GSCGemstoneStone >> netldiMonitConfigTemplate [
-
-	"TBD Maybe starting needs the USER and HOME env vars?!"
-
-	^ GSCSttTemplate tool: self sttString: '
-# NETLDI
-check process <?stt= me netldiMonitCheckName ?> matching "^/opt/.*/sys/netldid <?stt= me stoneName ?>_ldi .*$"
-			ONREBOOT START
-			DEPENDS ON <?stt= me monitCheckName ?>
-			MODE ACTIVE
-			start program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> <?stt= me gsHome ?>/bin/startNetldi <?stt= me stoneName ?>''" as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>"
-			stop program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> <?stt= me gsHome ?>/bin/stopNetldi <?stt= me stoneName ?>''" as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>" with timeout 90 seconds
- 			if 7 restarts within 10 cycles then stop
-#			if totalmem > 700 Mb then alert
-			if cpu > 60% for 4 cycles then alert
-'
+	^ self scheme templateNetldiMonitConfig
+		tool: self;
+		yourself
 ]
 
 { #category : #'as yet unclassified' }

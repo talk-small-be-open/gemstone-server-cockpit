@@ -17,8 +17,7 @@ GSCGemstoneGem >> build [
 			configTemplate: self monitConfigTemplate
 	].
 
-	"Register Servers in tODE"
-	"TODO only if not installed already"
+	"Seaside web server in gem"
 	self add: GSCGemstoneGemWebserver
 ]
 
@@ -56,20 +55,9 @@ GSCGemstoneGem >> monitCheckName [
 
 { #category : #'as yet unclassified' }
 GSCGemstoneGem >> monitConfigTemplate [
-	^ GSCSttTemplate tool: self sttString: '
-# GEM ON PORT <?stt= me portNumber ?>
-check process <?stt= me monitCheckName ?> with pidfile <?stt= me gsHome ?>/server/stones/<?stt= me stoneName ?>/logs/seaside<?stt= me portNumber ?>_server-<?stt= me portNumber ?>.pid
-	DEPENDS ON <?stt= me stoneTool netldiMonitCheckName ?>
-	ONREBOOT START
-	GROUP gemstone_gems
-	MODE ACTIVE
-	start program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> <?stt= me gsHome ?>/bin/todeIt <?stt= me stoneName ?> /home/seaside/gemServer --restart=seaside<?stt= me portNumber ?>'' " as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>"
-	stop program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> <?stt= me gsHome ?>/bin/todeIt <?stt= me stoneName ?> /home/seaside/gemServer --stop=seaside<?stt= me portNumber ?>'' " as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>" with timeout 90 seconds
-	if 7 restarts within 10 cycles then stop
-#	if failed url http://127.0.0.1:<?stt= me portNumber ?>/ping and content == "OK" for 2 cycles then alert
-#	if totalmem > 700 Mb then alert
-	if cpu > 60% for 4 cycles then alert
-'
+	^ self scheme templateGemMonitConfig
+		tool: self;
+		yourself
 ]
 
 { #category : #accessing }

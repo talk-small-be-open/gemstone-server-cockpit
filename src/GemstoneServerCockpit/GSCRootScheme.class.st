@@ -9,7 +9,7 @@ GSCRootScheme >> buildRootTool [
 	| root |
 
 	root := GSCRoot new.
-	root config: config.
+	root scheme: self.
 	root build.
 
 	^ root

@@ -9,6 +9,11 @@ Class {
 }
 
 { #category : #'instance creation' }
+GSCSttTemplate class >> sttString: aString [
+	^ self tool: nil sttString: aString
+]
+
+{ #category : #'instance creation' }
 GSCSttTemplate class >> tool: aGscTool sttString: aString [
 	^ self new
 		tool: aGscTool;

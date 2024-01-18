@@ -2,8 +2,8 @@ Class {
 	#name : #GSCApplication,
 	#superclass : #GSCTool,
 	#instVars : [
-		'config',
-		'appIndex'
+		'appIndex',
+		'scheme'
 	],
 	#category : #'GemstoneServerCockpit-Model'
 }
@@ -32,7 +32,7 @@ GSCApplication >> build [
 	self add: GSCConfigurationEditor then: [ :editor |
 		editor
 			title: 'App config';
-			config: config.
+			config: self config.
 	].
 
 	self add: GSCFolder then: [ :folder |
@@ -53,16 +53,7 @@ GSCApplication >> build [
 { #category : #accessing }
 GSCApplication >> config [
 
-	^ config
-]
-
-{ #category : #accessing }
-GSCApplication >> config: anObject [
-
-	config := anObject.
-	
-	"Try to read the number of the conf file."
-	appIndex := config indexFromFilename
+	^ scheme config
 ]
 
 { #category : #'as yet unclassified' }
@@ -91,12 +82,27 @@ GSCApplication >> recreateMyself [
 	self parent removeTool: self.
 	
 	"Add a new application like myself, with my config"
-	config createScheme buildApplicationToolInto: self core rootTool
+	scheme buildApplicationToolInto: self core rootTool
 ]
 
 { #category : #rendering }
 GSCApplication >> renderBodyOn: html [
 	html div: 'TBD'
+]
+
+{ #category : #accessing }
+GSCApplication >> scheme [
+
+	^ scheme
+]
+
+{ #category : #accessing }
+GSCApplication >> scheme: anObject [
+
+	scheme := anObject.
+	
+	"Try to read the number of the conf filename."
+	appIndex := scheme config indexFromFilename
 ]
 
 { #category : #'as yet unclassified' }
