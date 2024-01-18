@@ -4,23 +4,32 @@ Class {
 	#category : #'GemstoneServerCockpit-Model'
 }
 
-{ #category : #building }
-GSCRootScheme >> buildDefaultConfiguration [
-	
-	| conf |
-	
-	conf := GSCEasyConfigurationBuilder new.
+{ #category : #'as yet unclassified' }
+GSCRootScheme >> buildRootTool [
+	| root |
 
-	conf server
+	root := GSCRoot new.
+	root config: config.
+	root build.
+
+	^ root
+]
+
+{ #category : #building }
+GSCRootScheme >> defaultConfigurationBuilder [
+	| builder |
+	
+	builder := super defaultConfigurationBuilder.
+
+	builder server
 		username: 'ubuntu';
-		installationPath: '/opt/webapp';
 		adminEmail: '';
 		aptPackages: #(vim);
 		snapPackages: #().
 
-	conf gemstone
+	builder gemstone
 		gsHome: '/opt/GsDevKit_home'.
 		
 
-	^ conf asGscConfiguration
+	^ builder
 ]

@@ -52,27 +52,27 @@ GSCWebApplicationSchemeV1 >> buildApplicationToolInto: aRootTool [
 ]
 
 { #category : #building }
-GSCWebApplicationSchemeV1 >> buildDefaultConfiguration [
+GSCWebApplicationSchemeV1 >> defaultConfigurationBuilder [
 	
-	| conf |
+	| builder |
 	
-	conf := GSCEasyConfigurationBuilder new.
-
+	builder := super defaultConfigurationBuilder.
+	
 	"Meta - about the project"
-	conf project
+	builder project
 		shortCode: 'MyWebApp';
 		name: 'My web application';
 		email: 'andreas.brodbeck@mindclue.ch'.
 
 	"Source code repository"
-	conf sourceCode base
+	builder sourceCode base
 		gitUrl: '';
 		metacelloName: 'WebApp';
 		gitBranch: 'master'.
 
 	"Files in repositories"
 	"TODO: In Config so etwas wie eine Vorlage/Kommentar machen können!"
-	(conf gitRepositories __example)
+	(builder gitRepositories __example)
 		path: '/opt/webapp/main';
 		url: '';
 		branch: 'master'.
@@ -82,11 +82,11 @@ GSCWebApplicationSchemeV1 >> buildDefaultConfiguration [
 		url: 'ssh://gitolite@mindclue.dyndns.org:3690/kshp/albus_school_kshp.git';
 		branch: 'master'."
 
-	conf gemstone
+	builder gemstone
 		version: '3.6.5';
 		keyfile: nil.
 
-	conf web
+	builder web
 		webRoot: '/opt/webapp/main/web_root';
 		useSsl: false;
 		appUrlPaths: {'app'. 'admin'};
@@ -94,23 +94,13 @@ GSCWebApplicationSchemeV1 >> buildDefaultConfiguration [
 		workersCount: 3;
 		nginxIncludeFile: ''.
 
-	conf mail
+	builder mail
 		smtpRelayhost: nil.
 		
-	conf ansibleTasksJson: '[ { } ]'.
+	builder ansibleTasksJson: '[ { } ]'.
 
-	conf aptPackages: #().
-	conf snapPackages: #().
+	builder aptPackages: #().
+	builder snapPackages: #().
 
-	^ conf asGscConfiguration
-]
-
-{ #category : #accessing }
-GSCWebApplicationSchemeV1 >> ensureDefaultConfig [
-	
-	super ensureDefaultConfig.
-	
-	config presetFrom: self buildDefaultConfiguration
-	
-	"config at: 'gems:count' default: [ 3 ]"
+	^ builder
 ]

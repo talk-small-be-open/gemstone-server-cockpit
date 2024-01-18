@@ -43,5 +43,5 @@ GSCGemstoneGems >> startPort [
 
 { #category : #accessing }
 GSCGemstoneGems >> title [
-	^ 'Gem web workers'
+	^ 'GemStone web gems'
 ]

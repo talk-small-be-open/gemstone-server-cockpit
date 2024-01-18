@@ -102,5 +102,5 @@ GSCGemstoneGem >> stoneTool [
 
 { #category : #accessing }
 GSCGemstoneGem >> title [
-	^ 'gem ', gemIndex asString
+	^ 'web gem ', gemIndex asString
 ]

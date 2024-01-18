@@ -49,6 +49,12 @@ GSCConfiguration >> getDataFromFile: aFilePathString [
 	^ dictionary
 ]
 
+{ #category : #accessing }
+GSCConfiguration >> indexFromFilename [
+	"03_blablabla.conf -> 3"
+	^ (filePath basename copyUpTo: $_ ) asInteger ifNil: [ 0 ]
+]
+
 { #category : #testing }
 GSCConfiguration >> isFileDifferent [
 	| onDisk |
@@ -86,10 +92,8 @@ GSCConfiguration >> printOn: aStream [
 
 { #category : #'as yet unclassified' }
 GSCConfiguration >> schemeClass [
-	"TBD"
-"	^ GSCWebApplicationSchemeV1"
 	| className |
-	className := self at: #applicationScheme ifAbsent: [ 'GSCWebApplicationSchemeV1' ].
+	className := self at: #applicationScheme ifAbsent: [ GSCConfigError signal: 'missing applicationScheme in config file' ].
 	
 	^ Smalltalk at: className asSymbol
 ]

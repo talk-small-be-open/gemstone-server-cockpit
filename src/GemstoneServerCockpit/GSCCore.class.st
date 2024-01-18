@@ -563,25 +563,25 @@ GSCCore >> setSudoPassword: aString [
 
 { #category : #'as yet unclassified' }
 GSCCore >> setup [
-	| rootConf defaultRootConf |
+	| rootConf scheme |
 
 	sudoPrompt := UUID new asString36.
 
-	defaultRootConf := GSCRootScheme new buildDefaultConfiguration.
+"	defaultRootConf := GSCRootScheme new buildDefaultConfiguration."
 	
 	"Get root config from external file"
 	rootConf := GSCConfiguration fromFile: ('/etc/gsc/gsc.conf').
 
-	"pre-load with the default configuration"
-	rootConf presetFrom: defaultRootConf.
+	scheme := rootConf createScheme.
+
+"	""pre-load with the default configuration""
+	rootConf presetFrom: defaultRootConf."
 	
 	"Store it back to the file (could have added some new default values)"
 "?Why	rootConf storeToFile."
 	
 	"Create the root node of the tool tree"
-	rootTool := GSCRoot new.
-	rootTool config: rootConf.
-	rootTool build.
+	rootTool := scheme buildRootTool.
 		
 	"Do soms stuff inside Pharo to set things right"
 	self setupPharo.
@@ -624,7 +624,7 @@ GSCCore >> setupExampleApplications [
 	1 to: 5 do: [ :index |
 		| app scheme conf |
 		scheme := GSCWebApplicationSchemeV1 new.
-		conf := GSCConfiguration fromFile: ('/etc/gsc/applications/example', index asString, '.conf').
+		conf := GSCConfiguration fromFile: ('/etc/gsc/applications/', index asTwoCharacterString, '_example', index asString, '.conf').
 		conf at: 'project:shortCode' put: ('ExampleApp', index asString).
 		conf at: 'project:name' put: ('Example Webapp ', index asString).
 

@@ -51,7 +51,7 @@ GSCRoot >> doAddApplication [
 	"TODO: Name it."
 
 	scheme := schemeClass new.
-	conf := GSCConfiguration fromFile: ('/etc/gsc/applications/new.conf').
+	conf := GSCConfiguration fromFile: ('/etc/gsc/applications/99_new.conf').
 "	conf at: 'project:shortCode' put: 'NewWebApp'.
 	conf at: 'project:name' put: 'New Web Application'."
 
