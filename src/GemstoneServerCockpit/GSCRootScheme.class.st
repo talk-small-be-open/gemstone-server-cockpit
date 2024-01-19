@@ -6,13 +6,7 @@ Class {
 
 { #category : #'as yet unclassified' }
 GSCRootScheme >> buildRootTool [
-	| root |
-
-	root := GSCRoot new.
-	root scheme: self.
-	root build.
-
-	^ root
+	self subclassResponsibility
 ]
 
 { #category : #building }

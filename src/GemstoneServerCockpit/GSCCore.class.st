@@ -46,7 +46,7 @@ GSCCore class >> instance [
 GSCCore class >> startUp: isComingUp [
 	isComingUp ifTrue: [
 		"Automatic read in the config files on the server"
-"		self instance setup"
+		[ self instance setup ] on: Error do: [ "hm, what?" ]
 	]
 ]
 
@@ -571,6 +571,9 @@ GSCCore >> setSudoPassword: aString [
 GSCCore >> setup [
 	| rootConf scheme |
 
+	"Do soms stuff inside Pharo to set things right"
+	self setupPharo.
+
 	sudoPrompt := UUID new asString36.
 
 "	defaultRootConf := GSCRootScheme new buildDefaultConfiguration."
@@ -580,21 +583,11 @@ GSCCore >> setup [
 
 	scheme := rootConf createScheme.
 
-"	""pre-load with the default configuration""
-	rootConf presetFrom: defaultRootConf."
-	
 	"Store it back to the file (could have added some new default values)"
 "?Why	rootConf storeToFile."
 	
 	"Create the root node of the tool tree"
 	rootTool := scheme buildRootTool.
-		
-	"Do soms stuff inside Pharo to set things right"
-	self setupPharo.
-	
-	"build the tool tree according to the config"
-	"Build tools for the Linux server infrastructure"
-	self setupServer.
 	
 	"Build tools for the one or many applications, taken from their conf files"
 	self setupApplicationsFromConfigFiles.
@@ -644,60 +637,6 @@ GSCCore >> setupExampleApplications [
 { #category : #'as yet unclassified' }
 GSCCore >> setupPharo [
 	GSCHtmlCanvas selectAsDefault
-]
-
-{ #category : #'as yet unclassified' }
-GSCCore >> setupServer [
-	"TODO: DEV"
-"	filesystemRoot := '/tmp/gsc_test_file_root' asPath."
-
-	rootTool add: GSCFolder then: [ :folder |
-		folder name: 'Server software'.
-
-		"hardcoded apt packages for the server setup"
-		{'logrotate'. 'ufw'. 'git'. 'htop'. 'unzip'. 'zip'. 'pigz'. 'aptitude'. 'mosh'.
-		'cronic'. 'goaccess'. 'lnav'. 'mailutils' "for ngxblocker to send emails" } do: [ :each |
-			folder add: GSCAptPackage then: [ :apt |
-				apt packageName: each ] ].
-		
-		"additional apt packages from the config"
-		(rootTool configAt: 'server:aptPackages') do: [ :each |
-			folder add: GSCAptPackage then: [ :apt |
-				apt packageName: each ] ].
-
-		folder add: GSCSnapPackage then: [ :apt |
-			apt packageName: 'certbot' ].
-	].
-	
-	rootTool add: GSCNginx.
-	
-	rootTool add: GSCHaproxy.
-	
-	rootTool add: GSCMonit.
-	
-	rootTool add: GSCGsDevKit.
-
-	rootTool add: GSCAnsibleTasks then: [ :ansible |
-		ansible addTasksJson: '
-[
-    {
-        "name": "Set timezone to Switzerland",
-        "timezone": {
-            "name": "Europe/Zurich"
-        }
-    }
-]
-'
-	].
-
-	rootTool add: GSCFolder then: [ :folder |
-		folder name: 'Utilities'.
-
-		folder add: GSCShellConsole.
-		folder add: GSCGeneralTool then: [ :tool |
-			tool actionBlock: [ self clearSudoPassword ].
-			tool title: 'reset sudo'
-	].	].
 ]
 
 { #category : #'as yet unclassified' }
