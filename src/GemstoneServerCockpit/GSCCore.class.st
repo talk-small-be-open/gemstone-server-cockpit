@@ -236,7 +236,13 @@ GSCCore >> installSeasideComponents [
 
 { #category : #'as yet unclassified' }
 GSCCore >> instanceId [
-	uuidString ifNil: [ uuidString := UUID new asString36 ].
+	uuidString ifNil: [
+		uuidString := UUID new asString36.
+		
+		"Logging, so we can get that ID from somewhere, if unknown"
+		Transcript crShow: 'GSC application ID: '.
+		Transcript show: uuidString.
+	].
 	^ uuidString
 ]
 

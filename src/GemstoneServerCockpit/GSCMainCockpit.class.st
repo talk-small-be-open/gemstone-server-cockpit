@@ -425,7 +425,7 @@ GSCMainCockpit >> renderSubprocessOn: html [
 		html heading level3; with: 'Last log entries'.
 		core subprocessTailLines ifNotBlank: [ :lines |
 			html preformatted class: 'lastLogEntries'; with: [
-				lines do: [ :each | html text: each ] separatedBy: [ html text: Character lf ].
+				(lines lastAtMost: 30) do: [ :each | html text: each ] separatedBy: [ html text: Character lf ].
 		]]
 
 		] ].
