@@ -256,6 +256,9 @@ div.toolsPane a.listEntry:hover {
 div.toolsPane a.listEntry.selected {
  background-color: yellow;
 }
+div.toolsPane a.listEntry.main.selected {
+ background-color: #ddd;
+}
 div.toolsPane a.listEntry span.attributes {
 	padding-left: 1em;
 	float: right;
@@ -263,6 +266,9 @@ div.toolsPane a.listEntry span.attributes {
 }
 table.fileComparison { 
 	font-size: 66%;
+}
+.error {
+	color: red;
 }
 '
 ]

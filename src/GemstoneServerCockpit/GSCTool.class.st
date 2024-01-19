@@ -444,6 +444,18 @@ GSCTool >> renderListEntryOn: html [
 ]
 
 { #category : #rendering }
+GSCTool >> renderListHeadEntryOn: html [
+
+	"In a pane, render myself again on top of the children list, for UX convenience.
+	But without the children icon"
+	self needsAttention ifTrue: [
+		html span: '! '
+	].
+
+	html span: '< Main'.
+]
+
+{ #category : #rendering }
 GSCTool >> renderLogOn: html [
 	log ifNotEmpty: [ 
 		html div class: 'log'; with: [
@@ -467,9 +479,14 @@ GSCTool >> renderOn: html [
 
 	self renderActionsOn: html.
 	self renderFactsOn: html.
-	self renderBodyOn: html.
-	self renderLogOn: html.
 
+	[
+		self renderBodyOn: html.
+	] on: GSCMissingSudoPassword do: [ :e |
+		html div class: 'error'; with: 'This tool needs the sudo password'
+	].
+
+	self renderLogOn: html.
 ]
 
 { #category : #accessing }

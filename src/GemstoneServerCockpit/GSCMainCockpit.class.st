@@ -364,11 +364,23 @@ GSCMainCockpit >> renderLogoOn: html [
 ]
 
 { #category : #rendering }
-GSCMainCockpit >> renderPane: anIndex list: aCollection on: html [
+GSCMainCockpit >> renderPane: anIndex head: aHeadTool list: aCollection on: html [
 	| selected |
+
+	aCollection ifBlank: [ ^ self ].
+	
 	selected := self selectedInPane: anIndex.
 
 	html div class: 'toolsPane'; with: [	
+		"Pseudo entry of the parent tool, so that we do not overlook it"
+		html anchor
+			class: 'listEntry main';
+			class: 'selected' if: (selected isNil);
+			callback: [ self selectTool: aHeadTool ];
+			with: [
+				aHeadTool renderListHeadEntryOn: html ].
+
+		"Render the children list of tools"
 		aCollection do: [ :each |
 			html anchor
 				class: 'listEntry';
@@ -386,7 +398,7 @@ GSCMainCockpit >> renderPanesOn: html [
 		self selectedTools withIndexDo: [ :each :index |
 			| paneNumber |
 			paneNumber := index.
-			self renderPane: paneNumber list: each children on: html.
+			self renderPane: paneNumber head: each list: each children on: html.
 		]
 	]
 ]
