@@ -57,7 +57,7 @@ GSCRootSchemeV1 >> buildRootTool [
 
 		folder add: GSCShellConsole.
 		folder add: GSCGeneralTool then: [ :tool |
-			tool actionBlock: [ self clearSudoPassword ].
+			tool actionBlock: [ GSCCore instance clearSudoPassword ].
 			tool title: 'reset sudo'
 	].	].
 
