@@ -35,7 +35,7 @@ GSCNginx >> build [
 
 { #category : #'as yet unclassified' }
 GSCNginx >> defaultVhostConfigTemplate [
-	^ GSCSimpleTemplate source: '
+	^ GSCSttTemplate tool: self sttString: '
 # Reject access with just the IP. We do not want bots or other dark forces to annoy us
 server {
 	listen 80 default_server;
@@ -80,4 +80,9 @@ GSCNginx >> renderBodyOn: html [
 { #category : #accessing }
 GSCNginx >> title [
 	^ 'NGINX web server'
+]
+
+{ #category : #'as yet unclassified' }
+GSCNginx >> useSsl [
+	^ self configAt: 'web:useSsl'
 ]

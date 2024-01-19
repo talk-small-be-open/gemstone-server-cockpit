@@ -486,6 +486,8 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: 
 			fireRunBlock value: proc
 		].
 
+		lineReader autoNewlineIfTimeout: 1000.
+
 		"Always detect sudo prompt"
 		lineReader lastLine = sudoPrompt ifTrue: [
 			

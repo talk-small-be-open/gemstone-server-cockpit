@@ -7,10 +7,19 @@ Class {
 		'cr',
 		'lf',
 		'currentCharacter',
-		'ignoreLeadingNewlinesCounter'
+		'ignoreLeadingNewlinesCounter',
+		'lastCharAt'
 	],
 	#category : #'GemstoneServerCockpit-Misc'
 }
+
+{ #category : #'as yet unclassified' }
+GSCPipeLinesReadStream >> autoNewlineIfTimeout: aMsInteger [
+	self hasBuffered ifTrue: [
+		(Time millisecondClockValue - lastCharAt) > aMsInteger ifTrue: [
+			self lineComplete
+	] ]
+]
 
 { #category : #clearing }
 GSCPipeLinesReadStream >> clearBuffer [
@@ -29,7 +38,8 @@ GSCPipeLinesReadStream >> consumePipe: anOssPipe [
 	[
 		| char |
 		char := anOssPipe next.
-		self nextPut: char.
+		char ifNotNil: [
+			self nextPut: char ].
 		char notNil
 	] whileTrue
 
@@ -120,6 +130,8 @@ GSCPipeLinesReadStream >> nextPut: aCharacter [
 	| lastCharacter |
 
 	aCharacter ifNil: [ ^ self ].
+
+	lastCharAt := Time millisecondClockValue.
 
 	lastCharacter := currentCharacter.
 	currentCharacter := aCharacter.
