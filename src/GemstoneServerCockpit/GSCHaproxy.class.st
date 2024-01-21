@@ -16,6 +16,7 @@ GSCHaproxy >> build [
 	self add: GSCTextFile then: [ :file |
 		file
 			filePath: self configFilePath;
+			beRootOwned;
 			contentTemplate: self haproxyConfigTemplate
 	].
 

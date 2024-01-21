@@ -15,6 +15,7 @@ GSCGsDevKit >> build [
 	self add: GSCTextFile then: [ :file |
 		file
 			filePath: '/etc/profile.d/Z99-gsdevkit.sh';
+			beRootOwned;
 			contentTemplate: (GSCSimpleTemplate source: ('
 # Env vars for GemStone
 export GS_HOME=', self gsHome pathString, '
@@ -50,7 +51,8 @@ export PATH=$GS_HOME/bin:$PATH
 	self add: GSCTextFile then: [ :file |
 		"Why?! Seaside will be loaded from my baseline! But this has some more helper scripts packed for GemStone"
 		file filePath: self gsHome / 'sys/local/server/projects/Seaside3.ston'.
-		file contentTemplate: self seasideStonTemplate
+		file contentTemplate: self seasideStonTemplate.
+		file beUserOwned.
 	].
 
 

@@ -22,6 +22,13 @@ GSCTextFile >> beRootOwned [
 ]
 
 { #category : #'as yet unclassified' }
+GSCTextFile >> beUserOwned [
+	owner := self serverUsername.
+	group := self serverGroupname.
+	mode := 'u=rw,g=rw'
+]
+
+{ #category : #'as yet unclassified' }
 GSCTextFile >> checkMe [
 	self beNotNeedsAttention.
 

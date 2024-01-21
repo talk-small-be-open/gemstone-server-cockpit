@@ -13,6 +13,7 @@ GSCNginx >> build [
 	self add: GSCTextFile then: [ :file |
 		file
 			filePath: ('/etc/nginx/nginx.conf');
+			beRootOwned;
 			contentTemplate: self nginxConfigTemplate
 	].
 
@@ -25,6 +26,7 @@ GSCNginx >> build [
 		file
 			title: 'default vhost';
 			filePath: ('/etc/nginx/sites-available/default');
+			beRootOwned;
 			contentTemplate: self defaultVhostConfigTemplate
 	].
 	

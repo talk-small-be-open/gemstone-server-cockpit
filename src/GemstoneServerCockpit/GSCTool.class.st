@@ -404,10 +404,11 @@ GSCTool >> renderBodyOn: html [
 GSCTool >> renderFactsOn: html [
 	facts ifNotBlank: [
 		facts keysAndValuesDo: [ :key :value |
-			html table: [ 
+			self renderLabel: key text: value on: html.
+"			html table: [ 
 				html tableRow: [ 
 					html tableHeading: key.
-					html tableData: value ] ] ] ]
+					html tableData: value ] ]" ] ]
 ]
 
 { #category : #rendering }

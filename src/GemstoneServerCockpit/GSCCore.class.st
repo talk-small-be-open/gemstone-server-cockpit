@@ -740,9 +740,14 @@ GSCCore >> sudoAsyncWriteFile: aFilePath owner: anOwnerString group: aGroupStrin
 				onFinish: nil ].
 		
 		anOwnerString ifNotBlank: [
+			| groupString |
+			
+			"Fallback to own users group"
+			groupString := aGroupString ifBlank: [ anOwnerString ].
+			
 			self
 				runSshOSSUnixSubprocess: 'chown'
-				args: { (anOwnerString, ':', aGroupString). path }
+				args: { (anOwnerString, ':', groupString). path }
 				sudo: true
 				onLines: nil
 				onRun: nil

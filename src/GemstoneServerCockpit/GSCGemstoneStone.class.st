@@ -31,6 +31,7 @@ GSCGemstoneStone >> build [
 		file
 			title: 'stone.conf file';
 			filePath: (self basePath / (self stoneName, '.conf'));
+			beUserOwned;
 			contentTemplate: self gemConfTemplate
 	].
 
@@ -129,6 +130,14 @@ GSCGemstoneStone >> netldiMonitConfigTemplate [
 	^ self scheme templateNetldiMonitConfig
 		tool: self;
 		yourself
+]
+
+{ #category : #rendering }
+GSCGemstoneStone >> renderBodyOn: html [
+	self renderLabel: 'Stone name' text: self stoneName on: html.
+	self renderLabel: 'Version' text: self stoneVersion on: html.
+	self renderLabel: 'Key file' text: self keyfilePath on: html.
+
 ]
 
 { #category : #'as yet unclassified' }

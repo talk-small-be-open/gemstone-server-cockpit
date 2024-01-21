@@ -14,6 +14,7 @@ GSCMonitCheck >> build [
 	self add: GSCTextFile then: [ :file |
 		file
 			filePath: ('/etc/monit/conf.d/', checkName, '.conf');
+			beRootOwned;
 			contentTemplate: configTemplate
 	].
 
