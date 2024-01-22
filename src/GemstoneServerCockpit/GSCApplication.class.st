@@ -87,7 +87,25 @@ GSCApplication >> recreateMyself [
 
 { #category : #rendering }
 GSCApplication >> renderBodyOn: html [
-	html div: 'TBD'
+	html heading level2; with: 'Links'.
+	(self configAt: 'web:domains') do: [ :eachDomain |
+		(self configAt: 'web:appUrlPaths') do: [ :eachPath |
+			| url |
+			url := WAUrl new.
+			(self configAt: 'web:useSsl')
+				ifTrue: [ url scheme: 'https' ]
+				ifFalse: [ url scheme: 'http' ].
+			
+			url host: eachDomain.
+			url path: { eachPath }.
+			
+			html div: [ 
+				html anchor
+					target: '_blank';
+					url: url;
+					with: url asString ]
+		]
+	]
 ]
 
 { #category : #accessing }
