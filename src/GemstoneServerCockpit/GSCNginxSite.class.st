@@ -58,6 +58,11 @@ GSCNginxSite >> title [
 ]
 
 { #category : #'as yet unclassified' }
+GSCNginxSite >> tmpDir [
+	^ (self configAt: 'tmpDir') ifNotBlank: [ :string | string asPath ]
+]
+
+{ #category : #'as yet unclassified' }
 GSCNginxSite >> useSsl [
 	^ self configAt: 'web:useSsl'
 ]

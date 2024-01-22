@@ -28,3 +28,8 @@ GSCLogFileViewer >> renderBodyOn: html [
 	
 	html preformatted: tail.
 ]
+
+{ #category : #accessing }
+GSCLogFileViewer >> title [
+	^ 'Log file'
+]

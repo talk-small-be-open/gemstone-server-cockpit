@@ -27,6 +27,12 @@ GSCGitRepository >> checkMe [
 	
 	(self core dirExists: (self folderPath / '.git') ) ifFalse: [ ^ self beNeedsAttention: 'git repo does not exist' ].
 
+	"Test, if can be updated from remote branch"
+	"OPTIMIZE: A bit dirty"
+	((self core readCommand: ((self gitCommand: 'remote update'), ' && ', (self gitCommand: 'status -uno')) )
+		includesSubstring: 'Your branch is up to date') ifFalse: [
+			^ self beNeedsAttention: 'Probably can be updated, see log'
+		]
 ]
 
 { #category : #'as yet unclassified' }
@@ -45,7 +51,7 @@ GSCGitRepository >> doPull [
 	| path |
 	path := self folderPath pathString.
 	
-	self runShellCommand: ('git -C "', path, '" pull')
+	self runShellCommand: (self gitCommand: 'pull')
 ]
 
 { #category : #accessing }
@@ -58,6 +64,19 @@ GSCGitRepository >> folderPath [
 GSCGitRepository >> folderPath: anObject [
 
 	folderPath := self core realPathForFile: anObject
+]
+
+{ #category : #'as yet unclassified' }
+GSCGitRepository >> gitCommand: aString [
+	^ self gitDefaultCommand, ' ', aString
+]
+
+{ #category : #'as yet unclassified' }
+GSCGitRepository >> gitDefaultCommand [
+	| path |
+	path := self folderPath pathString.
+	
+	^ 'git -C "', path, '"'
 ]
 
 { #category : #rendering }

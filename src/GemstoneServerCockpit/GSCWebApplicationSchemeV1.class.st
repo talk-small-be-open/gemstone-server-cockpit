@@ -71,7 +71,6 @@ GSCWebApplicationSchemeV1 >> defaultConfigurationBuilder [
 		gitBranch: 'master'.
 
 	"Files in repositories"
-	"TODO: In Config so etwas wie eine Vorlage/Kommentar machen können!"
 	(builder gitRepositories __example)
 		path: '/opt/webapp/main';
 		url: '';
@@ -101,6 +100,8 @@ GSCWebApplicationSchemeV1 >> defaultConfigurationBuilder [
 
 	builder aptPackages: #().
 	builder snapPackages: #().
+
+	builder tmpDir: '/tmp'.
 
 	^ builder
 ]
@@ -348,12 +349,13 @@ server {
 			', sttProxyToHaproxy, '
 		}
 
-
+<?stt me tmpDir ifNotBlank: [ :tmpDir | ?>
 		# X-Sendfile for generated files (ZIP, PDF, ...) and asset file download
-		#location {{via.installationPath}}/tmp {
-		#	internal;
-		#	root /;
-		#}
+		location <?stt= tmpDir pathString ?> {
+			internal;
+			root /;
+		}
+<?stt ] ?>
 
 		# TBD: Hide and secure
 		# or just use the CLI features, see https://sleeplessbeastie.eu/2020/01/29/how-to-use-haproxy-stats-socket/
