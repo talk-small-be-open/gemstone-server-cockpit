@@ -27,6 +27,8 @@ GSCSttTemplate >> contentString [
 	me := GSCSmalltalkTemplateDataGateway tool: tool.
 "
 
+"	^ [ mclSmalltalkTemplate evaluateFor: tool ] onErrorDo: [  ] "
+	
 	^ mclSmalltalkTemplate evaluateFor: tool
 ]
 

@@ -73,6 +73,11 @@ GSCNginx >> nginxConfigTemplate [
 		yourself
 ]
 
+{ #category : #'as yet unclassified' }
+GSCNginx >> nginxSites [
+	^ (self rootFindTools: GSCNginxSite)
+]
+
 { #category : #rendering }
 GSCNginx >> renderBodyOn: html [
 "	html iframe
@@ -86,5 +91,5 @@ GSCNginx >> title [
 
 { #category : #'as yet unclassified' }
 GSCNginx >> useSsl [
-	^ self configAt: 'web:useSsl'
+	^ self nginxSites anySatisfy: [ :each | each useSsl ]
 ]
