@@ -21,6 +21,10 @@ GSCMonit >> build [
 	self add: GSCSystemService then: [ :service |
 		service name: 'monit'
 	].
+
+	self add: GSCLogFileViewer then: [ :logFile |
+		logFile filePath: '/var/log/monit.log'
+	]
 ]
 
 { #category : #'as yet unclassified' }
