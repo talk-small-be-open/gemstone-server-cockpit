@@ -516,6 +516,43 @@ GSCTool >> runShellCommand: aString then: aBlock [
 ]
 
 { #category : #'as yet unclassified' }
+GSCTool >> runSmalltalk: aString stone: aStoneName [
+	| topazCode smalltalkCode lines |
+
+	smalltalkCode := aString trimBoth.
+	
+	"Ensure Smalltalk code ends with a dot"
+	(smalltalkCode last = $.) ifFalse: [
+		smalltalkCode := smalltalkCode, '.'.
+	].
+
+	topazCode := '
+iferror stack
+display oops
+login
+run
+', smalltalkCode, '
+System commitTransaction.
+%
+logout
+exit
+'.
+
+	lines := OrderedCollection new.
+
+	self
+		runSshOSSUnixSubprocess: 'startTopaz'
+		args: { aStoneName. '-q'. '-l'. }
+		stdin: topazCode
+		sudo: false
+		onLines: [ :newLines | lines addAll: newLines ]
+		onRun: nil
+		onFinish: nil.
+
+	^ lines joinUsingLf
+]
+
+{ #category : #'as yet unclassified' }
 GSCTool >> runSudoShellCommand: aString [
 	self runSudoShellCommand: aString then: nil
 ]

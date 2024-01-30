@@ -301,6 +301,7 @@ GSCCore >> readCommand: aCommand sudo: aBoolean args: aCollection [
 	self
 		runSshOSSUnixSubprocess: aCommand
 		args: aCollection
+		stdin: nil
 		sudo: aBoolean
 		onLines: [ :newLines | lines addAll: newLines ]
 		onRun: nil
@@ -350,6 +351,7 @@ GSCCore >> runAsyncShell: aString sudo: aSudoBoolean onOutput: aBlock onFinish: 
 		self
 			runSshOSSUnixSubprocess: aString
 			args: {  }
+			stdin: nil
 			sudo: aSudoBoolean
 			onLines: aBlock
 			onRun: nil
@@ -364,13 +366,10 @@ GSCCore >> runShellIsSuccess: aString [
 		  runSshOSSUnixSubprocess: aString
 		  args: {  }
 		  sudo: false
-		  onLines: nil
-		  onRun: nil
-		  onFinish: nil
 ]
 
 { #category : #shell }
-GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: aSudoBoolean onLines: aLinesBlock onRun: aRunBlock onFinish: aFinishBlock [
+GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection stdin: aStdinString sudo: aSudoBoolean onLines: aLinesBlock onRun: aRunBlock onFinish: aFinishBlock [
 
 	| process sudoPassword cmd args envVars lineReader catchFirstSudoPrompt runBlockDone fireRunBlock linesBlock |
 
@@ -455,8 +454,16 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: 
 		command: cmd;
 		arguments: args;
 		redirectStdout;
-		createMissingStandardStreams: true;
-		run.
+		createMissingStandardStreams: true.
+
+	"Optionally send some stdin text. Might not work, if with sudo"
+	aStdinString ifNotBlank: [
+		process stdinStream nextPutAll: aStdinString
+	].
+
+	"Start the subprocess and run the command"
+	process run.
+	
 		
 	"Sending sudo password into stdin with LF."
 "	aSudoBoolean ifTrue: [
@@ -530,6 +537,12 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: 
 ]
 
 { #category : #shell }
+GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: aSudoBoolean [
+
+	^ self runSshOSSUnixSubprocess: aCommandString args: anArgsCollection stdin: nil sudo: aSudoBoolean onLines: nil onRun: nil onFinish: nil
+]
+
+{ #category : #shell }
 GSCCore >> runSudoAsyncShell: aString onOutput: aBlock [
 	^ self runSudoAsyncShell: aString onOutput: aBlock onFinish: nil
 ]
@@ -547,9 +560,7 @@ GSCCore >> runSudoShellIsSuccess: aString [
 		  runSshOSSUnixSubprocess: aString
 		  args: {  }
 		  sudo: true
-		  onLines: nil
-		  onRun: nil
-		  onFinish: nil
+
 ]
 
 { #category : #'as yet unclassified' }
@@ -691,6 +702,7 @@ GSCCore >> sudoAsyncWriteFile: aFilePath owner: anOwnerString group: aGroupStrin
 		self
 			runSshOSSUnixSubprocess: 'sed'
 			args: { '-n'. ('''s/\x0//g; w ', path, '''') }
+			stdin: nil
 			sudo: true
 			onLines: nil
 			onRun: [ :process |
@@ -734,10 +746,7 @@ GSCCore >> sudoAsyncWriteFile: aFilePath owner: anOwnerString group: aGroupStrin
 				args: { 
 						aModeString.
 						path }
-				sudo: true
-				onLines: nil
-				onRun: nil
-				onFinish: nil ].
+				sudo: true ].
 		
 		anOwnerString ifNotBlank: [
 			| groupString |
@@ -748,10 +757,7 @@ GSCCore >> sudoAsyncWriteFile: aFilePath owner: anOwnerString group: aGroupStrin
 			self
 				runSshOSSUnixSubprocess: 'chown'
 				args: { (anOwnerString, ':', groupString). path }
-				sudo: true
-				onLines: nil
-				onRun: nil
-				onFinish: nil ].
+				sudo: true ].
 			
 		aBlock value.
 	]
@@ -781,10 +787,7 @@ GSCCore >> sudoEnsureDirectory: aDirPath owner: anOwnerString group: aGroupStrin
 		self
 			runSshOSSUnixSubprocess: 'mkdir'
 			args: { '-p'. path }
-			sudo: true
-			onLines: nil
-			onRun: nil
-			onFinish: nil.
+			sudo: true.
 
 		aModeString ifNotBlank: [
 			self
@@ -792,19 +795,13 @@ GSCCore >> sudoEnsureDirectory: aDirPath owner: anOwnerString group: aGroupStrin
 				args: { 
 						aModeString.
 						path }
-				sudo: true
-				onLines: nil
-				onRun: nil
-				onFinish: nil ].
+				sudo: true ].
 		
 		anOwnerString ifNotBlank: [
 			self
 				runSshOSSUnixSubprocess: 'chown'
 				args: { (anOwnerString, ':', aGroupString). path }
-				sudo: true
-				onLines: nil
-				onRun: nil
-				onFinish: nil ].
+				sudo: true ].
 			
 		aBlock ifNotNil: [ aBlock value ]
 			
