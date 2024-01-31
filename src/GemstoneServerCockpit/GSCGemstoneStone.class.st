@@ -67,6 +67,34 @@ GSCGemstoneStone >> doCreateStone [
 ]
 
 { #category : #'as yet unclassified' }
+GSCGemstoneStone >> doInstallSwissTimeZone [
+	| topaz |
+	
+	topaz := '
+set user SystemUser
+set password swordfish
+login
+run
+| aTimeZone |
+aTimeZone := TimeZone named: ''Europe/Zurich''.
+TimeZone default become: aTimeZone.
+TimeZone default installAsCurrentTimeZone.
+%
+commit
+logout
+exit
+'.
+
+	self runTopaz: topaz stone: self stoneName
+
+]
+
+{ #category : #'as yet unclassified' }
+GSCGemstoneStone >> doShowStoneTime [
+	self log: (self runAndPrintSmalltalk: 'DateAndTime now asString, '' in TimeZone '', TimeZone default asString' stone: self stoneName)
+]
+
+{ #category : #'as yet unclassified' }
 GSCGemstoneStone >> gemConfTemplate [
 	^ GSCSttTemplate tool: self sttString: '
 #
@@ -91,11 +119,6 @@ STN_TRAN_LOG_SIZES = 100, 100;
 # default would be 1000, has been proven to be to low.
 GEM_MAX_SMALLTALK_STACK_DEPTH = 5000;
 '
-]
-
-{ #category : #'as yet unclassified' }
-GSCGemstoneStone >> getStoneTime [
-	self log: (self runAndPrintSmalltalk: 'DateAndTime now asString' stone: self stoneName)
 ]
 
 { #category : #accessing }
@@ -142,10 +165,6 @@ GSCGemstoneStone >> renderBodyOn: html [
 	self renderLabel: 'Stone name' text: self stoneName on: html.
 	self renderLabel: 'Version' text: self stoneVersion on: html.
 	self renderLabel: 'Key file' text: self keyfilePath on: html.
-	
-	html anchorButton
-		callback: [ self getStoneTime ];
-		with: 'Show stone time'
 
 ]
 

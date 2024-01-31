@@ -507,19 +507,17 @@ GSCTool >> runAndPrintSmalltalk: aString stone: aStoneName [
 	smalltalkCode := aString trimBoth.
 	
 	"Ensure Smalltalk code ends with a dot"
-	(smalltalkCode last = $.) ifFalse: [
+"	(smalltalkCode last = $.) ifFalse: [
 		smalltalkCode := smalltalkCode, '.'.
-	].
+	]."
 
-	bash := 'startTopaz ', aStoneName, ' -q -l << EOF >& /dev/null
+	bash := 'startTopaz ', aStoneName, ' -q -l << EOF >& /tmp/gscTopaz.log
 iferror stack
 display oops
 login
-output push /tmp/gscSmalltalkOutput.log
-printit
-', smalltalkCode, '
+run
+(GsFile openWrite: ''/tmp/gscSmalltalkOutput.log'') nextPutAllUtf8: ([ ', smalltalkCode, ' ] value asString); close
 %
-output pop
 commit
 logout
 exit
@@ -567,39 +565,29 @@ GSCTool >> runShellCommand: aString then: aBlock [
 
 { #category : #'as yet unclassified' }
 GSCTool >> runSmalltalk: aString stone: aStoneName [
-	| topazCode smalltalkCode lines |
+	| smalltalkCode bash |
 
 	smalltalkCode := aString trimBoth.
 	
 	"Ensure Smalltalk code ends with a dot"
-	(smalltalkCode last = $.) ifFalse: [
+"	(smalltalkCode last = $.) ifFalse: [
 		smalltalkCode := smalltalkCode, '.'.
-	].
+	]."
 
-	topazCode := '
+	bash := 'startTopaz ', aStoneName, ' -q -l << EOF >& /tmp/gscTopaz.log
 iferror stack
 display oops
 login
 run
 ', smalltalkCode, '
-System commitTransaction.
 %
+commit
 logout
 exit
+EOF
 '.
 
-	lines := OrderedCollection new.
-
-	self core
-		runShell: 'startTopaz'
-		args: { aStoneName. '-q'. '-l'. }
-		stdin: topazCode
-		sudo: false
-		onOutput: [ :newLines | lines addAll: newLines ]
-		onRun: nil
-		onFinish: nil.
-
-	^ lines joinUsingLf
+	^ self runBashScript: bash.
 ]
 
 { #category : #'as yet unclassified' }
@@ -620,6 +608,18 @@ GSCTool >> runSudoShellCommand: aString then: aBlock [
 { #category : #'as yet unclassified' }
 GSCTool >> runTodeCommand: aCommand stone: aStoneName [
 	self runShellCommand: 'todeIt ', aStoneName, ' ', aCommand
+]
+
+{ #category : #'as yet unclassified' }
+GSCTool >> runTopaz: aString stone: aStoneName [
+	| bash |
+
+	bash := 'startTopaz ', aStoneName, ' -q -l << EOF >& /tmp/gscTopaz.log
+', aString, '
+EOF
+'.
+
+	^ self runBashScript: bash.
 ]
 
 { #category : #accessing }
