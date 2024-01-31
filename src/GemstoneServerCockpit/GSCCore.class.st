@@ -169,7 +169,7 @@ GSCCore >> ensureRunningSshControlMaster [
 
 	process := OSSUnixSubprocess new.
 	
-	cmd := 'ssh -q -S /tmp/gscControlMaster.sock -O check localhost || ssh -fN -oControlMaster=yes -oControlPersist=yes -oControlPath=/tmp/gscControlMaster.sock localhost'.
+	cmd := 'ssh -q -S /tmp/gscControlMaster.sock -O check nonrelevanthost || ssh -fN -oControlMaster=yes -oControlPersist=yes -oControlPath=/tmp/gscControlMaster.sock localhost'.
 	
 	process
 		command: cmd;
@@ -425,11 +425,11 @@ https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not
 		a nextPut: '-ttq'.
 
 "DONT?. Disturbs stdin and hangs."
-		a nextPut: '-oControlMaster=auto'.
+"		a nextPut: '-oControlMaster=auto'.
 		a nextPut: '-oControlPersist=yes'.
-		a nextPut: '-oControlPath=/tmp/gscControlMaster.sock'.
+		a nextPut: '-oControlPath=/tmp/gscControlMaster.sock'."
 		
-"		a nextPut: '-S /tmp/gscControlMaster.sock'."
+		a nextPut: '-S /tmp/gscControlMaster.sock'.
 		
 		a nextPut: 'localhost'.
 
