@@ -536,7 +536,7 @@ GSCTool >> runBashScript: aString [
 
 	"We need to pipe stdin via tee so that bash does not invoke interactive"
 	self core
-		runShell: 'tee | bash'
+		runShell: 'tee | bash --login'
 		args: {  }
 		stdin: aString
 		sudo: false
