@@ -146,6 +146,23 @@ GSCCore >> dirExists: aPathString [
 	^ self runSudoShellIsSuccess: ('test -d "', (aPathString asPath pathString), '"')
 ]
 
+{ #category : #shell }
+GSCCore >> doInBackground: aBlock [
+
+"	self isShellProcessRunning ifTrue: [ 
+		self error: 'Another shell process is running'. ^ self ]."
+	| name |
+	name := 'GSC shell process'.
+
+	Processor activeProcess name = name ifTrue: [
+		aBlock value
+	] ifFalse: [
+		aBlock
+			forkAt: Processor userInterruptPriority
+			named: name
+	]
+]
+
 { #category : #'as yet unclassified' }
 GSCCore >> ensureWebserver [
 	"Webserver starten"
@@ -173,17 +190,6 @@ GSCCore >> filesystemRoot: aString [
 	filesystemRoot isRoot ifFalse: [
 		self sudoEnsureDirectory: filesystemRoot owner: self serverUsername group: self serverUsername mode: 'u=rwx,g=rwx,o=rx'
 	]
-]
-
-{ #category : #shell }
-GSCCore >> forkShellBlock: aBlock [
-
-	self isShellProcessRunning ifTrue: [ 
-		self error: 'Another shell process is running'. ^ self ].
-
-	aBlock
-		forkAt: Processor userInterruptPriority
-		named: 'GSC shell process'
 ]
 
 { #category : #'as yet unclassified' }
@@ -299,11 +305,11 @@ GSCCore >> readCommand: aCommand sudo: aBoolean args: aCollection [
 	lines := OrderedCollection new.
 
 	self
-		runSshOSSUnixSubprocess: aCommand
+		runShell: aCommand
 		args: aCollection
 		stdin: nil
 		sudo: aBoolean
-		onLines: [ :newLines | lines addAll: newLines ]
+		onOutput: [ :newLines | lines addAll: newLines ]
 		onRun: nil
 		onFinish: nil.
 
@@ -347,31 +353,26 @@ GSCCore >> runAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
 { #category : #shell }
 GSCCore >> runAsyncShell: aString sudo: aSudoBoolean onOutput: aBlock onFinish: aFinishBlock [
 
-	self forkShellBlock: [
+	self doInBackground: [
 		self
-			runSshOSSUnixSubprocess: aString
+			runShell: aString
 			args: {  }
 			stdin: nil
 			sudo: aSudoBoolean
-			onLines: aBlock
+			onOutput: aBlock
 			onRun: nil
 			onFinish: aFinishBlock
 	]
 ]
 
 { #category : #shell }
-GSCCore >> runShellIsSuccess: aString [
-
-	^ self
-		  runSshOSSUnixSubprocess: aString
-		  args: {  }
-		  sudo: false
-]
-
-{ #category : #shell }
-GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection stdin: aStdinString sudo: aSudoBoolean onLines: aLinesBlock onRun: aRunBlock onFinish: aFinishBlock [
+GSCCore >> runShell: aCommandString args: anArgsCollection stdin: aStdinString sudo: aSudoBoolean onOutput: aLinesBlock onRun: aRunBlock onFinish: aFinishBlock [
 
 	| process sudoPassword cmd args envVars lineReader catchFirstSudoPrompt runBlockDone fireRunBlock linesBlock |
+
+"Best info for ssh/tty/stdin etc.
+https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not-terminating-once-stdin-is-consumed
+"
 
 	self isShellProcessRunning ifTrue: [ self error: 'Another shell process is running.' ].
 
@@ -409,9 +410,9 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection stdin:
 
 	args := Array streamContents: [ :a |
 		a nextPut: '-ttq'.
-		a nextPut: '-oControlMaster=auto'.
-		a nextPut: '-oControlPersist=10s'.
-		a nextPut: '-oControlPath=/tmp/gscControlMaster.sock'.
+
+"DONT?. Disturbs stdin and hangs."
+		a nextPut: '-S /tmp/gscControlMaster.sock'.
 		
 		a nextPut: 'localhost'.
 
@@ -420,10 +421,11 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection stdin:
 		a nextPut: '-c'."
 
 		"Prevent the input being echoed as output"
-		a nextPut: 'stty icanon isig iexten iutf8 -echo eof ^D intr ^C ;'.
+"		a nextPut: 'stty icanon isig iexten iutf8 -echo eof ^D intr ^C ;'."
+		a nextPut: 'stty icanon isig iexten iutf8 -echo ;'.
 		
 		"Used as a container to serialize the real commands"
-		a nextPut: 'env'.
+		a nextPut: 'env -S'.
 
 		a nextPut: ('SUDO_PROMPT=', sudoPrompt).
 		
@@ -440,7 +442,10 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection stdin:
 
 "		a nextPut: '{'."
 		a nextPut: aCommandString.
-		a nextPutAll: anArgsCollection.
+		
+		anArgsCollection ifNotBlank: [
+			a nextPutAll: anArgsCollection ].
+
 "		a nextPut: ';'.
 		a nextPut: '}'."
 
@@ -458,7 +463,12 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection stdin:
 
 	"Optionally send some stdin text. Might not work, if with sudo"
 	aStdinString ifNotBlank: [
-		process stdinStream nextPutAll: aStdinString
+		process redirectStdin.
+		process stdinStream
+			nextPutAll: aStdinString;
+			end;
+			end;
+			flush.
 	].
 
 	"Start the subprocess and run the command"
@@ -500,7 +510,7 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection stdin:
 			
 			proc stdinStream 
 				nextPutAll: self getSudoPassword;
-				nextPut: Character lf;
+				lf;
 				flush.
 			lineReader removeLastLine.
 
@@ -537,9 +547,18 @@ GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection stdin:
 ]
 
 { #category : #shell }
-GSCCore >> runSshOSSUnixSubprocess: aCommandString args: anArgsCollection sudo: aSudoBoolean [
+GSCCore >> runShell: aCommandString args: anArgsCollection sudo: aSudoBoolean [
 
-	^ self runSshOSSUnixSubprocess: aCommandString args: anArgsCollection stdin: nil sudo: aSudoBoolean onLines: nil onRun: nil onFinish: nil
+	^ self runShell: aCommandString args: anArgsCollection stdin: nil sudo: aSudoBoolean onOutput: nil onRun: nil onFinish: nil
+]
+
+{ #category : #shell }
+GSCCore >> runShellIsSuccess: aString [
+
+	^ self
+		  runShell: aString
+		  args: {  }
+		  sudo: false
 ]
 
 { #category : #shell }
@@ -557,7 +576,7 @@ GSCCore >> runSudoAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
 GSCCore >> runSudoShellIsSuccess: aString [
 
 	^ self
-		  runSshOSSUnixSubprocess: aString
+		  runShell: aString
 		  args: {  }
 		  sudo: true
 
@@ -586,6 +605,8 @@ GSCCore >> setup [
 
 	"Do soms stuff inside Pharo to set things right"
 	self setupPharo.
+
+	self startSshControlMaster.
 
 	sudoPrompt := UUID new asString36.
 
@@ -652,6 +673,38 @@ GSCCore >> setupPharo [
 	GSCHtmlCanvas selectAsDefault
 ]
 
+{ #category : #shell }
+GSCCore >> startSshControlMaster [
+	| cmd process args |
+
+	(self runShellIsSuccess: 'ssh -S /tmp/gscControlMaster.sock -O check localhost') ifFalse: [
+
+		process := self createOSSUnixSubprocess.
+
+		cmd := 'ssh'.
+
+		args := Array streamContents: [ :a |
+	"		a nextPut: '-ttq'."
+
+			a nextPut: '-fN'.
+
+			a nextPut: '-oControlMaster=auto'.
+			a nextPut: '-oControlPersist=10s'.
+			a nextPut: '-oControlPath=/tmp/gscControlMaster.sock'.
+			
+			a nextPut: 'localhost' ].
+
+	"	self log: (cmd, ' ', (args joinUsing: String space))."
+			
+		process
+			command: cmd;
+			arguments: args;
+			createMissingStandardStreams: false.
+
+		"Start the subprocess and run the command"
+		process run ]
+]
+
 { #category : #'as yet unclassified' }
 GSCCore >> startWebserver [
 	"Webserver starten"
@@ -682,7 +735,7 @@ GSCCore >> sudoAsyncWriteFile: aFilePath owner: anOwnerString group: aGroupStrin
 			close
 	] onFinish: nil."
 
-	self forkShellBlock: [
+	self doInBackground: [
 		| path fileContent endsWithLf |
 		path := aFilePath asPath pathString.
 		fileContent := aString withUnixLineEndings.
@@ -700,11 +753,11 @@ GSCCore >> sudoAsyncWriteFile: aFilePath owner: anOwnerString group: aGroupStrin
 		"
 
 		self
-			runSshOSSUnixSubprocess: 'sed'
+			runShell: 'sed'
 			args: { '-n'. ('''s/\x0//g; w ', path, '''') }
 			stdin: nil
 			sudo: true
-			onLines: nil
+			onOutput: nil
 			onRun: [ :process |
 				| counter stdin |
 				
@@ -742,7 +795,7 @@ GSCCore >> sudoAsyncWriteFile: aFilePath owner: anOwnerString group: aGroupStrin
 
 		aModeString ifNotBlank: [
 			self
-				runSshOSSUnixSubprocess: 'chmod'
+				runShell: 'chmod'
 				args: { 
 						aModeString.
 						path }
@@ -755,7 +808,7 @@ GSCCore >> sudoAsyncWriteFile: aFilePath owner: anOwnerString group: aGroupStrin
 			groupString := aGroupString ifBlank: [ anOwnerString ].
 			
 			self
-				runSshOSSUnixSubprocess: 'chown'
+				runShell: 'chown'
 				args: { (anOwnerString, ':', groupString). path }
 				sudo: true ].
 			
@@ -782,16 +835,16 @@ GSCCore >> sudoEnsureDirectory: aDirPath owner: anOwnerString group: aGroupStrin
 
 	path := aDirPath asPath pathString.
 	
-	self forkShellBlock: [
+	self doInBackground: [
 		"Ging nicht mit tee, weil es nicht exit gemacht hat"
 		self
-			runSshOSSUnixSubprocess: 'mkdir'
+			runShell: 'mkdir'
 			args: { '-p'. path }
 			sudo: true.
 
 		aModeString ifNotBlank: [
 			self
-				runSshOSSUnixSubprocess: 'chmod'
+				runShell: 'chmod'
 				args: { 
 						aModeString.
 						path }
@@ -799,7 +852,7 @@ GSCCore >> sudoEnsureDirectory: aDirPath owner: anOwnerString group: aGroupStrin
 		
 		anOwnerString ifNotBlank: [
 			self
-				runSshOSSUnixSubprocess: 'chown'
+				runShell: 'chown'
 				args: { (anOwnerString, ':', aGroupString). path }
 				sudo: true ].
 			

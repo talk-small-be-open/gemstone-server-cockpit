@@ -95,7 +95,7 @@ GEM_MAX_SMALLTALK_STACK_DEPTH = 5000;
 
 { #category : #'as yet unclassified' }
 GSCGemstoneStone >> getStoneTime [
-	self log: (self runSmalltalk: 'DateAndTime now asString' stone: self stoneName)
+	self log: (self runAndPrintSmalltalk: 'DateAndTime now asString' stone: self stoneName)
 ]
 
 { #category : #accessing }
@@ -143,7 +143,7 @@ GSCGemstoneStone >> renderBodyOn: html [
 	self renderLabel: 'Version' text: self stoneVersion on: html.
 	self renderLabel: 'Key file' text: self keyfilePath on: html.
 	
-	self anchorButton
+	html anchorButton
 		callback: [ self getStoneTime ];
 		with: 'Show stone time'
 

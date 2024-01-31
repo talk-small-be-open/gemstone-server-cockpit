@@ -10,7 +10,7 @@ Class {
 
 { #category : #'as yet unclassified' }
 GSCMainCockpit >> checkAll [
-	core forkShellBlock: [
+	core doInBackground: [
 		core rootTool check ]
 	
 ]

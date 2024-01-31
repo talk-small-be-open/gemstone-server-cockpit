@@ -501,6 +501,56 @@ GSCTool >> rootFindTools: aClass [
 ]
 
 { #category : #'as yet unclassified' }
+GSCTool >> runAndPrintSmalltalk: aString stone: aStoneName [
+	| smalltalkCode bash |
+
+	smalltalkCode := aString trimBoth.
+	
+	"Ensure Smalltalk code ends with a dot"
+	(smalltalkCode last = $.) ifFalse: [
+		smalltalkCode := smalltalkCode, '.'.
+	].
+
+	bash := '
+startTopaz ', aStoneName, ' -q -l << EOF >& /dev/null
+iferror stack
+display oops
+output push /tmp/gscSmalltalkOutput.log
+login
+printit
+', smalltalkCode, '
+System commitTransaction.
+%
+logout
+exit
+EOF
+
+cat /tmp/gscSmalltalkOutput.log
+'.
+
+	^ self runBashScript: bash.
+]
+
+{ #category : #'as yet unclassified' }
+GSCTool >> runBashScript: aString [
+	| lines |
+
+	lines := OrderedCollection new.
+
+	self core
+		runShell: 'bash'
+		args: {  }
+		stdin: aString
+		sudo: false
+		onOutput: [ :newLines | lines addAll: newLines ]
+		onRun: nil
+		onFinish: nil.
+
+	^ lines joinUsingLf
+
+]
+
+{ #category : #'as yet unclassified' }
 GSCTool >> runShellCommand: aString [
 	self runShellCommand: aString then: nil
 ]
@@ -540,12 +590,12 @@ exit
 
 	lines := OrderedCollection new.
 
-	self
-		runSshOSSUnixSubprocess: 'startTopaz'
+	self core
+		runShell: 'startTopaz'
 		args: { aStoneName. '-q'. '-l'. }
 		stdin: topazCode
 		sudo: false
-		onLines: [ :newLines | lines addAll: newLines ]
+		onOutput: [ :newLines | lines addAll: newLines ]
 		onRun: nil
 		onFinish: nil.
 

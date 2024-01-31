@@ -55,6 +55,11 @@ GSCRoot >> doAddApplication [
 	scheme buildApplicationToolInto: self
 ]
 
+{ #category : #accessing }
+GSCRoot >> doTestShell [
+	self testShellExecution
+]
+
 { #category : #'as yet unclassified' }
 GSCRoot >> gemstoneGsHome [
 	^ ((self configAt: 'gemstone:gsHome') ifBlank: [ '/opt/GsDevKit_home' ]) asPath.
@@ -91,6 +96,29 @@ GSCRoot >> scheme [
 GSCRoot >> scheme: anObject [
 
 	scheme := anObject
+]
+
+{ #category : #tests }
+GSCRoot >> testShellExecution [
+	
+	| lines stdin |
+
+	lines := OrderedCollection new.
+	
+	stdin := 'TEST1
+TEST2
+TEST3'.
+
+	self core
+		runShell: 'cat'
+		args: nil
+		stdin: stdin
+		sudo: false
+		onOutput: [ :newLines | lines addAll: newLines ]
+		onRun: nil
+		onFinish: nil.
+
+	self log: lines joinUsingLf
 ]
 
 { #category : #accessing }
