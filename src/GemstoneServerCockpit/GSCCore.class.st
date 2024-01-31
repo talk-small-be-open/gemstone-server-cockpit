@@ -163,6 +163,19 @@ GSCCore >> doInBackground: aBlock [
 	]
 ]
 
+{ #category : #shell }
+GSCCore >> ensureRunningSshControlMaster [
+	| cmd process |
+
+	process := OSSUnixSubprocess new.
+	
+	cmd := 'ssh -q -S /tmp/gscControlMaster.sock -O check localhost || ssh -fN -oControlMaster=auto -oControlPersist=4h -oControlPath=/tmp/gscControlMaster.sock localhost'.
+	
+	process
+		command: cmd;
+		runAndWait.
+]
+
 { #category : #'as yet unclassified' }
 GSCCore >> ensureWebserver [
 	"Webserver starten"
@@ -606,7 +619,7 @@ GSCCore >> setup [
 	"Do soms stuff inside Pharo to set things right"
 	self setupPharo.
 
-	self startSshControlMaster.
+	self ensureRunningSshControlMaster.
 
 	sudoPrompt := UUID new asString36.
 
@@ -673,38 +686,6 @@ GSCCore >> setupPharo [
 	GSCHtmlCanvas selectAsDefault
 ]
 
-{ #category : #shell }
-GSCCore >> startSshControlMaster [
-	| cmd process args |
-
-	(self runShellIsSuccess: 'ssh -S /tmp/gscControlMaster.sock -O check localhost') ifFalse: [
-
-		process := self createOSSUnixSubprocess.
-
-		cmd := 'ssh'.
-
-		args := Array streamContents: [ :a |
-	"		a nextPut: '-ttq'."
-
-			a nextPut: '-fN'.
-
-			a nextPut: '-oControlMaster=auto'.
-			a nextPut: '-oControlPersist=10s'.
-			a nextPut: '-oControlPath=/tmp/gscControlMaster.sock'.
-			
-			a nextPut: 'localhost' ].
-
-	"	self log: (cmd, ' ', (args joinUsing: String space))."
-			
-		process
-			command: cmd;
-			arguments: args;
-			createMissingStandardStreams: false.
-
-		"Start the subprocess and run the command"
-		process run ]
-]
-
 { #category : #'as yet unclassified' }
 GSCCore >> startWebserver [
 	"Webserver starten"
@@ -712,6 +693,19 @@ GSCCore >> startWebserver [
 	port := 8650 "Looks like: 8GSC".
 	ZnZincServerAdaptor startOn: port.
 
+]
+
+{ #category : #shell }
+GSCCore >> stopSshControlMaster [
+	| cmd process |
+
+	process := OSSUnixSubprocess new.
+	
+	cmd := 'ssh -q -S /tmp/gscControlMaster.sock -O stop localhost'.
+	
+	process
+		command: cmd;
+		runAndWait
 ]
 
 { #category : #accessing }
