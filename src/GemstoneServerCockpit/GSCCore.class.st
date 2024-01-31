@@ -165,22 +165,20 @@ GSCCore >> doInBackground: aBlock [
 
 { #category : #shell }
 GSCCore >> ensureRunningSshControlMaster [
-	| cmd process |
+	| process |
 
 	process := OSSUnixSubprocess new.
 	
-	cmd := 'ssh -q -S /tmp/gscControlMaster.sock -O check nonrelevanthost'.
-	
 	process
-		command: cmd;
+		command: 'ssh';
+		arguments: { '-q'. '-S /tmp/gscControlMaster.sock'. '-O check'. 'nonrelevanthost' };
 		runAndWait.
 		
 	process isSuccess ifFalse: [
 
-		cmd := 'ssh -fN -oControlMaster=yes -oControlPersist=yes -oControlPath=/tmp/gscControlMaster.sock localhost'.
-	
 		OSSUnixSubprocess new
-			command: cmd;
+			command: 'ssh';
+			arguments: { '-fN'. '-oControlMaster=yes'. '-oControlPersist=yes'. '-oControlPath=/tmp/gscControlMaster.sock'. 'localhost' }
 			runAndWait.
 	]
 ]
