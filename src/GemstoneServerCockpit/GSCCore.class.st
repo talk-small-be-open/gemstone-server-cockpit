@@ -178,7 +178,7 @@ GSCCore >> ensureRunningSshControlMaster [
 
 		OSSUnixSubprocess new
 			command: 'ssh';
-			arguments: { '-fN'. '-oControlMaster=yes'. '-oControlPersist=yes'. '-oControlPath=/tmp/gscControlMaster.sock'. 'localhost' }
+			arguments: { '-fN'. '-oControlMaster=yes'. '-oControlPersist=yes'. '-oControlPath=/tmp/gscControlMaster.sock'. 'localhost' };
 			runAndWait.
 	]
 ]
@@ -408,10 +408,27 @@ https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not
 	fireRunBlock := [ :proc |
 		"do this after the main sudo password has been streamed into the pipe. So that runBlock is ready
 		for things like stdin"
-		aRunBlock ifNotNil: [
-			runBlockDone ifFalse: [
+		runBlockDone ifFalse: [
+
+			"Feed stdin, if any"
+			aStdinString ifNotBlank: [
+"				proc redirectStdin."
+				
+				"We have to delay the input, after the stty -echo has been done"
+				(Delay forMilliseconds: 800) wait.
+				proc stdinStream
+					nextPutAll: aStdinString;
+					end;
+					end;
+					flush.
+			].
+
+			"Run a code, if any"
+			aRunBlock ifNotNil: [
 				aRunBlock value: proc.
-				runBlockDone := true ]
+			].
+		
+			runBlockDone := true.
 		].
 	].
 
@@ -446,7 +463,7 @@ https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not
 
 		"Prevent the input being echoed as output"
 "		a nextPut: 'stty icanon isig iexten iutf8 -echo eof ^D intr ^C ;'."
-		a nextPut: 'stty icanon isig iexten iutf8 -echo ;'.
+		a nextPut: 'stty -echo icanon isig iexten iutf8 ;'.
 		
 		"Used as a container to serialize the real commands"
 		a nextPut: 'env -S'.
@@ -486,14 +503,14 @@ https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not
 		createMissingStandardStreams: true.
 
 	"Optionally send some stdin text. Might not work, if with sudo"
-	aStdinString ifNotBlank: [
+"	aStdinString ifNotBlank: [
 		process redirectStdin.
 		process stdinStream
 			nextPutAll: aStdinString;
 			end;
 			end;
 			flush.
-	].
+	]."
 
 	"Start the subprocess and run the command"
 	process run.
