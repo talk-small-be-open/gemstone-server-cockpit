@@ -511,20 +511,19 @@ GSCTool >> runAndPrintSmalltalk: aString stone: aStoneName [
 		smalltalkCode := smalltalkCode, '.'.
 	].
 
-	bash := '
-startTopaz ', aStoneName, ' -q -l << EOF >& /dev/null
+	bash := 'startTopaz ', aStoneName, ' -q -l << EOF >& /dev/null
 iferror stack
 display oops
-output push /tmp/gscSmalltalkOutput.log
 login
+output push /tmp/gscSmalltalkOutput.log
 printit
 ', smalltalkCode, '
-System commitTransaction.
 %
+output pop
+commit
 logout
 exit
 EOF
-
 cat /tmp/gscSmalltalkOutput.log
 '.
 
@@ -537,8 +536,9 @@ GSCTool >> runBashScript: aString [
 
 	lines := OrderedCollection new.
 
+	"We need to pipe stdin via tee so that bash does not invoke interactive"
 	self core
-		runShell: 'bash'
+		runShell: 'tee | bash'
 		args: {  }
 		stdin: aString
 		sudo: false
