@@ -169,11 +169,20 @@ GSCCore >> ensureRunningSshControlMaster [
 
 	process := OSSUnixSubprocess new.
 	
-	cmd := 'ssh -q -S /tmp/gscControlMaster.sock -O check nonrelevanthost || ssh -fN -oControlMaster=yes -oControlPersist=yes -oControlPath=/tmp/gscControlMaster.sock localhost'.
+	cmd := 'ssh -q -S /tmp/gscControlMaster.sock -O check nonrelevanthost'.
 	
 	process
 		command: cmd;
 		runAndWait.
+		
+	process isSuccess ifFalse: [
+
+		cmd := 'ssh -fN -oControlMaster=yes -oControlPersist=yes -oControlPath=/tmp/gscControlMaster.sock localhost'.
+	
+		OSSUnixSubprocess new
+			command: cmd;
+			runAndWait.
+	]
 ]
 
 { #category : #'as yet unclassified' }
