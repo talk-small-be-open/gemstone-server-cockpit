@@ -8,6 +8,42 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
+GSCGemstoneStone >> OPTIMIZEInstallGermanDateNames [
+	| smalltalk |
+	
+	" See file /opt/GsDevKit_home/shared/downloads/products/GemStone64Bit3.4.5-x86_64.Linux/upgrade/installtimezone.txt"
+
+	"DOES NOT WORK"	
+"	smalltalk := '
+(ChronologyConstants classVarAt: ''DayNames'')
+at: 1 put: #''Montag'';
+at: 2 put: #''Dienstag'';
+at: 3 put: #''Mittwoch'';
+at: 4 put: #''Donnerstag'';
+at: 5 put: #''Freitag'';
+at: 6 put: #''Samstag'';
+at: 7 put: #''Sonntag''.
+
+(ChronologyConstants classVarAt: ''MonthNames'')
+at: 1 put: #''Januar'';
+at: 2 put: #''Februar'';
+at: 3 put: #''März'';
+at: 4 put: #''April'';
+at: 5 put: #''Mai'';
+at: 6 put: #''Juni'';
+at: 7 put: #''Juli'';
+at: 8 put: #''August'';
+at: 9 put: #''September'';
+at: 10 put: #''Oktober'';
+at: 11 put: #''November'';
+at: 12 put: #''Dezember''.
+'."
+
+	"self runSmalltalk: smalltalk stone: self stoneName"
+
+]
+
+{ #category : #'as yet unclassified' }
 GSCGemstoneStone >> basePath [
 	^ self gemstoneGsHome / 'server/stones' / self stoneName
 ]
@@ -69,6 +105,8 @@ GSCGemstoneStone >> doCreateStone [
 { #category : #'as yet unclassified' }
 GSCGemstoneStone >> doInstallSwissTimeZone [
 	| topaz |
+	
+	" See file /opt/GsDevKit_home/shared/downloads/products/GemStone64Bit3.4.5-x86_64.Linux/upgrade/installtimezone.txt"
 	
 	topaz := '
 set user SystemUser

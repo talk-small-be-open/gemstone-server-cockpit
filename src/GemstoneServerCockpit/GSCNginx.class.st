@@ -46,12 +46,7 @@ server {
 	<?stt me useSsl ifTrue: [ ?>
 	listen 443 ssl http2 default_server;
 	listen [::]:443 ssl http2 default_server;
-
-	ssl_certificate /etc/letsencrypt/live/<?stt= me appShortCode ?>/fullchain.pem;
-	ssl_certificate_key /etc/letsencrypt/live/<?stt= me appShortCode ?>/privkey.pem;
-	include /etc/letsencrypt/options-ssl-nginx.conf;
-	ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
-
+	ssl_reject_handshake on;
 	<?stt ] ?>
 
 	server_name _;
