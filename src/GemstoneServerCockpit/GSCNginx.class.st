@@ -46,7 +46,7 @@ server {
 	<?stt me useSsl ifTrue: [ ?>
 	listen 443 ssl http2 default_server;
 	listen [::]:443 ssl http2 default_server;
-	ssl_reject_handshake on;
+	# Only in version 1.19.x ssl_reject_handshake on;
 	<?stt ] ?>
 
 	server_name _;
