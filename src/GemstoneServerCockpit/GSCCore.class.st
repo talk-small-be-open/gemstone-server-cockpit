@@ -235,6 +235,8 @@ GSCCore >> initialize [
 
 { #category : #actions }
 GSCCore >> install [
+	self installStarterShellScript.
+	
 	self installSeasideComponents.
 
 	self ensureWebserver.
@@ -258,6 +260,43 @@ GSCCore >> installSeasideComponents [
 	app exceptionHandler: WADebugErrorHandler.
 
 "nicht, weil versteckt	WAAdmin defaultDispatcher defaultName: appPath"
+]
+
+{ #category : #actions }
+GSCCore >> installStarterShellScript [
+	| filename fileRef script |
+	filename := './start-gsc.sh'.
+
+	filename asFileReference isFile ifTrue: [
+		fileRef := (filename, '.original') asFileReference ensureDelete. 
+	] ifFalse: [ 
+		fileRef := filename asFileReference.
+	].
+
+	script := '#!/bin/bash
+
+NAME=$(dirname "$0")
+DIR=$(realpath "$NAME")
+
+cd $DIR
+
+if [ "$1" -eq "ui" ]
+then
+  xpra start :100
+  export DISPLAY=:100
+  ./pharo-ui gsc.image >& pharo.log
+else
+  ./pharo gsc.image >& pharo.log
+fi
+
+'.
+	
+	fileRef writeStreamDo: [ :s |
+		s nextPutAll: script
+	].
+
+	fileRef permissions: (FileSystemPermission posixPermissions: 8r770)
+
 ]
 
 { #category : #'as yet unclassified' }
@@ -976,6 +1015,7 @@ GSCCore >> timestampSudoPassword [
 
 { #category : #actions }
 GSCCore >> update [
+	"TODO: Update git repository and load that code, but how?!"
 	Metacello registry
 		baseline: 'GemstoneServerCockpit';
 		load

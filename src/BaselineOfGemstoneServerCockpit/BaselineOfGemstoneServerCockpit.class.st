@@ -4,12 +4,20 @@ Class {
 	#category : #BaselineOfGemstoneServerCockpit
 }
 
+{ #category : #'as yet unclassified' }
+BaselineOfGemstoneServerCockpit >> afterLoadGsc [
+	GSCCore install
+]
+
 { #category : #baselines }
 BaselineOfGemstoneServerCockpit >> baseline: spec [
 	<baseline>
 	spec
 		for: #common
 		do: [
+			
+			spec postLoadDoIt: #afterLoadGsc.
+			
 			spec baseline: 'Seaside3' with: [
 				spec
 					repository: 'github://SeasideSt/Seaside:master/repository';
