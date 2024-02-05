@@ -16,8 +16,25 @@ GSCConfiguration class >> fromFile: aStringPath [
 
 { #category : #'as yet unclassified' }
 GSCConfiguration >> createScheme [
-	| scheme |
-	scheme := self schemeClass new.
+	^ self createSchemeDefault: nil
+]
+
+{ #category : #'as yet unclassified' }
+GSCConfiguration >> createSchemeDefault: aSchemeClass [
+	| scheme schemeClass className |
+	
+	className := self at: #configurationScheme default: [
+
+		"no default given"
+		aSchemeClass ifNil: [
+			GSCConfigError signal: 'missing configurationScheme in config file' ].
+		
+		aSchemeClass name asString
+	].
+	
+	schemeClass := Smalltalk at: className asSymbol.
+	
+	scheme := schemeClass new.
 	scheme config: self.
 	^ scheme
 ]
@@ -88,14 +105,6 @@ GSCConfiguration >> printOn: aStream [
 		prettyPrint: true;
 		newLine: String lf;
 		nextPut: data
-]
-
-{ #category : #'as yet unclassified' }
-GSCConfiguration >> schemeClass [
-	| className |
-	className := self at: #applicationScheme ifAbsent: [ GSCConfigError signal: 'missing applicationScheme in config file' ].
-	
-	^ Smalltalk at: className asSymbol
 ]
 
 { #category : #'as yet unclassified' }

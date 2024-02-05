@@ -682,28 +682,16 @@ GSCCore >> setSudoPassword: aString [
 
 { #category : #'as yet unclassified' }
 GSCCore >> setup [
-	| rootConf scheme |
-
 	"Do soms stuff inside Pharo to set things right"
 	self setupPharo.
 
 	self ensureRunningSshControlMaster.
 
 	sudoPrompt := UUID new asString36.
-
-"	defaultRootConf := GSCRootScheme new buildDefaultConfiguration."
 	
-	"Get root config from external file"
-	rootConf := GSCConfiguration fromFile: ('/etc/gsc/gsc.conf').
+	"Build root tools"
+	self setupRoot.
 
-	scheme := rootConf createScheme.
-
-	"Store it back to the file (could have added some new default values)"
-"?Why	rootConf storeToFile."
-	
-	"Create the root node of the tool tree"
-	rootTool := scheme buildRootTool.
-	
 	"Build tools for the one or many applications, taken from their conf files"
 	self setupApplicationsFromConfigFiles.
 	
@@ -752,6 +740,25 @@ GSCCore >> setupExampleApplications [
 { #category : #'as yet unclassified' }
 GSCCore >> setupPharo [
 	GSCHtmlCanvas selectAsDefault
+]
+
+{ #category : #'as yet unclassified' }
+GSCCore >> setupRoot [
+	| rootConf scheme |
+
+"	defaultRootConf := GSCRootScheme new buildDefaultConfiguration."
+	
+	"Get root config from external file"
+	rootConf := GSCConfiguration fromFile: ('/etc/gsc/gsc.conf').
+
+	scheme := rootConf createSchemeDefault: GSCRootSchemeV1.
+
+	"Store it back to the file (could have added some new default values)"
+"?Why	rootConf storeToFile."
+	
+	"Create the root node of the tool tree"
+	rootTool := scheme buildRootTool.
+
 ]
 
 { #category : #'as yet unclassified' }
