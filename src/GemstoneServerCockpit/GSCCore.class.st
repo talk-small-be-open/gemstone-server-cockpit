@@ -171,7 +171,7 @@ GSCCore >> ensureRunningSshControlMaster [
 	
 	process
 		command: 'ssh';
-		arguments: { '-q'. '-S /tmp/gscControlMaster.sock'. '-O check'. 'nonrelevanthost' };
+		arguments: { '-q'. '-S'. '/tmp/gscControlMaster.sock'. '-O'. 'check'. 'nonrelevanthost' };
 		runAndWait.
 		
 	process isSuccess ifFalse: [
