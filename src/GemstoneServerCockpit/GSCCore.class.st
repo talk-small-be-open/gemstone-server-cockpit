@@ -773,7 +773,7 @@ GSCCore >> startUp [
 	
 	self setup.
 	
-	self ensureWebserver.
+	self restartWebserver.
 	
 	Transcript crShow: 'GSC is running locally. Connect through an SSH tunnel, like so:'.
 	Transcript crShow: 'ssh -L 8888:localhost:8650 user@hostname'.
@@ -783,13 +783,6 @@ GSCCore >> startUp [
 { #category : #'as yet unclassified' }
 GSCCore >> startWebserver [
 	"Start webserver, only on local network"
-	| serverManager |
-	
-	"Make sure: Kill all, then start single"
-	serverManager := WAAdmin defaultServerManager.
-	serverManager adaptors do: [ :each | serverManager unregister: each ].
-	
-	
 	GSCZincServerAdaptor startOn: self webserverPort.
 ]
 
@@ -808,6 +801,15 @@ GSCCore >> stopSshControlMaster [
 
 { #category : #'as yet unclassified' }
 GSCCore >> stopWebserver [
+
+	| serverManager |
+	
+	"Make sure: Kill all"
+	serverManager := WAAdmin defaultServerManager.
+	serverManager adaptors do: [ :each | serverManager unregister: each ].
+
+	ZnServer stopDefault.
+
 	GSCZincServerAdaptor default ifNotNil: [ :server | server stop ]
 ]
 
