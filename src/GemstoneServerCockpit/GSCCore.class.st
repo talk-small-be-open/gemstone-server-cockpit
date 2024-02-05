@@ -286,7 +286,7 @@ then
   export DISPLAY=:100
   ./pharo-ui gsc.image >& pharo.log
 else
-  ./pharo gsc.image >& pharo.log
+  ./pharo gsc.image --no-quit 2>&1 | tee pharo.log
 fi
 
 '.
@@ -774,11 +774,26 @@ GSCCore >> startUp [
 
 { #category : #'as yet unclassified' }
 GSCCore >> startWebserver [
-	"Webserver starten"
-	| port |
+	"Start webserver, only on local network"
+	| port adaptor |
 	port := 8650 "Looks like: 8GSC".
-	ZnZincServerAdaptor startOn: port.
 
+	"Taken from 	ZnZincServerAdaptor startOn: port."
+	adaptor := ZnZincServerAdaptor default.
+	adaptor isNil
+		ifFalse: [ adaptor stop; port: port ]
+		ifTrue: [
+			| server |
+			server := ZnServer on: port.
+			
+			"localhost access only, too dangerous else"
+			server bindingAddress: #[127 0 0 1].
+			
+			adaptor := ZnZincServerAdaptor new.
+			adaptor server: server
+		].
+
+	adaptor start
 ]
 
 { #category : #shell }
