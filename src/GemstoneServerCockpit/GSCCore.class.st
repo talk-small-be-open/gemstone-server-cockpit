@@ -239,7 +239,7 @@ GSCCore >> install [
 	
 	self installSeasideComponents.
 
-	self ensureWebserver.
+	self restartWebserver.
 
 	self setup.
 ]
@@ -392,6 +392,11 @@ GSCCore >> realPathForFile: aFileReferenceOrString [
 	].
 
 	^ path
+]
+
+{ #category : #'as yet unclassified' }
+GSCCore >> restartWebserver [
+	^ self startWebserver
 ]
 
 { #category : #accessing }
@@ -767,6 +772,8 @@ GSCCore >> startUp [
 	
 	self setup.
 	
+	self ensureWebserver.
+	
 	Transcript crShow: 'GSC is running locally. Connect through an SSH tunnel, like so:'.
 	Transcript crShow: 'ssh -L 8888:localhost:8650 user@hostname'.
 	Transcript crShow: 'Then in a browser: http://localhost:8888/'.
@@ -775,23 +782,20 @@ GSCCore >> startUp [
 { #category : #'as yet unclassified' }
 GSCCore >> startWebserver [
 	"Start webserver, only on local network"
-	| port adaptor |
-	port := 8650 "Looks like: 8GSC".
+	| port adaptor server |
+	port := self webserverPort.
 
 	"Taken from 	ZnZincServerAdaptor startOn: port."
-	adaptor := ZnZincServerAdaptor default.
-	adaptor isNil
-		ifFalse: [ adaptor stop; port: port ]
-		ifTrue: [
-			| server |
-			server := ZnServer on: port.
-			
-			"localhost access only, too dangerous else"
-			server bindingAddress: #[127 0 0 1].
-			
-			adaptor := ZnZincServerAdaptor new.
-			adaptor server: server
-		].
+	adaptor := ZnZincServerAdaptor default ifNil: [ ZnZincServerAdaptor new ].
+
+	adaptor stop.
+
+	server := ZnServer on: port.
+	
+	"localhost access only, too dangerous else"
+	server bindingAddress: #[127 0 0 1].
+	
+	adaptor server: server.
 
 	adaptor start
 ]
@@ -1053,6 +1057,11 @@ GSCCore >> update [
 	Metacello registry
 		baseline: 'GemstoneServerCockpit';
 		load
+]
+
+{ #category : #'as yet unclassified' }
+GSCCore >> webserverPort [
+	^ 8650 "Looks like: 8GSC"
 ]
 
 { #category : #writing }
