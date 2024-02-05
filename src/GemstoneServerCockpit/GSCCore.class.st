@@ -291,7 +291,7 @@ fi
 
 '.
 	
-	fileRef writeStreamDo: [ :s |
+	fileRef writeStreamEncoded: 'utf-8' do: [ :s |
 		s nextPutAll: script
 	].
 
@@ -307,6 +307,7 @@ GSCCore >> instanceId [
 		"Logging, so we can get that ID from somewhere, if unknown"
 		Transcript crShow: 'GSC application ID: '.
 		Transcript show: uuidString.
+		Transcript cr.
 	].
 	^ uuidString
 ]
