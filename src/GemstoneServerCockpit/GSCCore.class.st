@@ -808,7 +808,7 @@ GSCCore >> stopSshControlMaster [
 
 { #category : #'as yet unclassified' }
 GSCCore >> stopWebserver [
-	GSCZincServerAdaptor default stop
+	GSCZincServerAdaptor default ifNotNil: [ :server | server stop ]
 ]
 
 { #category : #accessing }
