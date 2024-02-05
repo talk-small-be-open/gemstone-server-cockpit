@@ -46,7 +46,7 @@ GSCCore class >> instance [
 GSCCore class >> startUp: isComingUp [
 	isComingUp ifTrue: [
 		"Automatic read in the config files on the server"
-		[ self instance setup ] on: Error do: [ "hm, what?" ]
+		[ self instance startUp ] on: Error do: [ "hm, what?" ]
 	]
 ]
 
@@ -280,7 +280,7 @@ DIR=$(realpath "$NAME")
 
 cd $DIR
 
-if [ "$1" -eq "ui" ]
+if [ "$1" = "ui" ]
 then
   xpra start :100
   export DISPLAY=:100
@@ -759,6 +759,17 @@ GSCCore >> setupRoot [
 	"Create the root node of the tool tree"
 	rootTool := scheme buildRootTool.
 
+]
+
+{ #category : #'system startup' }
+GSCCore >> startUp [
+	"on Pharo start"
+	
+	self setup.
+	
+	Transcript crShow: 'GSC is running locally. Connect through an SSH tunnel, like so:'.
+	Transcript crShow: 'ssh -L 8888:localhost:8650 user@hostname'.
+	Transcript crShow: 'Then in a browser: http://localhost:8888/'.
 ]
 
 { #category : #'as yet unclassified' }
