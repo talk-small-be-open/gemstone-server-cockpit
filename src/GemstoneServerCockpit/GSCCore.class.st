@@ -236,10 +236,10 @@ GSCCore >> initialize [
 { #category : #actions }
 GSCCore >> install [
 	self installStarterShellScript.
-	
-	self installSeasideComponents.
 
 	self restartWebserver.
+	
+	self installSeasideComponents.
 
 	self setup.
 ]
