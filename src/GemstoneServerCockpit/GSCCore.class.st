@@ -187,7 +187,7 @@ GSCCore >> ensureRunningSshControlMaster [
 GSCCore >> ensureWebserver [
 	"Webserver starten"
 	| webserver |
-	webserver := ZnZincServerAdaptor default.
+	webserver := GSCZincServerAdaptor default.
 	(webserver isNil or: [ webserver isRunning not ]) ifTrue: [
 		self startWebserver ]
 ]
@@ -396,7 +396,8 @@ GSCCore >> realPathForFile: aFileReferenceOrString [
 
 { #category : #'as yet unclassified' }
 GSCCore >> restartWebserver [
-	^ self startWebserver
+	self stopWebserver.
+	self startWebserver
 ]
 
 { #category : #accessing }
@@ -776,28 +777,20 @@ GSCCore >> startUp [
 	
 	Transcript crShow: 'GSC is running locally. Connect through an SSH tunnel, like so:'.
 	Transcript crShow: 'ssh -L 8888:localhost:8650 user@hostname'.
-	Transcript crShow: 'Then in a browser: http://localhost:8888/'.
+	Transcript crShow: ('Then in a browser: http://localhost:8888/', self instanceId asString).
 ]
 
 { #category : #'as yet unclassified' }
 GSCCore >> startWebserver [
 	"Start webserver, only on local network"
-	| port adaptor server |
-	port := self webserverPort.
-
-	"Taken from 	ZnZincServerAdaptor startOn: port."
-	adaptor := ZnZincServerAdaptor default ifNil: [ ZnZincServerAdaptor new ].
-
-	adaptor stop.
-
-	server := ZnServer on: port.
+	| serverManager |
 	
-	"localhost access only, too dangerous else"
-	server bindingAddress: #[127 0 0 1].
+	"Make sure: Kill all, then start single"
+	serverManager := WAAdmin defaultServerManager.
+	serverManager adaptors do: [ :each | serverManager unregister: each ].
 	
-	adaptor server: server.
-
-	adaptor start
+	
+	GSCZincServerAdaptor startOn: self webserverPort.
 ]
 
 { #category : #shell }
@@ -811,6 +804,11 @@ GSCCore >> stopSshControlMaster [
 	process
 		command: cmd;
 		runAndWait
+]
+
+{ #category : #'as yet unclassified' }
+GSCCore >> stopWebserver [
+	GSCZincServerAdaptor default stop
 ]
 
 { #category : #accessing }
