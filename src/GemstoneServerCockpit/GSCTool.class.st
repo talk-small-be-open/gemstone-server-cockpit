@@ -199,7 +199,14 @@ GSCTool >> configAt: aConfigKey ifBlank: aBlock [
 
 { #category : #accessing }
 GSCTool >> configAt: aConfigKey put: aValue [
-	^ self config at: aConfigKey put: aValue
+	| c value |
+	c := self config.
+	value := c at: aConfigKey put: aValue.
+	
+	"We always savely store changes to disk"
+	c storeToFile.
+	
+	^ value
 ]
 
 { #category : #'as yet unclassified' }
@@ -461,8 +468,11 @@ GSCTool >> renderLogOn: html [
 	log ifNotEmpty: [ 
 		html div class: 'log'; with: [
 			html heading: 'Logtail'.
-			self logTail do: [ :each |
-				html preformatted: each ] ].
+			html preformatted: [
+				self logTail do: [ :each |
+					html text: each.
+					html text: String lf
+				] ] ].
 		
 		html anchor
 			callback: [ self showFullLog ];

@@ -1,7 +1,7 @@
 Class {
 	#name : #GSCRootSchemeV1,
 	#superclass : #GSCRootScheme,
-	#category : #'GemstoneServerCockpit-Model'
+	#category : #'GemstoneServerCockpit-Scheme'
 }
 
 { #category : #'as yet unclassified' }
@@ -18,7 +18,7 @@ GSCRootSchemeV1 >> buildRootTool [
 		"hardcoded apt packages for the server setup"
 		"'mailutils' ""for ngxblocker to send emails"""
 		{'logrotate'. 'ufw'. 'git'. 'htop'. 'unzip'. 'zip'. 'pigz'. 'aptitude'. 'mosh'.
-		'cronic'. 'goaccess'. 'lnav'. 'ansible'. 'snapd' } do: [ :each |
+		'cronic'. 'goaccess'. 'lnav'. 'ansible'. } do: [ :each |
 			folder add: GSCAptPackage then: [ :apt |
 				apt packageName: each ] ].
 		
@@ -27,8 +27,12 @@ GSCRootSchemeV1 >> buildRootTool [
 			folder add: GSCAptPackage then: [ :apt |
 				apt packageName: each ] ].
 
-		folder add: GSCSnapPackage then: [ :apt |
-			apt packageName: 'certbot' ].
+		(config at: 'server:snapPackages') do: [ :each |
+			folder add: GSCSnapPackage then: [ :apt |
+				apt packageName: each ] ].
+
+"		folder add: GSCSnapPackage then: [ :apt |
+			apt packageName: 'certbot' ]."
 	].
 	
 	root add: GSCNginx.

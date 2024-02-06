@@ -1,7 +1,7 @@
 Class {
 	#name : #GSCWebApplicationSchemeV1,
 	#superclass : #GSCApplicationScheme,
-	#category : #'GemstoneServerCockpit-Model'
+	#category : #'GemstoneServerCockpit-Scheme'
 }
 
 { #category : #building }
@@ -93,9 +93,6 @@ GSCWebApplicationSchemeV1 >> defaultConfigurationBuilder [
 		workersCount: 3;
 		nginxIncludeFile: ''.
 
-	builder mail
-		smtpRelayhost: nil.
-		
 	builder ansibleTasksJson: '[ { } ]'.
 
 	builder aptPackages: #().

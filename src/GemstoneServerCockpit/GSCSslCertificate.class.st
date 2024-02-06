@@ -1,5 +1,5 @@
 Class {
-	#name : #GSCCertbotCertificates,
+	#name : #GSCSslCertificate,
 	#superclass : #GSCTool,
 	#instVars : [
 		'domains',
@@ -9,19 +9,19 @@ Class {
 }
 
 { #category : #accessing }
-GSCCertbotCertificates >> certificateName [
+GSCSslCertificate >> certificateName [
 
-	^ certificateName
+	^ certificateName ifBlank: [ self domains first ]
 ]
 
 { #category : #accessing }
-GSCCertbotCertificates >> certificateName: anObject [
+GSCSslCertificate >> certificateName: anObject [
 
 	certificateName := anObject
 ]
 
 { #category : #'as yet unclassified' }
-GSCCertbotCertificates >> checkMe [
+GSCSslCertificate >> checkMe [
 	self beNotNeedsAttention.
 	
 	(self core fileExists: self pemFilePath) ifFalse: [ self beNeedsAttention: 'PEM certificate file does not exist' ]
@@ -30,7 +30,7 @@ GSCCertbotCertificates >> checkMe [
 ]
 
 { #category : #'as yet unclassified' }
-GSCCertbotCertificates >> doGetCertificate [
+GSCSslCertificate >> doGetCertificate [
 
 "  - name: Ensure port 80 not in use by nginx
     when: resres.useSsl
@@ -39,38 +39,52 @@ GSCCertbotCertificates >> doGetCertificate [
       enabled: yes
       state: stopped"
 
-	self runShellCommand: ('certbot --standalone -n --agree-tos --email ', self email, ' --cert-name "', self certificateName, '"  --domains "', self domainsCommaList, '" certonly').
+"	self runShellCommand: ('certbot --standalone -n --agree-tos --email ', self email, ' --cert-name ""', self certificateName, '""  --domains ""', self domainsCommaList, '"" certonly')."
 
+	| cmd |
+	cmd := String streamContents: [ :s |
+		s << 'acme.sh --issue --nginx '.
+		self domains do: [ :each |
+			s << '-d '.
+			s << each ]
+	].
+	self runShellCommand: cmd
+]
+
+{ #category : #'as yet unclassified' }
+GSCSslCertificate >> doInstallAcmeSh [
+
+	self runShellCommand: ('curl https://get.acme.sh | sh -s email=', self email)
 ]
 
 { #category : #accessing }
-GSCCertbotCertificates >> domain: aString [
+GSCSslCertificate >> domain: aString [
 	self domains: { aString }
 ]
 
 { #category : #accessing }
-GSCCertbotCertificates >> domains [
+GSCSslCertificate >> domains [
 
 	^ domains
 ]
 
 { #category : #accessing }
-GSCCertbotCertificates >> domains: anObject [
+GSCSslCertificate >> domains: anObject [
 
 	domains := anObject
 ]
 
 { #category : #'as yet unclassified' }
-GSCCertbotCertificates >> domainsCommaList [
+GSCSslCertificate >> domainsCommaList [
 	^ domains joinUsing: ','
 ]
 
 { #category : #accessing }
-GSCCertbotCertificates >> email [
+GSCSslCertificate >> email [
 	^ self configAt: 'project:email'
 ]
 
 { #category : #'as yet unclassified' }
-GSCCertbotCertificates >> pemFilePath [
+GSCSslCertificate >> pemFilePath [
 	^ '/etc/letsencrypt/live/', self certificateName, '/fullchain.pem'
 ]

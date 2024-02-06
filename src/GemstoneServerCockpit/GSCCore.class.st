@@ -448,8 +448,8 @@ https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not
 
 	linesBlock := aLinesBlock ifNil: [ [ :lines | Transcript << lines ] ].
 
-	subprocessTailLines ifNil: [
-		subprocessTailLines := OrderedCollection new ].
+"	subprocessTailLines ifNil: ["
+	subprocessTailLines := OrderedCollection new.
 
 	fireRunBlock := [ :proc |
 		"do this after the main sudo password has been streamed into the pipe. So that runBlock is ready
@@ -775,8 +775,8 @@ GSCCore >> startUp [
 	
 	self restartWebserver.
 	
-	Transcript crShow: 'GSC is running locally. Connect through an SSH tunnel, like so:'.
-	Transcript crShow: 'ssh -L 8888:localhost:8650 user@hostname'.
+	Transcript crShow: 'GSC is running locally only. Connect through an SSH tunnel. Example:'.
+	Transcript crShow: 'ssh -Y -L 8888:localhost:8650 user@hostname'.
 	Transcript crShow: ('Then in a browser: http://localhost:8888/', self instanceId asString).
 ]
 

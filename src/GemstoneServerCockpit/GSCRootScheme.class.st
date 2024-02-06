@@ -1,7 +1,7 @@
 Class {
 	#name : #GSCRootScheme,
 	#superclass : #GSCSchemeBase,
-	#category : #'GemstoneServerCockpit-Model'
+	#category : #'GemstoneServerCockpit-Scheme'
 }
 
 { #category : #'as yet unclassified' }
@@ -18,11 +18,14 @@ GSCRootScheme >> defaultConfigurationBuilder [
 	builder server
 		username: 'ubuntu';
 		adminEmail: '';
-		aptPackages: #(vim);
+		aptPackages: #();
 		snapPackages: #().
 
 	builder gemstone
 		gsHome: '/opt/GsDevKit_home'.
+
+	builder mail
+		smtpRelayhost: nil.
 		
 
 	^ builder

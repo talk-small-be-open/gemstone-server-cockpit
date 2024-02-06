@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'config'
 	],
-	#category : #'GemstoneServerCockpit-Model'
+	#category : #'GemstoneServerCockpit-Scheme'
 }
 
 { #category : #building }

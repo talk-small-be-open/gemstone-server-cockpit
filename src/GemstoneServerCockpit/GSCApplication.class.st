@@ -105,7 +105,18 @@ GSCApplication >> renderBodyOn: html [
 					url: url;
 					with: url asString ]
 		]
-	]
+	].
+	html heading level2; with: 'Remarks'.
+	html form: [ 
+		html textArea
+			style: 'display: block; width: 100%;';
+			rows: 20;
+			callback: [ :newValue | (self configAt: 'remarks' put: newValue) ];
+			value: (self configAt: 'remarks').
+		html submitButton
+	 ]
+	
+
 ]
 
 { #category : #accessing }

@@ -211,10 +211,18 @@ div.subprocess pre.lastLogEntries {
 	max-height: 50vh;
 	overflow-y: auto;
 }
+div.subprocess div.command {
+	color: darkgreen;
+	font-size: 120%;
+	margin: 1em 0;
+}
+div.subprocess pre.lastLogEntries { 
+	font-size: 75%;
+}
 
 div.main {
- display: flex;
- flex-direction: column;
+	display: flex;
+	flex-direction: column;
 }
 div.upperPane {
 }
@@ -264,6 +272,11 @@ div.toolsPane a.listEntry span.attributes {
 	float: right;
 	color: grey;
 }
+
+div.log pre { 
+	font-size: 75%;
+}
+
 table.fileComparison { 
 	font-size: 66%;
 }

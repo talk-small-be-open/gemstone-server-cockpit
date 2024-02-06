@@ -1,7 +1,7 @@
 Class {
 	#name : #GSCApplicationScheme,
 	#superclass : #GSCSchemeBase,
-	#category : #'GemstoneServerCockpit-Model'
+	#category : #'GemstoneServerCockpit-Scheme'
 }
 
 { #category : #building }

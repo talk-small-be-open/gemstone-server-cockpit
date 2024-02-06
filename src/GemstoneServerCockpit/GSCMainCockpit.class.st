@@ -418,7 +418,7 @@ GSCMainCockpit >> renderSubprocessOn: html [
 	core isShellProcessPresent ifTrue: [
 		html div class: 'subprocess'; with: [
 			html heading level2; with: 'SHELL COMMAND IS RUNNING!'.
-			html div: core subprocessCommandLabel.
+			html div class: 'command'; with: core subprocessCommandLabel.
 			html anchorButton
 				callback: [ self killShellProcess ];
 				with: 'Hard abort'.
@@ -434,7 +434,7 @@ GSCMainCockpit >> renderSubprocessOn: html [
 			html anchorButton callback: [ self writeToSubprocess: Character enter ]; with: 'Send Ctrl-C (INT)'.
 			html space.
 
-		html heading level3; with: 'Last log entries'.
+		html heading level3; with: 'Output'.
 		core subprocessTailLines ifNotBlank: [ :lines |
 			html preformatted class: 'lastLogEntries'; with: [
 				(lines lastAtMost: 30) do: [ :each | html text: each ] separatedBy: [ html text: Character lf ].

@@ -73,6 +73,13 @@ GSCGsDevKit >> doInstallScript [
 ]
 
 { #category : #'as yet unclassified' }
+GSCGsDevKit >> doStartTodeClient [
+	"Does only work, if the SSH tunnel is established with X11 forwarding"
+	"Will daemonize itself"
+	self runShellCommand: 'startClient tode'
+]
+
+{ #category : #'as yet unclassified' }
 GSCGsDevKit >> gsHome [
 	^ self gemstoneGsHome
 ]
