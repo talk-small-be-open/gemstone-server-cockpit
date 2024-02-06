@@ -65,8 +65,7 @@ GSCApplication >> doReConfig [
 
 { #category : #testing }
 GSCApplication >> isBeta [
-	^ true "TODO"
-	
+	^ (self configAt: 'isBeta') = true
 ]
 
 { #category : #'as yet unclassified' }

@@ -54,7 +54,7 @@ GSCNginxSite >> siteFileName [
 
 { #category : #accessing }
 GSCNginxSite >> title [
-	^ 'nginx site'
+	^ 'NGINX site'
 ]
 
 { #category : #'as yet unclassified' }

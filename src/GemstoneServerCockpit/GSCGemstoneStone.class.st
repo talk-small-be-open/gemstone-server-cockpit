@@ -143,7 +143,7 @@ GSCGemstoneStone >> gemConfTemplate [
 <?stt me hasKeyfile ifTrue: [ ?>
 KEYFILE = <?stt= me keyfilePath ?>;
 SHR_PAGE_CACHE_SIZE_KB = 2GB;
-GEM_TEMPOBJ_CACHE_SIZE = 300MB;
+GEM_TEMPOBJ_CACHE_SIZE = 500MB;
 <?stt ] ifFalse: [ ?>
 SHR_PAGE_CACHE_SIZE_KB = 1GB;
 GEM_TEMPOBJ_CACHE_SIZE = 300MB;
