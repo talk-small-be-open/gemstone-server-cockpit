@@ -23,3 +23,8 @@ GSCShellCommand >> cmd: anObject [
 GSCShellCommand >> doExecute [
 	self runShellCommand: cmd
 ]
+
+{ #category : #accessing }
+GSCShellCommand >> title [
+	^ 'Shell: ', cmd
+]

@@ -37,6 +37,25 @@ export PATH=$GS_HOME/bin:$PATH
 			line: ('kernel.shmall=', (2.5*1024*1024*1024 / 4) ceiling asInteger asString)
 	].
 
+	"systemd parameter RemoveIPC for GemStone"
+	self add: GSCLineInFile then: [ :lif |
+		lif
+			filePath: '/etc/systemd/logind.conf';
+			search: 'RemoveIPC=';
+			line: 'RemoveIPC=no'
+	].
+
+	"systemd parameter KillUserProcesses for GemStone"
+	self add: GSCLineInFile then: [ :lif |
+		lif
+			filePath: '/etc/systemd/logind.conf';
+			search: 'KillUserProcesses=';
+			line: 'KillUserProcesses=no'
+	].
+
+	self add: GSCShellCommand then: [ :shell |
+		shell cmd: ('loginctl enable-linger ', self serverUsername)
+	].
 
 	self add: GSCGeneralTool then: [ :tool |
 		tool checkMeBlock: [

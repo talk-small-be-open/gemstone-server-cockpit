@@ -83,5 +83,5 @@ GSCLineInFile >> search: anObject [
 
 { #category : #accessing }
 GSCLineInFile >> title [
-	^ 'Line in ', filePath pathString
+	^ 'Line in ', filePath pathString, ' (', search, ')'
 ]
