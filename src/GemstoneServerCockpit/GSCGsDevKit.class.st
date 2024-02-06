@@ -95,7 +95,13 @@ GSCGsDevKit >> doInstallScript [
 GSCGsDevKit >> doStartTodeClient [
 	"Does only work, if the SSH tunnel is established with X11 forwarding"
 	"Will daemonize itself"
-	self runShellCommand: 'startClient tode'
+	
+	| display |
+	
+	"Get the DISPLAY var, which is set from the sshd X11 forwarding"
+	display := Smalltalk os environment at: 'DISPLAY'. 
+	
+	self runShellCommand: ('startClient tode DISPLAY=', display)
 ]
 
 { #category : #'as yet unclassified' }
