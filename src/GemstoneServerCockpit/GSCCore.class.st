@@ -292,7 +292,7 @@ fi
 '.
 	
 	fileRef writeStreamEncoded: 'utf-8' do: [ :s |
-		s nextPutAll: script
+		s nextPutAll: ((GRCodec forEncoding: 'utf-8') encode: script)
 	].
 
 	fileRef permissions: (FileSystemPermission posixPermissions: 8r770)

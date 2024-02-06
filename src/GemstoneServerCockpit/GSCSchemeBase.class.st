@@ -32,7 +32,7 @@ GSCSchemeBase >> defaultConfigurationBuilder [
 	
 	builder := GSCEasyConfigurationBuilder new.
 
-	builder applicationScheme: self className.
+	builder configurationScheme: self className.
 	
 	^ builder
 ]
