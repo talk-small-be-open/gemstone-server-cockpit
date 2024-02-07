@@ -101,7 +101,7 @@ GSCGsDevKit >> doStartTodeClient [
 	"Get the DISPLAY var, which is set from the sshd X11 forwarding"
 	display := Smalltalk os environment at: 'DISPLAY'. 
 	
-	self runShellCommand: ('DISPLAY="', display, '" startClient tode')
+	self runShellCommand: ('DISPLAY="', display, '" nohup startClient tode')
 ]
 
 { #category : #'as yet unclassified' }
