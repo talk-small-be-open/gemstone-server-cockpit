@@ -9,7 +9,8 @@ Class {
 		'group',
 		'mode',
 		'filePath',
-		'title'
+		'title',
+		'fileDiff'
 	],
 	#category : #'GemstoneServerCockpit-Model'
 }
@@ -61,6 +62,23 @@ GSCTextFile >> doEditFile [
 	self uiEditText: self fileContents then: [ :newText |.
 		self writeFileContents: newText
 	]
+]
+
+{ #category : #'tool-actions' }
+GSCTextFile >> doGetDiff [
+
+"	fileDiff := (TextDiffBuilder buildDisplayPatchFrom: self fileContents to: self contentTemplate contentString)"
+
+	fileDiff := OrderedCollection new.
+
+	self core
+		runShell: 'diff'
+		args: { '--side-by-side'. '--left-column'. '--strip-trailing-cr'. '--text'. '--ignore-tab-expansion'. '--ignore-space-change'. '--ignore-all-space'. '--ignore-blank-lines'. filePath pathString. '-' }
+		stdin: self contentTemplate contentString
+		sudo: false
+		onOutput: [ :newLines | fileDiff addAll: newLines ]
+		onRun: nil
+		onFinish: nil.
 ]
 
 { #category : #'tool-actions' }
@@ -173,8 +191,22 @@ GSCTextFile >> renderBodyOn: html [
 					html preformatted
 						class: 'fileContent';
 						with: self contentTemplate contentString ]
+			].
+		
+			fileDiff ifNotBlank: [
+				html tableRow: [
+					html tableData colSpan: 2; with: [
+						html preformatted
+							with: [
+								fileDiff do: [ :each |
+									html text: each.
+									html text: String lf
+							].
+								
+								] ]
+				].
 			]
-		] ]
+		] ] 
 ]
 
 { #category : #accessing }
