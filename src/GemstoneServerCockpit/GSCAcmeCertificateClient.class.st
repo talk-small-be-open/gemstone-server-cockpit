@@ -33,7 +33,7 @@ GSCAcmeCertificateClient >> build [
 GSCAcmeCertificateClient >> checkMe [
 	self beNotNeedsAttention.
 	
-	(self core runShellIsSuccess: 'type -t ', self acmeShPath) ifFalse: [ self beNeedsAttention: 'acme.sh binary not installed' ]
+	(self core runShellIsSuccess: 'file -E ', self acmeShPath) ifFalse: [ self beNeedsAttention: 'acme.sh binary not installed' ]
 ]
 
 { #category : #'as yet unclassified' }
