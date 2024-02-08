@@ -578,6 +578,8 @@ GSCTool >> runShellCommand: aString [
 
 { #category : #'as yet unclassified' }
 GSCTool >> runShellCommand: aString then: aBlock [
+	self log: 'Shell command: ', aString.
+	
 	self core runAsyncShell: aString onOutput: [ :lines |
 		log addAll: lines ] onFinish: [ :success |
 			self refresh.

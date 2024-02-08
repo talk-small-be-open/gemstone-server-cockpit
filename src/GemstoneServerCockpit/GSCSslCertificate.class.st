@@ -53,7 +53,7 @@ GSCSslCertificate >> doGetCertificate [
 		s << self acmeShPath.
 		s << ' --issue --nginx '.
 		self domains do: [ :each |
-			s << '-d '.
+			s << ' -d '.
 			s << each ]
 	].
 	self runShellCommand: cmd
@@ -89,4 +89,9 @@ GSCSslCertificate >> email [
 { #category : #'as yet unclassified' }
 GSCSslCertificate >> pemFilePath [
 	^ '/etc/letsencrypt/live/', self certificateName, '/fullchain.pem'
+]
+
+{ #category : #accessing }
+GSCSslCertificate >> title [
+	^ 'SSL Certificate'
 ]
