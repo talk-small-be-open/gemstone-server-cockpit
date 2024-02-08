@@ -38,7 +38,9 @@ GSCAcmeCertificateClient >> checkMe [
 
 { #category : #'as yet unclassified' }
 GSCAcmeCertificateClient >> doInstall [
-	self runShellCommand: 'cd ', self serverUserHome, '/acme-sh-installer ; ./acme.sh --install -m ', self serverAdminEmail
+	self runBashScript: ('
+cd ', self serverUserHome, '/acme-sh-installer
+./acme.sh --install -m ', self serverAdminEmail)
 ]
 
 { #category : #accessing }

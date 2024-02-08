@@ -82,7 +82,8 @@ GSCMainCockpit >> renderContentOn: html [
 			self renderPanesOn: html
 		].
 		html div class: 'lowerPane'; with: [
-			self renderTheToolOn: html
+			self renderTheToolOn: html.
+			self renderSubprocessLogOn: html.
 		].
 
 	]
@@ -409,6 +410,16 @@ GSCMainCockpit >> renderRootToolbarOn: html [
 		self rootTool renderOn: html ]
 	
 "oder nur renderActionsOn: html"
+
+]
+
+{ #category : #rendering }
+GSCMainCockpit >> renderSubprocessLogOn: html [
+	core subprocessTailLines ifNotBlank: [ :lines |
+		html heading level1; with: 'Last subprocess output'.
+		html preformatted class: 'lastLogEntries'; with: [
+			lines do: [ :each | html text: each ] separatedBy: [ html text: Character lf ].
+	]]
 
 ]
 

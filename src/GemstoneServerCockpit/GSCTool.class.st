@@ -555,6 +555,8 @@ cat /tmp/gscSmalltalkOutput.log
 GSCTool >> runBashScript: aString [
 	| lines |
 
+	self log: 'Bash script: ', aString.
+
 	lines := OrderedCollection new.
 
 	"We need to pipe stdin via tee so that bash does not invoke interactive"
@@ -581,7 +583,7 @@ GSCTool >> runShellCommand: aString then: aBlock [
 	self log: 'Shell command: ', aString.
 	
 	self core runAsyncShell: aString onOutput: [ :lines |
-		log addAll: lines ] onFinish: [ :success |
+		"log addAll: lines" ] onFinish: [ :success |
 			self refresh.
 			aBlock ifNotNil: [
 				success ifTrue: aBlock ]	
@@ -622,8 +624,10 @@ GSCTool >> runSudoShellCommand: aString [
 
 { #category : #'as yet unclassified' }
 GSCTool >> runSudoShellCommand: aString then: aBlock [
+	self log: 'Shell sudo command: ', aString.
+
 	self core runSudoAsyncShell: aString onOutput: [ :lines |
-		log addAll: lines ] onFinish: [ :success |
+		"log addAll: lines" ] onFinish: [ :success |
 			self refresh.
 			aBlock ifNotNil: [
 				success ifTrue: aBlock ]

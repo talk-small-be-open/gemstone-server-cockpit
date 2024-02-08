@@ -130,13 +130,15 @@ GSCCore >> clearSudoPassword [
 GSCCore >> createOSSUnixSubprocess [
 	| process gsHome path |
 	
-	gsHome := rootTool gemstoneGsHome pathString.
-	path := Smalltalk os environment at: 'PATH'.
+"	gsHome := rootTool ifNotNil: [ rootTool gemstoneGsHome pathString ].
+	path := Smalltalk os environment at: 'PATH'."
 	
-	process := OSSUnixSubprocess new
-		environmentAt: 'GS_HOME' put: gsHome;
-		environmentAt: 'PATH' put: (gsHome, '/bin:', path);
-		yourself.
+	process := OSSUnixSubprocess new.
+	
+"	gsHome ifNotBlank: [
+		process
+			environmentAt: 'GS_HOME' put: gsHome;
+			environmentAt: 'PATH' put: (gsHome, '/bin:', path) ]."
 	
 	^ process
 ]
@@ -483,11 +485,15 @@ https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not
 
 	process := self createOSSUnixSubprocess.
 
-	envVars := {
-		'GS_HOME' -> rootTool gemstoneGsHome pathString.
-		'PATH' -> (rootTool gemstoneGsHome pathString, '/bin:$PATH').
-		'TERM' -> 'dumb'. "Some applications like 'service' have complained about non-capable terminal. We explicitely set to dumb."
-	} asDictionary.
+	envVars := Dictionary new.
+
+	"Some applications like 'service' have complained about non-capable terminal. We explicitely set to dumb."
+	envVars at: 'TERM' put: 'dumb'. 
+
+	rootTool ifNotNil: [
+		envVars at: 'GS_HOME' put: rootTool gemstoneGsHome pathString.
+		envVars at: 'PATH' put: (rootTool gemstoneGsHome pathString, '/bin:$PATH').
+	].
 
 	cmd := 'ssh'.
 
@@ -688,7 +694,11 @@ GSCCore >> setSudoPassword: aString [
 
 { #category : #'as yet unclassified' }
 GSCCore >> setup [
-	"Do soms stuff inside Pharo to set things right"
+
+	"Ensure: Clear root tool first"
+	rootTool := nil.
+
+	"Do some stuff inside Pharo to set things right"
 	self setupPharo.
 
 	self ensureRunningSshControlMaster.
