@@ -514,6 +514,11 @@ GSCTool >> root [
 ]
 
 { #category : #'as yet unclassified' }
+GSCTool >> rootFindTool: aClass [
+	^ self root descendantsDetectKindOf: aClass
+]
+
+{ #category : #'as yet unclassified' }
 GSCTool >> rootFindTools: aClass [
 	^ self root descendantsSelect: [ :each | each isKindOf: aClass ]
 ]

@@ -8,6 +8,11 @@ Class {
 	#category : #'GemstoneServerCockpit-Model'
 }
 
+{ #category : #'as yet unclassified' }
+GSCSslCertificate >> acmeShPath [
+	^ (self rootFindTool: GSCAcmeCertificateClient) acmeShPath
+]
+
 { #category : #accessing }
 GSCSslCertificate >> certificateName [
 
@@ -45,7 +50,8 @@ GSCSslCertificate >> doGetCertificate [
 
 	| cmd |
 	cmd := String streamContents: [ :s |
-		s << 'acme.sh --issue --nginx '.
+		s << self acmeShPath.
+		s << ' --issue --nginx '.
 		self domains do: [ :each |
 			s << '-d '.
 			s << each ]

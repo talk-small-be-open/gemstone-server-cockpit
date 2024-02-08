@@ -4,6 +4,11 @@ Class {
 	#category : #'GemstoneServerCockpit-Model'
 }
 
+{ #category : #'as yet unclassified' }
+GSCAcmeCertificateClient >> acmeShPath [
+	^ self serverUserHome, '/.acme.sh/acme.sh'
+]
+
 { #category : #accessing }
 GSCAcmeCertificateClient >> acmeShTemplate [
 	| response |
@@ -28,12 +33,12 @@ GSCAcmeCertificateClient >> build [
 GSCAcmeCertificateClient >> checkMe [
 	self beNotNeedsAttention.
 	
-	(self core runShellIsSuccess: 'type -t acme.sh') ifFalse: [ self beNeedsAttention: 'acme.sh binary not found in path' ]
+	(self core runShellIsSuccess: 'type -t ', self acmeShPath) ifFalse: [ self beNeedsAttention: 'acme.sh binary not installed' ]
 ]
 
 { #category : #'as yet unclassified' }
 GSCAcmeCertificateClient >> doInstall [
-	self runShellCommand: '~/acme-sh-installer/acme.sh --install -m ', self serverAdminEmail
+	self runShellCommand: 'cd ~/acme-sh-installer ; ./acme.sh --install -m ', self serverAdminEmail
 ]
 
 { #category : #accessing }
