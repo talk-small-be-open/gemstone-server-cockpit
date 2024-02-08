@@ -8,9 +8,7 @@ Class {
 GSCRootSchemeV1 >> buildRootTool [
 	| root |
 
-	root := GSCRoot new.
-	root scheme: self.
-	root build.
+	root := super buildRootTool.
 
 	root add: GSCFolder then: [ :folder |
 		folder name: 'Server software'.
@@ -66,6 +64,75 @@ GSCRootSchemeV1 >> buildRootTool [
 	].	].
 
 	^ root
+]
+
+{ #category : #'as yet unclassified' }
+GSCRootSchemeV1 >> templateHaproxyConfig [
+	^ GSCSttTemplate sttString: '
+global
+	log /dev/log	 local0
+	log /dev/log	 local1 notice
+	chroot /var/lib/haproxy
+	user haproxy
+	group haproxy
+	daemon
+	unix-bind user root group www-data mode 660
+
+defaults
+	log global
+	mode http
+	option httplog
+	option dontlognull
+	retries 3
+	timeout connect 5000
+	timeout client	50000
+	timeout server	50000
+	errorfile 400 /etc/haproxy/errors/400.http
+	errorfile 403 /etc/haproxy/errors/403.http
+	errorfile 408 /etc/haproxy/errors/408.http
+	errorfile 500 /etc/haproxy/errors/500.http
+	errorfile 502 /etc/haproxy/errors/502.http
+	errorfile 503 /etc/haproxy/errors/503.http
+	errorfile 504 /etc/haproxy/errors/504.http
+
+frontend stats
+	bind 127.0.0.1:8404
+	stats enable
+	stats uri /stats
+	stats refresh 10s
+	#log false
+	option dontlog-normal
+	# stats admin if LOCALHOST
+
+<?stt me haproxySiteConfigs do: [ :each | ?>
+<?stt= each contentString ?><?stt ] ?>'
+]
+
+{ #category : #'as yet unclassified' }
+GSCRootSchemeV1 >> templateMonitConfig [
+	^ GSCSttTemplate sttString: '
+set daemon 60
+	with start delay 30
+	
+set logfile /var/log/monit.log
+
+set idfile /var/lib/monit/id
+set statefile /var/lib/monit/state
+
+set mailserver localhost
+
+set eventqueue
+	basedir /var/lib/monit/events
+	slots 100
+
+set httpd port 2812 and
+	use address localhost
+	allow localhost
+	
+set alert <?stt= me serverAdminEmail ?> not on { instance, action }
+	 
+include /etc/monit/conf.d/*
+'
 ]
 
 { #category : #'as yet unclassified' }

@@ -29,6 +29,9 @@ GSCNginx >> build [
 			beRootOwned;
 			contentTemplate: self defaultVhostConfigTemplate
 	].
+
+"Dies not work, since sites have not been built yet.	self useSsl ifTrue: ["
+	self add: GSCAcmeCertificateClient
 	
 "TODO
   - name: User {{remoteUser}} is in group www-data (uploaded files permission)

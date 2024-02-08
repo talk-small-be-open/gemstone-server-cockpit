@@ -25,7 +25,7 @@ GSCGeneralTool >> actionBlock: anObject [
 GSCGeneralTool >> checkMe [
 	self beNotNeedsAttention.
 	
-	checkMeBlock ifNotNil: [ checkMeBlock value ]
+	checkMeBlock ifNotNil: [ checkMeBlock cull: self ]
 ]
 
 { #category : #accessing }
@@ -42,7 +42,7 @@ GSCGeneralTool >> checkMeBlock: anObject [
 
 { #category : #'as yet unclassified' }
 GSCGeneralTool >> doAction [
-	actionBlock ifNotNil: [ actionBlock value ]
+	actionBlock ifNotNil: [ actionBlock cull: self ]
 ]
 
 { #category : #accessing }

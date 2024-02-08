@@ -41,6 +41,8 @@ GSCSslCertificate >> doGetCertificate [
 
 "	self runShellCommand: ('certbot --standalone -n --agree-tos --email ', self email, ' --cert-name ""', self certificateName, '""  --domains ""', self domainsCommaList, '"" certonly')."
 
+	"Siehe https://github.com/acmesh-official/acme.sh"
+
 	| cmd |
 	cmd := String streamContents: [ :s |
 		s << 'acme.sh --issue --nginx '.
@@ -49,12 +51,6 @@ GSCSslCertificate >> doGetCertificate [
 			s << each ]
 	].
 	self runShellCommand: cmd
-]
-
-{ #category : #'as yet unclassified' }
-GSCSslCertificate >> doInstallAcmeSh [
-
-	self runShellCommand: ('curl https://get.acme.sh | sh -s email=', self email)
 ]
 
 { #category : #accessing }

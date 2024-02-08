@@ -18,6 +18,13 @@ GSCNginxSite >> build [
 			filePath: ('/etc/nginx/sites-available/', self siteFileName);
 			contentTemplate: self vhostConfigTemplate
 	].
+
+	self useSsl ifTrue: [ 
+		self add: GSCSslCertificate then: [ :cert |
+			cert domains: self domains.
+		].
+
+	]
 ]
 
 { #category : #'as yet unclassified' }

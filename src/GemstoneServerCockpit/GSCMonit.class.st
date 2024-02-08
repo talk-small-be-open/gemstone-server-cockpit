@@ -59,27 +59,9 @@ GSCMonit >> doSyntaxCheck [
 
 { #category : #building }
 GSCMonit >> monitConfigTemplate [
-	^ GSCSimpleTemplate source: '
-set daemon 60
-	with start delay 30
-	
-set logfile /var/log/monit.log
-
-set idfile /var/lib/monit/id
-set statefile /var/lib/monit/state
-
-set mailserver localhost
-
-set eventqueue
-	basedir /var/lib/monit/events
-	slots 100
-
-set httpd port 2812 and
-	use address localhost
-	allow localhost
-		 
-include /etc/monit/conf.d/*
-'
+	^ self scheme templateMonitConfig
+		tool: self;
+		yourself
 ]
 
 { #category : #accessing }

@@ -28,13 +28,6 @@ GSCGemstoneGems >> gemsCount [
 	^ (self configAt: 'web:workersCount')
 ]
 
-{ #category : #'private - initialization' }
-GSCGemstoneGems >> initMe [
-	super initMe.
-	
-
-]
-
 { #category : #'as yet unclassified' }
 GSCGemstoneGems >> startPort [
 	"TODO"

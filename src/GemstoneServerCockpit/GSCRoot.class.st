@@ -60,6 +60,14 @@ GSCRoot >> doTestShell [
 	self testShellExecution
 ]
 
+{ #category : #'private - initialization' }
+GSCRoot >> gatherFacts [
+	self factAt: 'hostname' put: (
+		self core readCommand: 'hostname' ).
+	self factAt: 'userHome' put: (
+		self core readCommand: 'echo -n ~', self serverUsername ).
+]
+
 { #category : #'as yet unclassified' }
 GSCRoot >> gemstoneGsHome [
 	^ ((self configAt: 'gemstone:gsHome') ifBlank: [ '/opt/GsDevKit_home' ]) asPath.
@@ -68,12 +76,6 @@ GSCRoot >> gemstoneGsHome [
 { #category : #accessing }
 GSCRoot >> hostname [
 	^ self factAt: 'hostname'
-]
-
-{ #category : #'private - initialization' }
-GSCRoot >> initMe [
-	self factAt: 'hostname' put: (
-		self core readCommand: 'hostname' ).
 ]
 
 { #category : #testing }
@@ -124,4 +126,9 @@ TEST3'.
 { #category : #accessing }
 GSCRoot >> title [
 	^ 'Home'
+]
+
+{ #category : #accessing }
+GSCRoot >> userHome [
+	^ self factAt: 'userHome'
 ]

@@ -775,9 +775,9 @@ GSCCore >> startUp [
 	
 	self restartWebserver.
 	
-	Transcript crShow: 'GSC is running locally only. Connect through an SSH tunnel. Example:'.
-	Transcript crShow: 'ssh -Y -L 8888:localhost:8650 user@hostname'.
-	Transcript crShow: ('Then in a browser: http://localhost:8888/', self instanceId asString).
+	Transcript crShow: 'GSC is running on local network only. Connect through an SSH tunnel. Example:'.
+	Transcript crShow: 'ssh -t -Y -L 8888:localhost:8650 user@hostname'.
+	Transcript crShow: ('Open in browser: http://localhost:8888/', self instanceId asString).
 ]
 
 { #category : #'as yet unclassified' }

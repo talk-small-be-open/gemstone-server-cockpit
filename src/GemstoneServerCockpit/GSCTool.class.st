@@ -24,6 +24,8 @@ GSCTool >> add: aToolClass then: aBlock [
 	child := aToolClass new.
 	self addTool: child.
 
+	child gatherFacts.
+
 	aBlock ifNotNil: [
 		aBlock value: child ].
 
@@ -290,6 +292,11 @@ GSCTool >> factAt: aName put: aValue [
 	facts at: aName put: aValue
 ]
 
+{ #category : #'as yet unclassified' }
+GSCTool >> gatherFacts [
+	"subclasses"
+]
+
 { #category : #'config-access' }
 GSCTool >> gemstoneGsHome [
 	^ self root gemstoneGsHome
@@ -323,6 +330,7 @@ GSCTool >> initialize [
 	children := OrderedCollection new.
 	self clearLog.
 	self clearFacts.
+	
 	needsAttention := false
 ]
 
@@ -639,8 +647,18 @@ GSCTool >> scheme [
 ]
 
 { #category : #'as yet unclassified' }
+GSCTool >> serverAdminEmail [
+	^ self root configAt: 'server:adminEmail'
+]
+
+{ #category : #'as yet unclassified' }
 GSCTool >> serverGroupname [
 	^ self serverUsername
+]
+
+{ #category : #'as yet unclassified' }
+GSCTool >> serverUserHome [
+	^ self root userHome
 ]
 
 { #category : #'as yet unclassified' }
