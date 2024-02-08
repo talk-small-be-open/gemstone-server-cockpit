@@ -206,10 +206,10 @@ GSCWebApplicationSchemeV1 >> templateNginxSiteVhost [
 	listen 443 ssl http2;
 	listen [::]:443 ssl http2;
 
-	ssl_certificate /etc/letsencrypt/live/<?stt= me appShortCode ?>/fullchain.pem;
-	ssl_certificate_key /etc/letsencrypt/live/<?stt= me appShortCode ?>/privkey.pem;
-	include /etc/letsencrypt/options-ssl-nginx.conf;
-	ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+	ssl_certificate <?stt= me sslCertificate fullchainFilePath ?>;
+	ssl_certificate_key <?stt= me sslCertificate keyFilePath ?>;
+	#include /etc/letsencrypt/options-ssl-nginx.conf;
+	#ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 
 <?stt ] ifFalse: [ ?>
 	listen 80;

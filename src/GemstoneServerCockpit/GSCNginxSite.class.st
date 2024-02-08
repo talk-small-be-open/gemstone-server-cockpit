@@ -1,6 +1,9 @@
 Class {
 	#name : #GSCNginxSite,
 	#superclass : #GSCTool,
+	#instVars : [
+		'sslCertificate'
+	],
 	#category : #'GemstoneServerCockpit-Model'
 }
 
@@ -20,7 +23,7 @@ GSCNginxSite >> build [
 	].
 
 	self useSsl ifTrue: [ 
-		self add: GSCSslCertificate then: [ :cert |
+		sslCertificate := self add: GSCSslCertificate then: [ :cert |
 			cert domains: self domains.
 		].
 
@@ -57,6 +60,12 @@ GSCNginxSite >> nginxDomainsString [
 { #category : #'as yet unclassified' }
 GSCNginxSite >> siteFileName [
 	^ self appShortCode, '.vhost'
+]
+
+{ #category : #accessing }
+GSCNginxSite >> sslCertificate [
+
+	^ sslCertificate
 ]
 
 { #category : #accessing }

@@ -29,7 +29,7 @@ GSCSslCertificate >> certificateName: anObject [
 GSCSslCertificate >> checkMe [
 	self beNotNeedsAttention.
 	
-	(self core fileExists: self pemFilePath) ifFalse: [ self beNeedsAttention: 'PEM certificate file does not exist' ]
+	(self core fileExists: self keyFilePath) ifFalse: [ self beNeedsAttention: 'PEM certificate file does not exist' ]
 
 
 ]
@@ -56,6 +56,28 @@ GSCSslCertificate >> doGetCertificate [
 			s << ' -d '.
 			s << each ]
 	].
+	self runShellCommand: cmd
+]
+
+{ #category : #'as yet unclassified' }
+GSCSslCertificate >> doInstallCertificate [
+
+	| cmd |
+	cmd := String streamContents: [ :s |
+		s << self acmeShPath.
+		s << ' --install-cert '.
+		s << '-d '.
+		s << self domains first.
+		
+		s << ' --key-file '.
+		s << self keyFilePath.
+
+		s << ' --fullchain-file '.
+		s << self fullchainFilePath.
+		
+		s << '--reloadcmd "service nginx force-reload"'
+	].
+
 	self runShellCommand: cmd
 ]
 
@@ -87,8 +109,13 @@ GSCSslCertificate >> email [
 ]
 
 { #category : #'as yet unclassified' }
-GSCSslCertificate >> pemFilePath [
-	^ '/etc/letsencrypt/live/', self certificateName, '/fullchain.pem'
+GSCSslCertificate >> fullchainFilePath [
+	^ '/etc/gsc/certificates/', self certificateName, '/fullchain.pem'
+]
+
+{ #category : #'as yet unclassified' }
+GSCSslCertificate >> keyFilePath [
+	^ '/etc/gsc/certificates/', self certificateName, '/key.pem'
 ]
 
 { #category : #accessing }
