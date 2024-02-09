@@ -134,8 +134,8 @@ GSCGemstoneStone >> doShowStoneTime [
 
 { #category : #'as yet unclassified' }
 GSCGemstoneStone >> gemConfTemplate [
-	^ GSCSttTemplate tool: self sttString: '
-#
+	^ GSCSttTemplate tool: self sttString:
+'#
 # standard gem.conf file for dev kit gems
 #
 

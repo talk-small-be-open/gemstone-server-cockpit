@@ -68,8 +68,8 @@ GSCRootSchemeV1 >> buildRootTool [
 
 { #category : #'as yet unclassified' }
 GSCRootSchemeV1 >> templateHaproxyConfig [
-	^ GSCSttTemplate sttString: '
-global
+	^ GSCSttTemplate sttString:
+'global
 	log /dev/log	 local0
 	log /dev/log	 local1 notice
 	chroot /var/lib/haproxy
@@ -110,8 +110,8 @@ frontend stats
 
 { #category : #'as yet unclassified' }
 GSCRootSchemeV1 >> templateMonitConfig [
-	^ GSCSttTemplate sttString: '
-set daemon 60
+	^ GSCSttTemplate sttString:
+'set daemon 60
 	with start delay 30
 	
 set logfile /var/log/monit.log
@@ -137,8 +137,8 @@ include /etc/monit/conf.d/*
 
 { #category : #'as yet unclassified' }
 GSCRootSchemeV1 >> templateNginxConfig [
-	^ GSCSttTemplate sttString: '
-user www-data;
+	^ GSCSttTemplate sttString:
+'user www-data;
 worker_processes auto;
 pid /run/nginx.pid;
 include /etc/nginx/modules-enabled/*.conf;

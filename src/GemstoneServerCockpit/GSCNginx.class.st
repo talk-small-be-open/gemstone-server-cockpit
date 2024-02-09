@@ -40,8 +40,8 @@ GSCNginx >> build [
 
 { #category : #'as yet unclassified' }
 GSCNginx >> defaultVhostConfigTemplate [
-	^ GSCSttTemplate tool: self sttString: '
-# Reject access with just the IP. We do not want bots or other dark forces to annoy us
+	^ GSCSttTemplate tool: self sttString:
+'# Reject access with just the IP. We do not want bots or other dark forces to annoy us
 server {
 	listen 80 default_server;
 	listen [::]:80 default_server;

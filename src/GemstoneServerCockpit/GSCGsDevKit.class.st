@@ -17,11 +17,10 @@ GSCGsDevKit >> build [
 		file
 			filePath: '/etc/profile.d/Z99-gsdevkit.sh';
 			beRootOwned;
-			contentTemplate: (GSCSimpleTemplate source: ('
-# Env vars for GemStone
+			contentTemplate: (GSCSimpleTemplate source: (
+'# Env vars for GemStone
 export GS_HOME=', self gsHome pathString, '
-export PATH=$GS_HOME/bin:$PATH
-'))
+export PATH=$GS_HOME/bin:$PATH'))
 	].
 
 	"Use a bit more than 2GB of max shared memory, since the 'Limited' GemStone license will give us only max 2GB"
@@ -128,8 +127,8 @@ GSCGsDevKit >> repoUrl [
 
 { #category : #'as yet unclassified' }
 GSCGsDevKit >> seasideStonTemplate [
-	^ GSCSimpleTemplate source: '
-TDObjectGatewayLeafNode{#name:''Seaside3'',#contents:''^ TDProjectSpecEntryDefinition new
+	^ GSCSimpleTemplate source:
+'TDObjectGatewayLeafNode{#name:''Seaside3'',#contents:''^ TDProjectSpecEntryDefinition new
     comment: \''\'';
     projectUrl: \''https://github.com/SeasideSt/Seaside\'';
     baseline: \''Seaside3\''
@@ -140,8 +139,7 @@ TDObjectGatewayLeafNode{#name:''Seaside3'',#contents:''^ TDProjectSpecEntryDefin
     gitCheckout: \''master\'';
     status: #(#\''inactive\'');
     locked: false;
-    yourself''}
-'
+    yourself''}'
 ]
 
 { #category : #accessing }

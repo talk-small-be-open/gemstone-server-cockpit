@@ -462,7 +462,7 @@ GSCCore >> runShell: aCommandString args: anArgsCollection stdin: aStdinString s
 https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not-terminating-once-stdin-is-consumed
 "
 
-	needSudoPassword := aSudoBoolean and: [ self needsSudoPassword ].
+	needSudoPassword := aSudoBoolean and: [ self hasPasswordlessSudo not ].
 	
 	self isShellProcessRunning ifTrue: [ self error: 'Another shell process is running.' ].
 

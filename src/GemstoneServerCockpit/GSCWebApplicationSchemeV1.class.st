@@ -107,8 +107,8 @@ GSCWebApplicationSchemeV1 >> defaultConfigurationBuilder [
 
 { #category : #'as yet unclassified' }
 GSCWebApplicationSchemeV1 >> templateGemMonitConfig [
-	^ GSCSttTemplate sttString: '
-# GEM ON PORT <?stt= me portNumber ?>
+	^ GSCSttTemplate sttString:
+'# GEM ON PORT <?stt= me portNumber ?>
 check process <?stt= me monitCheckName ?> with pidfile <?stt= me gsHome ?>/server/stones/<?stt= me stoneName ?>/logs/seaside<?stt= me gemIndex ?>_server-<?stt= me portNumber ?>.pid
 	DEPENDS ON <?stt= me stoneTool netldiMonitCheckName ?>
 	ONREBOOT START
@@ -125,8 +125,8 @@ check process <?stt= me monitCheckName ?> with pidfile <?stt= me gsHome ?>/serve
 
 { #category : #'as yet unclassified' }
 GSCWebApplicationSchemeV1 >> templateHaproxySite [
-	^ GSCSttTemplate sttString: '
-frontend <?stt= me appShortCode ?>_nginx
+	^ GSCSttTemplate sttString:
+'frontend <?stt= me appShortCode ?>_nginx
 	bind unix@/tmp/haproxy_<?stt= me appShortCode ?>.socket
 	default_backend <?stt= me appShortCode ?>_gems
 
@@ -182,8 +182,8 @@ GSCWebApplicationSchemeV1 >> templateNetldiMonitConfig [
 
 	"TBD Maybe starting needs the USER and HOME env vars?!"
 
-	^ GSCSttTemplate sttString: '
-# NETLDI
+	^ GSCSttTemplate sttString:
+'# NETLDI
 check process <?stt= me netldiMonitCheckName ?> matching "^/opt/.*/sys/netldid <?stt= me stoneName ?>_ldi .*$"
 			ONREBOOT START
 			DEPENDS ON <?stt= me monitCheckName ?>
@@ -275,8 +275,8 @@ sttCachedLocations := '
 <?stt ] ?>
 '.
 
-	^ GSCSttTemplate sttString: '
-server {
+	^ GSCSttTemplate sttString:
+'server {
 
 	', sttListenPort, '
 
@@ -368,8 +368,8 @@ server {
 
 { #category : #'as yet unclassified' }
 GSCWebApplicationSchemeV1 >> templateStoneMonitConfig [
-	^ GSCSttTemplate sttString: '
-# STONE
+	^ GSCSttTemplate sttString:
+'# STONE
 check process <?stt= me monitCheckName ?> matching "^/opt/.*/sys/stoned <?stt= me stoneName ?> .*$"
 			ONREBOOT START
 			MODE ACTIVE
