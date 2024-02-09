@@ -871,15 +871,13 @@ GSCCore >> sudoAsyncWriteFile: aFilePath owner: anOwnerString group: aGroupStrin
 	] onFinish: nil."
 
 	self doInBackground: [
-		| path fileContent endsWithLf |
+		| path fileContent |
 		path := aFilePath asPath pathString.
 		fileContent := aString withUnixLineEndings.
 
 "		endsWithLf := fileContent last = Character lf."
 
 		"Ging nicht mit tee, weil es nicht exit gemacht hat"
-	"		runSshOSSUnixSubprocess: 'sed'
-			args: { '-n'. ('''w ', path, '''') }"
 "nicht zuverlässig, hängt			runSshOSSUnixSubprocess: 'tee'
 			args: { path }"
 
@@ -891,8 +889,10 @@ GSCCore >> sudoAsyncWriteFile: aFilePath owner: anOwnerString group: aGroupStrin
 		self
 "			runShell: 'sed'
 			args: { '-n'. ('''s/\x0//g; w ', path, '''') }"
-			runShell: 'tee'
-			args: { path }
+"			runShell: 'tee'
+			args: { path }"
+			runShell: 'dd'
+			args: { 'of="',path,'"' }
 			stdin: nil
 			sudo: true
 			onOutput: nil
