@@ -94,7 +94,7 @@ GSCMainCockpit >> renderCoreToolbarOn: html [
 
 	html div class: 'coreToolbar'; with: [
 		html form: [	
-			core isSudoPasswordSet ifFalse: [
+			core needsSudoPassword ifTrue: [
 				html anchorButton
 					callback: [ self setSudoPassword ];
 					with: 'Set sudo password ...'

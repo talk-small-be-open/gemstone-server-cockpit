@@ -11,7 +11,8 @@ Class {
 		'isDevelopment',
 		'sudoPrompt',
 		'subprocessTailLines',
-		'subprocessCommandLabel'
+		'subprocessCommandLabel',
+		'hasPasswordlessSudo'
 	],
 	#classVars : [
 		'Instance'
@@ -122,6 +123,15 @@ GSCCore >> beDevelopment [
 ]
 
 { #category : #'as yet unclassified' }
+GSCCore >> checkPermissions [
+	| output |
+	output := self readCommand: 'sudo --non-interactive echo -n "yes"'.
+	
+	hasPasswordlessSudo := (output = 'yes')
+
+]
+
+{ #category : #'as yet unclassified' }
 GSCCore >> clearSudoPassword [
 	temporarySudoPassword := nil
 ]
@@ -225,6 +235,11 @@ GSCCore >> getSudoPassword [
 	self timestampSudoPassword.
 	
 	^ temporarySudoPassword
+]
+
+{ #category : #accessing }
+GSCCore >> hasPasswordlessSudo [
+	^ hasPasswordlessSudo
 ]
 
 { #category : #initialization }
@@ -350,6 +365,11 @@ GSCCore >> log: aString [
 	Transcript crShow: aString
 ]
 
+{ #category : #testing }
+GSCCore >> needsSudoPassword [
+	^ (self isSudoPasswordSet or: [ self hasPasswordlessSudo ]) not
+]
+
 { #category : #'as yet unclassified' }
 GSCCore >> readCommand: aCommand [
 	^ self readCommand: aCommand args: #()
@@ -436,12 +456,14 @@ GSCCore >> runAsyncShell: aString sudo: aSudoBoolean onOutput: aBlock onFinish: 
 { #category : #shell }
 GSCCore >> runShell: aCommandString args: anArgsCollection stdin: aStdinString sudo: aSudoBoolean onOutput: aLinesBlock onRun: aRunBlock onFinish: aFinishBlock [
 
-	| process sudoPassword cmd args envVars lineReader catchFirstSudoPrompt runBlockDone fireRunBlock linesBlock |
+	| process sudoPassword cmd args envVars lineReader catchFirstSudoPrompt runBlockDone fireRunBlock linesBlock needSudoPassword |
 
 "Best info for ssh/tty/stdin etc.
 https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not-terminating-once-stdin-is-consumed
 "
 
+	needSudoPassword := aSudoBoolean and: [ self needsSudoPassword ].
+	
 	self isShellProcessRunning ifTrue: [ self error: 'Another shell process is running.' ].
 
 	subprocessCommandLabel := aCommandString.
@@ -480,7 +502,7 @@ https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not
 		].
 	].
 
-	aSudoBoolean ifTrue: [
+	needSudoPassword ifTrue: [
 		sudoPassword := self getSudoPassword ].
 
 	process := self createOSSUnixSubprocess.
@@ -578,11 +600,11 @@ https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not
 	lineReader := GSCPipeLinesReadStream new.
 	
 	"when sudo is involved there is a strange empty newline at the beginning"
-	aSudoBoolean ifTrue: [
+	needSudoPassword ifTrue: [
 		lineReader ignoreLeadingNewlines: 1
 	].
 
-	catchFirstSudoPrompt := aSudoBoolean.
+	catchFirstSudoPrompt := needSudoPassword.
 	
 	process waitForExitPollingEvery: (Delay forMilliseconds: 100) doing: [ :proc :outStream :errStream |
 		
@@ -592,7 +614,7 @@ https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not
 		proc isComplete ifTrue: [ lineReader complete ].
 
 		"If we do not wait for a initial sudo prompt, then we can do that immediately"
-		aSudoBoolean ifFalse: [
+		needSudoPassword ifFalse: [
 			fireRunBlock value: proc
 		].
 
@@ -701,6 +723,7 @@ GSCCore >> setup [
 	"Do some stuff inside Pharo to set things right"
 	self setupPharo.
 
+	self checkPermissions.
 	self ensureRunningSshControlMaster.
 
 	sudoPrompt := UUID new asString36.

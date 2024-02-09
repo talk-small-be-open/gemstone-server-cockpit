@@ -6,6 +6,7 @@ Class {
 
 { #category : #building }
 GSCGsDevKit >> build [
+	| shmmax |
 	self add: GSCGitRepository then: [ :git |
 		git
 			folderPath: self gsHome;
@@ -23,18 +24,19 @@ export PATH=$GS_HOME/bin:$PATH
 '))
 	].
 
-	"Use a bit more than 2GB of max shared memory, since the 'Limited' GemStone license will give us 2GB"
+	"Use a bit more than 2GB of max shared memory, since the 'Limited' GemStone license will give us only max 2GB"
+	shmmax := (2.5*1024*1024*1024) asInteger.
 	self add: GSCLineInFile then: [ :lif |
 		lif
 			filePath: '/etc/sysctl.conf';
 			search: 'kernel.shmmax=';
-			line: ('kernel.shmmax=', (2.5*1024*1024*1024) asInteger asString)
+			line: ('kernel.shmmax=', shmmax asString)
 	].
 	self add: GSCLineInFile then: [ :lif |
 		lif
 			filePath: '/etc/sysctl.conf';
 			search: 'kernel.shmall=';
-			line: ('kernel.shmall=', (2.5*1024*1024*1024 / 4) ceiling asInteger asString)
+			line: ('kernel.shmall=', (shmmax / 4096) ceiling asInteger asString)
 	].
 
 	"systemd parameter RemoveIPC for GemStone"
