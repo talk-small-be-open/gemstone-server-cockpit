@@ -239,7 +239,7 @@ GSCCore >> getSudoPassword [
 
 { #category : #accessing }
 GSCCore >> hasPasswordlessSudo [
-	^ hasPasswordlessSudo
+	^ hasPasswordlessSudo = true
 ]
 
 { #category : #initialization }
