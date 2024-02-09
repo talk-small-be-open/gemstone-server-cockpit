@@ -608,6 +608,7 @@ https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not
 	
 	process waitForExitPollingEvery: (Delay forMilliseconds: 100) doing: [ :proc :outStream :errStream |
 		
+		"Read both back stdout and stderr"
 		lineReader consumePipe: outStream.
 		lineReader consumePipe: errStream.
 
@@ -627,6 +628,8 @@ https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not
 				nextPutAll: self getSudoPassword;
 				lf;
 				flush.
+				
+			"Remove the sudo prompt"
 			lineReader removeLastLine.
 
 			(Delay forMilliseconds: 110) wait.
@@ -871,7 +874,8 @@ GSCCore >> sudoAsyncWriteFile: aFilePath owner: anOwnerString group: aGroupStrin
 		| path fileContent endsWithLf |
 		path := aFilePath asPath pathString.
 		fileContent := aString withUnixLineEndings.
-		endsWithLf := fileContent last = Character lf.
+
+"		endsWithLf := fileContent last = Character lf."
 
 		"Ging nicht mit tee, weil es nicht exit gemacht hat"
 	"		runSshOSSUnixSubprocess: 'sed'
@@ -885,8 +889,10 @@ GSCCore >> sudoAsyncWriteFile: aFilePath owner: anOwnerString group: aGroupStrin
 		"
 
 		self
-			runShell: 'sed'
-			args: { '-n'. ('''s/\x0//g; w ', path, '''') }
+"			runShell: 'sed'
+			args: { '-n'. ('''s/\x0//g; w ', path, '''') }"
+			runShell: 'tee'
+			args: { path }
 			stdin: nil
 			sudo: true
 			onOutput: nil
@@ -899,9 +905,9 @@ GSCCore >> sudoAsyncWriteFile: aFilePath owner: anOwnerString group: aGroupStrin
 					nextPutAll: fileContent;
 					flush.
 				
-				endsWithLf ifFalse: [
+"DONT. Adds a trailing line in files				endsWithLf ifFalse: [
 					stdin lf
-				].
+				]."
 	
 				stdin
 					end;

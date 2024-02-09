@@ -71,9 +71,13 @@ GSCTextFile >> doGetDiff [
 
 	fileDiff := OrderedCollection new.
 
+	"'--strip-trailing-cr'
+	'--ignore-blank-lines'
+	'--ignore-all-space'
+	'--ignore-space-change'"
 	self core
 		runShell: 'diff'
-		args: { '--side-by-side'. '--left-column'. '--strip-trailing-cr'. '--text'. '--ignore-tab-expansion'. '--ignore-space-change'. '--ignore-all-space'. '--ignore-blank-lines'. filePath pathString. '-' }
+		args: { '--side-by-side'. '--left-column'. '--text'. '--ignore-tab-expansion'. filePath pathString. '-' }
 		stdin: self contentTemplate contentString
 		sudo: false
 		onOutput: [ :newLines | fileDiff addAll: newLines ]
