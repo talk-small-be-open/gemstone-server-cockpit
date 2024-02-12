@@ -241,5 +241,5 @@ GSCTextFile >> writeFileContents: aString [
 	self core sudoEnsureDirectory: filePath parent owner: self serverUsername group: self serverUsername mode: 'u=rwx,g=rwx,o=rx' then: [
 		self core sudoAsyncWriteFile: filePath owner: owner group: group mode: mode with: aString then: [
 			self log: 'File created'.
-			self refresh ] ]
+			"self refresh" ] ]
 ]

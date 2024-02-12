@@ -136,6 +136,11 @@ GSCCore >> checkPermissions [
 
 ]
 
+{ #category : #accessing }
+GSCCore >> clearSubprocessTailLines [
+	subprocessTailLines := OrderedCollection new
+]
+
 { #category : #'as yet unclassified' }
 GSCCore >> clearSudoPassword [
 	temporarySudoPassword := nil
@@ -174,6 +179,8 @@ GSCCore >> doInBackground: aBlock [
 	Processor activeProcess name = name ifTrue: [
 		aBlock value
 	] ifFalse: [
+
+		self clearSubprocessTailLines.
 		aBlock
 			forkAt: Processor userInterruptPriority
 			named: name
@@ -482,7 +489,7 @@ https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not
 	linesBlock := aLinesBlock ifNil: [ [ :lines | Transcript << lines ] ].
 
 "	subprocessTailLines ifNil: ["
-	subprocessTailLines := OrderedCollection new.
+"	subprocessTailLines := OrderedCollection new."
 
 	fireRunBlock := [ :proc |
 		"do this after the main sudo password has been streamed into the pipe. So that runBlock is ready
@@ -705,7 +712,7 @@ https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not
 		]
 	].
 
-	subprocessTailLines := OrderedCollection new.
+"	subprocessTailLines := OrderedCollection new."
 
 	fireRunBlock := [ :proc |
 		"do this after the main sudo password has been streamed into the pipe. So that runBlock is ready
@@ -943,6 +950,7 @@ GSCCore >> setup [
 	"Do some stuff inside Pharo to set things right"
 	self setupPharo.
 
+	self clearSubprocessTailLines.
 	self checkPermissions.
 	self ensureRunningSshControlMaster.
 
@@ -1159,7 +1167,6 @@ GSCCore >> sudoEnsureDirectory: aDirPath owner: anOwnerString group: aGroupStrin
 	path := aDirPath asPath pathString.
 	
 	self doInBackground: [
-		"Ging nicht mit tee, weil es nicht exit gemacht hat"
 		self
 			runShell: 'mkdir'
 			args: { '-p'. path }

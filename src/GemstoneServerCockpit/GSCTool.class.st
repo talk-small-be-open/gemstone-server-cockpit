@@ -584,7 +584,7 @@ GSCTool >> runShellCommand: aString then: aBlock [
 	
 	self core runAsyncShell: aString onOutput: [ :lines |
 		"log addAll: lines" ] onFinish: [ :success |
-			self refresh.
+"			self refresh."
 			aBlock ifNotNil: [
 				success ifTrue: aBlock ]	
 	]
@@ -628,7 +628,7 @@ GSCTool >> runSudoShellCommand: aString then: aBlock [
 
 	self core runSudoAsyncShell: aString onOutput: [ :lines |
 		"log addAll: lines" ] onFinish: [ :success |
-			self refresh.
+"			self refresh."
 			aBlock ifNotNil: [
 				success ifTrue: aBlock ]
 	]
