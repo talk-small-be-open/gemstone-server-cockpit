@@ -123,6 +123,11 @@ GSCCore >> beDevelopment [
 ]
 
 { #category : #'as yet unclassified' }
+GSCCore >> beNotDevelopment [
+	isDevelopment := false
+]
+
+{ #category : #'as yet unclassified' }
 GSCCore >> checkPermissions [
 	| output |
 	output := self readCommand: 'sudo --non-interactive echo -n "yes"'.
@@ -744,8 +749,10 @@ https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not
 	cmd := 'ssh'.
 
 	args := Array streamContents: [ :a |
+		a nextPut: '-q'.
+
 		aTtyBoolean ifTrue: [
-			a nextPut: '-ttq'. ].
+			a nextPut: '-tt'. ].
 
 		a nextPut: '-S /tmp/gscControlMaster.sock'.
 		
@@ -753,7 +760,7 @@ https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not
 
 		aTtyBoolean ifTrue: [
 			"Prevent the input being echoed as output"
-			a nextPut: 'stty icanon isig iexten iutf8 -echo eof ^D intr ^C ;'.
+"			a nextPut: 'stty icanon isig iexten iutf8 -echo eof ^D intr ^C ;'."
 			a nextPut: 'stty -echo icanon isig iexten iutf8 ;'. ].
 		
 		"Used as a container to serialize the real commands"
@@ -766,6 +773,7 @@ https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not
 			a nextPut: (key, '=', value).
 		].
 
+		"Invoke sudo, taking password from stdin"
 		aSudoBoolean ifTrue: [
 			a nextPut: 'sudo'.
 			a nextPut: '--preserve-env'.
@@ -821,7 +829,7 @@ https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not
 
 	catchFirstSudoPrompt := false. "needSudoPassword."
 	
-	process waitForExitPollingEvery: (Delay forMilliseconds: 100) doing: [ :proc :outStream :errStream |
+	process waitForExitPollingEvery: (Delay forMilliseconds: 50) doing: [ :proc :outStream :errStream |
 		
 		"Read both back stdout and stderr"
 		lineReader consumePipe: outStream.
@@ -1037,7 +1045,7 @@ GSCCore >> stopSshControlMaster [
 
 	process := OSSUnixSubprocess new.
 	
-	cmd := 'ssh -q -S /tmp/gscControlMaster.sock -O stop localhost'.
+	cmd := 'ssh -q -S /tmp/gscControlMaster.sock -O exit localhost'.
 	
 	process
 		command: cmd;

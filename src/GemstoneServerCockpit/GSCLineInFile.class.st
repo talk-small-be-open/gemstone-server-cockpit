@@ -25,11 +25,11 @@ GSCLineInFile >> doShowFile [
 { #category : #'as yet unclassified' }
 GSCLineInFile >> doWriteLine [
 	| exists |
-	exists := (self core sudoReadFile: self filePath) lines anySatisfy: [ :each | each beginsWith: search ].
+	exists := (self core sudoReadFile: self filePath) lines anySatisfy: [ :each | each includesSubstring: search ].
 
 	exists ifTrue: [
 		"replace"
-		self runSudoShellCommand: ('sed --in-place=bak "s/^', search, '.*$/', line, '/" "', filePath pathString, '"')
+		self runSudoShellCommand: ('sed --in-place=bak "s/^.*', search, '.*$/', line, '/" "', filePath pathString, '"')
 	] ifFalse: [
 		"append"
 		self runSudoShellCommand: ('sed --in-place=bak ''$a\', line, ''' "', filePath pathString, '"')
