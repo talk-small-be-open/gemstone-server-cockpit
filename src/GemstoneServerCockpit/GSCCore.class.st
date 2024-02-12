@@ -691,9 +691,15 @@ https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not
 	
 	runBlockDone := false.
 
-	linesBlock := aLinesBlock ifNil: [ [ :lines | Transcript << lines ] ].
+	linesBlock := aLinesBlock ifNil: [ [ :lines |
+			self isDevelopment ifTrue: [
+				lines do: [ :each |
+					Transcript crShow: each
+				]
+			]
+		]
+	].
 
-"	subprocessTailLines ifNil: ["
 	subprocessTailLines := OrderedCollection new.
 
 	fireRunBlock := [ :proc |
@@ -703,17 +709,15 @@ https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not
 
 			"Feed stdin, if any"
 			aStdinString ifNotBlank: [
-"				proc redirectStdin."
-				
 				"We have to delay the input, after the stty -echo has been done"
-				(Delay forMilliseconds: 800) wait.
+				"Ugly, but there seems to be no real other solution"
+				aTtyBoolean ifTrue: [
+					(Delay forMilliseconds: 800) wait ].
+				
 				proc stdinStream
 					nextPutAll: aStdinString;
-"					end;
-					end;"
 					flush;
 					close.
-"				proc closeStdinStream."
 			].
 
 			"Run a code, if any"
