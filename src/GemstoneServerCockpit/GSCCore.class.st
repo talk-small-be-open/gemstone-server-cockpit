@@ -458,6 +458,10 @@ GSCCore >> runShell: aCommandString args: anArgsCollection stdin: aStdinString s
 
 	| process sudoPassword cmd args envVars lineReader catchFirstSudoPrompt runBlockDone fireRunBlock linesBlock needSudoPassword |
 
+	true ifTrue: [
+		^ self runShell: aCommandString args: anArgsCollection tty: false stdin: aStdinString sudo: aSudoBoolean onOutput: aLinesBlock onRun: aRunBlock onFinish: aFinishBlock.
+	].
+
 "Best info for ssh/tty/stdin etc.
 https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not-terminating-once-stdin-is-consumed
 "
@@ -601,7 +605,7 @@ https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not
 	
 	"when sudo is involved there is a strange empty newline at the beginning"
 	needSudoPassword ifTrue: [
-		lineReader ignoreLeadingNewlines: 1
+		lineReader ignoreLeadingLines: 1
 	].
 
 	catchFirstSudoPrompt := needSudoPassword.
@@ -668,6 +672,209 @@ https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not
 GSCCore >> runShell: aCommandString args: anArgsCollection sudo: aSudoBoolean [
 
 	^ self runShell: aCommandString args: anArgsCollection stdin: nil sudo: aSudoBoolean onOutput: nil onRun: nil onFinish: nil
+]
+
+{ #category : #'as yet unclassified' }
+GSCCore >> runShell: aCommandString args: anArgsCollection tty: aTtyBoolean stdin: aStdinString sudo: aSudoBoolean onOutput: aLinesBlock onRun: aRunBlock onFinish: aFinishBlock [
+
+	| process sudoPassword cmd args envVars lineReader catchFirstSudoPrompt runBlockDone fireRunBlock linesBlock needSudoPassword |
+
+"Best info for ssh/tty/stdin etc.
+https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not-terminating-once-stdin-is-consumed
+"
+
+	needSudoPassword := aSudoBoolean and: [ self hasPasswordlessSudo not ].
+	
+	self isShellProcessRunning ifTrue: [ self error: 'Another shell process is running.' ].
+
+	subprocessCommandLabel := aCommandString.
+	
+	runBlockDone := false.
+
+	linesBlock := aLinesBlock ifNil: [ [ :lines | Transcript << lines ] ].
+
+"	subprocessTailLines ifNil: ["
+	subprocessTailLines := OrderedCollection new.
+
+	fireRunBlock := [ :proc |
+		"do this after the main sudo password has been streamed into the pipe. So that runBlock is ready
+		for things like stdin"
+		runBlockDone ifFalse: [
+
+			"Feed stdin, if any"
+			aStdinString ifNotBlank: [
+"				proc redirectStdin."
+				
+				"We have to delay the input, after the stty -echo has been done"
+				(Delay forMilliseconds: 800) wait.
+				proc stdinStream
+					nextPutAll: aStdinString;
+"					end;
+					end;"
+					flush;
+					close.
+"				proc closeStdinStream."
+			].
+
+			"Run a code, if any"
+			aRunBlock ifNotNil: [
+				aRunBlock value: proc.
+			].
+		
+			runBlockDone := true.
+		].
+	].
+
+	sudoPassword := self getSudoPassword.
+
+	process := self createOSSUnixSubprocess.
+
+	envVars := Dictionary new.
+
+	"Some applications like 'service' have complained about non-capable terminal. We explicitely set to dumb."
+	envVars at: 'TERM' put: 'dumb'. 
+
+	rootTool ifNotNil: [
+		envVars at: 'GS_HOME' put: rootTool gemstoneGsHome pathString.
+		envVars at: 'PATH' put: (rootTool gemstoneGsHome pathString, '/bin:$PATH').
+	].
+
+	cmd := 'ssh'.
+
+	args := Array streamContents: [ :a |
+		aTtyBoolean ifTrue: [
+			a nextPut: '-ttq'. ].
+
+		a nextPut: '-S /tmp/gscControlMaster.sock'.
+		
+		a nextPut: 'localhost'.
+
+		aTtyBoolean ifTrue: [
+			"Prevent the input being echoed as output"
+			a nextPut: 'stty icanon isig iexten iutf8 -echo eof ^D intr ^C ;'.
+			a nextPut: 'stty -echo icanon isig iexten iutf8 ;'. ].
+		
+		"Used as a container to serialize the real commands"
+		a nextPut: 'env -S'.
+
+		"Define a unique sudo prompt, for all maybe nested sudo invocations. Not for our own sudo."
+		a nextPut: ('SUDO_PROMPT=', sudoPrompt).
+		
+		envVars keysAndValuesDo: [ :key :value |
+			a nextPut: (key, '=', value).
+		].
+
+		aSudoBoolean ifTrue: [
+			a nextPut: 'sudo'.
+			a nextPut: '--preserve-env'.
+			a nextPut: '--prompt=""'.
+			a nextPut: '--stdin'.
+			a nextPut: '--' ].
+
+		a nextPut: aCommandString.
+		
+		anArgsCollection ifNotBlank: [
+			a nextPutAll: anArgsCollection ].
+
+	].
+
+	self log: (cmd, ' ', (args joinUsing: String space)).
+		
+	shellSubprocess := process.
+	
+	process
+		command: cmd;
+		arguments: args;
+		redirectStdout;
+		redirectStdin;
+		createMissingStandardStreams: true.
+
+	"Optionally send some stdin text. Might not work, if with sudo"
+"	aStdinString ifNotBlank: [
+		process redirectStdin.
+		process stdinStream
+			nextPutAll: aStdinString;
+			end;
+			end;
+			flush.
+	]."
+
+	"Start the subprocess and run the command"
+	process run.
+	
+		
+	"Sending sudo password into stdin with LF."
+	needSudoPassword ifTrue: [
+		process stdinStream 
+			nextPutAll: sudoPassword;
+			nextPut: Character lf;
+			flush ].
+
+	lineReader := GSCPipeLinesReadStream new.
+	
+	"when sudo is involved there is a strange empty newline at the beginning"
+"	needSudoPassword ifTrue: [
+		lineReader ignoreLeadingNewlines: 1
+	]."
+
+	catchFirstSudoPrompt := false. "needSudoPassword."
+	
+	process waitForExitPollingEvery: (Delay forMilliseconds: 100) doing: [ :proc :outStream :errStream |
+		
+		"Read both back stdout and stderr"
+		lineReader consumePipe: outStream.
+		lineReader consumePipe: errStream.
+
+		proc isComplete ifTrue: [ lineReader complete ].
+
+		"If we do not wait for a initial sudo prompt, then we can do that immediately"
+		"needSudoPassword ifFalse: ["
+		fireRunBlock value: proc.
+		"]."
+
+		lineReader autoNewlineIfTimeout: 1000.
+
+		"Always detect sudo prompt, potentially from nested sudo invocations"
+		lineReader lastLine = sudoPrompt ifTrue: [
+			
+			proc stdinStream 
+				nextPutAll: sudoPassword;
+				lf;
+				flush.
+				
+			"Remove the sudo prompt"
+			lineReader removeLastLine.
+
+			(Delay forMilliseconds: 110) wait.
+	
+			"Detect very first initial sudo prompt, and do stuff right after that"
+"			catchFirstSudoPrompt ifTrue: [ 
+				catchFirstSudoPrompt := false.
+				fireRunBlock value: proc
+			]"
+
+		].
+		
+		lineReader nextLines ifNotEmpty: [ :lines |
+			subprocessTailLines addAll: lines.
+			subprocessTailLines := subprocessTailLines lastAtMost: 200.
+			linesBlock value: lines ]
+	].
+	
+
+	"do cleanup stuff in any case"
+	process
+"vermutlich verantwortlich für nicht stoppende Prozesse, deadlocks. nicht nötig nochmals:		waitForExit;"
+		closeAndCleanStreams.
+
+	"we need to decouple it explicitly here, because the finish block could be
+	a cascaded shell process"
+	shellSubprocess := nil.
+	
+	aFinishBlock ifNotNil: [ 
+		aFinishBlock value: process isSuccess ].
+	
+	^ process isSuccess
 ]
 
 { #category : #shell }
@@ -893,42 +1100,10 @@ GSCCore >> sudoAsyncWriteFile: aFilePath owner: anOwnerString group: aGroupStrin
 			args: { path }"
 			runShell: 'dd'
 			args: { 'of="',path,'"' }
-			stdin: nil
+			stdin: fileContent
 			sudo: true
 			onOutput: nil
-			onRun: [ :process |
-				| counter stdin |
-				
-				stdin := process stdinStream.
-				
-				stdin
-					nextPutAll: fileContent;
-					flush.
-				
-"DONT. Adds a trailing line in files				endsWithLf ifFalse: [
-					stdin lf
-				]."
-	
-				stdin
-					end;
-					end; "strange: second time, because pty only transforms it to EOF if on a empty line, else it is just an end of line"
-					flush.
-
-				"Go sure that the pipe ends. Send additional endings if stalled"
-				counter := 0.
-				[
-					(Delay forMilliseconds: 100) wait.
-					counter := counter + 1.
-					process isComplete not and: [ counter <= 10 ]
-				] whileTrue: [
-					"OPTIMIZE Strangely we need this on real Ubuntu. WTF?!"
-					Transcript crShow: 'end/flush stream ...'.
-					stdin
-						end;
-						flush.
-				]
-
-			]
+			onRun: nil
 			onFinish: nil.
 
 		aModeString ifNotBlank: [

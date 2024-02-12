@@ -7,8 +7,8 @@ Class {
 		'cr',
 		'lf',
 		'currentCharacter',
-		'ignoreLeadingNewlinesCounter',
-		'lastCharAt'
+		'lastCharAt',
+		'ignoreLeadingLinesCounter'
 	],
 	#category : #'GemstoneServerCockpit-Misc'
 }
@@ -58,8 +58,8 @@ GSCPipeLinesReadStream >> hasBuffered [
 ]
 
 { #category : #'as yet unclassified' }
-GSCPipeLinesReadStream >> ignoreLeadingNewlines: anInteger [
-	ignoreLeadingNewlinesCounter := anInteger
+GSCPipeLinesReadStream >> ignoreLeadingLines: anInteger [
+	ignoreLeadingLinesCounter := anInteger
 ]
 
 { #category : #initialization }
@@ -71,7 +71,7 @@ GSCPipeLinesReadStream >> initialize [
 	cr := Character cr.
 	lf := Character lf.
 	lines := OrderedCollection new.
-	ignoreLeadingNewlinesCounter := 0
+	ignoreLeadingLinesCounter := 0
 ]
 
 { #category : #accessing }
@@ -92,8 +92,8 @@ GSCPipeLinesReadStream >> lineComplete [
 	line := self currentLineBufferString.
 	self clearBuffer.
 
-	ignoreLeadingNewlinesCounter > 0 ifTrue: [
-		ignoreLeadingNewlinesCounter := ignoreLeadingNewlinesCounter - 1.
+	ignoreLeadingLinesCounter > 0 ifTrue: [
+		ignoreLeadingLinesCounter := ignoreLeadingLinesCounter - 1.
 		^ self
 	].
 

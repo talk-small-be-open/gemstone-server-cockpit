@@ -78,7 +78,7 @@ GSCTextFile >> doGetDiff [
 	self core
 		runShell: 'diff'
 		args: { '--side-by-side'. '--left-column'. '--text'. '--ignore-tab-expansion'. filePath pathString. '-' }
-		stdin: self contentTemplate contentString
+		stdin: self contentTemplate contentString withUnixLineEndings
 		sudo: false
 		onOutput: [ :newLines | fileDiff addAll: newLines ]
 		onRun: nil
