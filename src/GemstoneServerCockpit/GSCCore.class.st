@@ -677,7 +677,7 @@ GSCCore >> runShell: aCommandString args: anArgsCollection sudo: aSudoBoolean [
 { #category : #'as yet unclassified' }
 GSCCore >> runShell: aCommandString args: anArgsCollection tty: aTtyBoolean stdin: aStdinString sudo: aSudoBoolean onOutput: aLinesBlock onRun: aRunBlock onFinish: aFinishBlock [
 
-	| process sudoPassword cmd args envVars lineReader catchFirstSudoPrompt runBlockDone fireRunBlock linesBlock needSudoPassword |
+	| process cmd args envVars lineReader catchFirstSudoPrompt runBlockDone fireRunBlock linesBlock needSudoPassword |
 
 "Best info for ssh/tty/stdin etc.
 https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not-terminating-once-stdin-is-consumed
@@ -724,8 +724,6 @@ https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not
 			runBlockDone := true.
 		].
 	].
-
-	sudoPassword := self getSudoPassword.
 
 	process := self createOSSUnixSubprocess.
 
@@ -806,7 +804,7 @@ https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not
 	"Sending sudo password into stdin with LF."
 	needSudoPassword ifTrue: [
 		process stdinStream 
-			nextPutAll: sudoPassword;
+			nextPutAll: (self getSudoPassword);
 			nextPut: Character lf;
 			flush ].
 
@@ -838,7 +836,7 @@ https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not
 		lineReader lastLine = sudoPrompt ifTrue: [
 			
 			proc stdinStream 
-				nextPutAll: sudoPassword;
+				nextPutAll: (self getSudoPassword);
 				lf;
 				flush.
 				
