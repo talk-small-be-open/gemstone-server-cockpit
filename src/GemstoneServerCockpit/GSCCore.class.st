@@ -579,10 +579,17 @@ https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not
 			a nextPut: '--stdin'.
 			a nextPut: '--' ].
 
-		a nextPut: aCommandString withUnixLineEndings.
+		a nextPut: aCommandString withUnixLineEndings. "Not sure if conversion needed?"
 		
 		anArgsCollection ifNotBlank: [
-			a nextPutAll: anArgsCollection ].
+			"Since these arguments will be sent as a string to be executed by the
+			remote shell, we need to be careful with spaces. We detect it and escape them"
+			anArgsCollection do: [ :each |
+				| sanitized |
+				sanitized := each copyReplaceAll: ' ' with: '\ '.
+				a nextPut: sanitized
+			]
+		].
 
 	].
 
