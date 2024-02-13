@@ -223,7 +223,7 @@ GSCGemstoneStone >> renderBodyOn: html [
 
 { #category : #'as yet unclassified' }
 GSCGemstoneStone >> stoneLogPath [
-	^ self basePath / 'log' / (self stoneName, '.log')
+	^ self basePath / 'logs' / (self stoneName, '.log')
 ]
 
 { #category : #'as yet unclassified' }
