@@ -259,7 +259,8 @@ GSCTool >> descendantsSelect: aBlock [
 
 { #category : #'as yet unclassified' }
 GSCTool >> doCheck [
-	self check
+	self core doInBackground: [
+		self check ]
 ]
 
 { #category : #'as yet unclassified' }

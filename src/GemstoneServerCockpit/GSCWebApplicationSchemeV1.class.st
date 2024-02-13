@@ -185,14 +185,14 @@ GSCWebApplicationSchemeV1 >> templateNetldiMonitConfig [
 	^ GSCSttTemplate sttString:
 '# NETLDI
 check process <?stt= me netldiMonitCheckName ?> matching "^/opt/.*/sys/netldid <?stt= me stoneName ?>_ldi .*$"
-			ONREBOOT START
-			DEPENDS ON <?stt= me monitCheckName ?>
-			MODE ACTIVE
-			start program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> <?stt= me gsHome ?>/bin/startNetldi <?stt= me stoneName ?>''" as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>"
-			stop program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> <?stt= me gsHome ?>/bin/stopNetldi <?stt= me stoneName ?>''" as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>" with timeout 90 seconds
- 			if 7 restarts within 10 cycles then stop
-#			if totalmem > 700 Mb then alert
-			if cpu > 60% for 4 cycles then alert
+	ONREBOOT START
+	DEPENDS ON <?stt= me monitCheckName ?>
+	MODE ACTIVE
+	start program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> <?stt= me gsHome ?>/bin/startNetldi <?stt= me stoneName ?>''" as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>"
+	stop program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> <?stt= me gsHome ?>/bin/stopNetldi <?stt= me stoneName ?>''" as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>" with timeout 90 seconds
+	if 7 restarts within 10 cycles then stop
+	# if totalmem > 700 Mb then alert
+	if cpu > 60% for 4 cycles then alert
 '
 ]
 
@@ -200,9 +200,7 @@ check process <?stt= me netldiMonitCheckName ?> matching "^/opt/.*/sys/netldid <
 GSCWebApplicationSchemeV1 >> templateNginxSiteVhost [
 	| sttListenPort sttBlockIdiots sttProxyToHaproxy sttCachedLocations |
 	
-	sttListenPort := '
-<?stt me useSsl ifTrue: [ ?>
-
+	sttListenPort := '<?stt me useSsl ifTrue: [ ?>
 	listen 443 ssl http2;
 	listen [::]:443 ssl http2;
 
@@ -210,12 +208,10 @@ GSCWebApplicationSchemeV1 >> templateNginxSiteVhost [
 	ssl_certificate_key <?stt= me sslCertificate keyFilePath ?>;
 	#include /etc/letsencrypt/options-ssl-nginx.conf;
 	#ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
-
 <?stt ] ifFalse: [ ?>
 	listen 80;
 	listen [::]:80;
-<?stt ] ?>
-'.
+<?stt ] ?>'.
 
 sttBlockIdiots := '
 	##
@@ -277,8 +273,7 @@ sttCachedLocations := '
 
 	^ GSCSttTemplate sttString:
 'server {
-
-	', sttListenPort, '
+', sttListenPort, '
 
 	server_name <?stt= me nginxDomainsString ?>;
 
@@ -371,12 +366,12 @@ GSCWebApplicationSchemeV1 >> templateStoneMonitConfig [
 	^ GSCSttTemplate sttString:
 '# STONE
 check process <?stt= me monitCheckName ?> matching "^/opt/.*/sys/stoned <?stt= me stoneName ?> .*$"
-			ONREBOOT START
-			MODE ACTIVE
-			start program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> <?stt= me gsHome ?>/bin/startStone <?stt= me stoneName ?>''" as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>"
-			stop program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> <?stt= me gsHome ?>/bin/stopStone <?stt= me stoneName ?>''" as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>"
- 			if 7 restarts within 10 cycles then stop
-#			if totalmem > 700 Mb then alert
-			if cpu > 60% for 4 cycles then alert
+	ONREBOOT START
+	MODE ACTIVE
+	start program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> <?stt= me gsHome ?>/bin/startStone <?stt= me stoneName ?>''" as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>"
+	stop program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> <?stt= me gsHome ?>/bin/stopStone <?stt= me stoneName ?>''" as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>"
+	if 7 restarts within 10 cycles then stop
+	# if totalmem > 700 Mb then alert
+	if cpu > 60% for 4 cycles then alert
 '
 ]

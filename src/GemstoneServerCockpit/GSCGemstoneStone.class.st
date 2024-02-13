@@ -133,6 +133,16 @@ GSCGemstoneStone >> doShowStoneTime [
 ]
 
 { #category : #'as yet unclassified' }
+GSCGemstoneStone >> doStartStone [
+	self runShellCommand: ('startStone -b ', self stoneName)
+]
+
+{ #category : #'as yet unclassified' }
+GSCGemstoneStone >> doStopStone [
+	self runShellCommand: ('stopStone -b ', self stoneName)
+]
+
+{ #category : #'as yet unclassified' }
 GSCGemstoneStone >> gemConfTemplate [
 	^ GSCSttTemplate tool: self sttString:
 '#
