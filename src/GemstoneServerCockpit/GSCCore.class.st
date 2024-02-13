@@ -915,7 +915,7 @@ GSCCore >> sudoAsyncWriteFile: aFilePath owner: anOwnerString group: aGroupStrin
 "			runShell: 'tee'
 			args: { path }"
 			runShell: 'dd'
-			args: { 'of="',path,'"' }
+			args: { 'of=',path }
 			stdin: fileContent
 			sudo: true
 			onOutput: nil

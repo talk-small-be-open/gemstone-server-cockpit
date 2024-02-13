@@ -153,11 +153,9 @@ GSCGemstoneStone >> gemConfTemplate [
 '#
 # standard gem.conf file for dev kit gems
 #
-
 <?stt me hasKeyfile ifTrue: [ ?>
 KEYFILE = <?stt= me keyfilePath ?>;
 <?stt ] ?>
-
 # SHR_PAGE_CACHE_SIZE_KB should always be > GEM_TEMPOBJ_CACHE_SIZE
 SHR_PAGE_CACHE_SIZE_KB = <?stt= me shrPageCacheSizeKb ?>;
 GEM_TEMPOBJ_CACHE_SIZE = <?stt= me gemTempobjCacheSize ?>;
