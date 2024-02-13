@@ -285,7 +285,7 @@ GSCTool >> error: aString [
 
 { #category : #accessing }
 GSCTool >> factAt: aName [
-	^ facts at: aName ifAbsent: [ nil ]
+	^ facts at: aName ifAbsent: [ self error: 'Unknown fact' ]
 ]
 
 { #category : #accessing }

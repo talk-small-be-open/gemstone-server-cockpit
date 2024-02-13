@@ -154,15 +154,13 @@ GSCGemstoneStone >> gemConfTemplate [
 # standard gem.conf file for dev kit gems
 #
 
-# SHR_PAGE_CACHE_SIZE_KB should always be > GEM_TEMPOBJ_CACHE_SIZE
 <?stt me hasKeyfile ifTrue: [ ?>
 KEYFILE = <?stt= me keyfilePath ?>;
-SHR_PAGE_CACHE_SIZE_KB = 2GB;
-GEM_TEMPOBJ_CACHE_SIZE = 500MB;
-<?stt ] ifFalse: [ ?>
-SHR_PAGE_CACHE_SIZE_KB = 1GB;
-GEM_TEMPOBJ_CACHE_SIZE = 300MB;
 <?stt ] ?>
+
+# SHR_PAGE_CACHE_SIZE_KB should always be > GEM_TEMPOBJ_CACHE_SIZE
+SHR_PAGE_CACHE_SIZE_KB = <?stt= me shrPageCacheSizeKb ?>;
+GEM_TEMPOBJ_CACHE_SIZE = <?stt= me gemTempobjCacheSize ?>;
 
 STN_TRAN_FULL_LOGGING = TRUE;
 STN_TRAN_LOG_DIRECTORIES = $GEMSTONE_TRANLOGDIR/, $GEMSTONE_TRANLOGDIR/;
@@ -172,6 +170,12 @@ STN_TRAN_LOG_SIZES = 100, 100;
 # default would be 1000, has been proven to be to low.
 GEM_MAX_SMALLTALK_STACK_DEPTH = 5000;
 '
+]
+
+{ #category : #'as yet unclassified' }
+GSCGemstoneStone >> gemTempobjCacheSize [
+	"in KB"
+	^ self hasKeyfile ifTrue: [ 300 * 1024 ] ifFalse: [ 500 * 1024 ]
 ]
 
 { #category : #accessing }
@@ -218,6 +222,23 @@ GSCGemstoneStone >> renderBodyOn: html [
 	self renderLabel: 'Stone name' text: self stoneName on: html.
 	self renderLabel: 'Version' text: self stoneVersion on: html.
 	self renderLabel: 'Key file' text: self keyfilePath on: html.
+
+]
+
+{ #category : #'as yet unclassified' }
+GSCGemstoneStone >> shrPageCacheSizeKb [
+	| maxTotalKb total limitKb |
+
+	"OPTIMIZE: Does not use alle the shared memory, if the GemStone license limits are hit. Maybe never the case, but
+	the math should be preciser, for distributing the total shared memory"
+
+	maxTotalKb := (self root gsDevKit sharedMemoryMaxBytes) // 1024.
+	
+	total := self root stones size max: 1.
+	
+	limitKb := self hasKeyfile ifTrue: [ (1024*1024) ] ifFalse: [ 2 * (1024*1024) ].
+
+	^ (maxTotalKb // total) min: limitKb.
 
 ]
 

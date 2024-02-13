@@ -6,7 +6,7 @@ Class {
 
 { #category : #building }
 GSCGsDevKit >> build [
-	| shmmax |
+	| shmmax pageSize |
 	self add: GSCGitRepository then: [ :git |
 		git
 			folderPath: self gsHome;
@@ -23,8 +23,9 @@ export GS_HOME=', self gsHome pathString, '
 export PATH=$GS_HOME/bin:$PATH'))
 	].
 
-	"Use a bit more than 2GB of max shared memory, since the 'Limited' GemStone license will give us only max 2GB"
-	shmmax := (2.5*1024*1024*1024) asInteger.
+	"Use 75% of total RAM for max shared memory. The 'Limited' GemStone license will give us only max 2GB per stone"
+	pageSize := self root factAt: 'memoryPageSizeBytes'.
+	shmmax := self sharedMemoryMaxBytes.
 	self add: GSCLineInFile then: [ :lif |
 		lif
 			filePath: '/etc/sysctl.conf';
@@ -35,7 +36,7 @@ export PATH=$GS_HOME/bin:$PATH'))
 		lif
 			filePath: '/etc/sysctl.conf';
 			search: 'kernel.shmall=';
-			line: ('kernel.shmall=', (shmmax / 4096) ceiling asInteger asString)
+			line: ('kernel.shmall=', (shmmax / pageSize) ceiling asInteger asString)
 	].
 
 	"systemd parameter RemoveIPC for GemStone"
@@ -140,6 +141,13 @@ GSCGsDevKit >> seasideStonTemplate [
     status: #(#\''inactive\'');
     locked: false;
     yourself''}'
+]
+
+{ #category : #'as yet unclassified' }
+GSCGsDevKit >> sharedMemoryMaxBytes [
+	| ramBytes |
+	ramBytes := (self root factAt: 'memoryTotalBytes') max: (1024*1024*1024) . "Assuming some 1GB RAM, if not detected"
+	^ (ramBytes * (3/4)) asInteger.
 ]
 
 { #category : #accessing }

@@ -66,11 +66,20 @@ GSCRoot >> gatherFacts [
 		self core readCommand: 'hostname' ).
 	self factAt: 'userHome' put: (
 		self core readCommand: 'echo -n ~', self serverUsername ).
+	self factAt: 'memoryTotalBytes' put: (
+		self core readCommand: 'awk' args: { '/MemTotal:/ { printf "%0.f",$2 * 1024}'. '/proc/meminfo' } ) asInteger.
+	self factAt: 'memoryPageSizeBytes' put: (
+		self core readCommand: 'getconf' args: { 'PAGE_SIZE' } ) asInteger.
 ]
 
 { #category : #'as yet unclassified' }
 GSCRoot >> gemstoneGsHome [
 	^ ((self configAt: 'gemstone:gsHome') ifBlank: [ '/opt/GsDevKit_home' ]) asPath.
+]
+
+{ #category : #'as yet unclassified' }
+GSCRoot >> gsDevKit [
+	^ self rootFindTool: GSCGsDevKit
 ]
 
 { #category : #accessing }
@@ -98,6 +107,11 @@ GSCRoot >> scheme [
 GSCRoot >> scheme: anObject [
 
 	scheme := anObject
+]
+
+{ #category : #'as yet unclassified' }
+GSCRoot >> stones [
+	^ self rootFindTools: GSCGemstoneStone
 ]
 
 { #category : #tests }
