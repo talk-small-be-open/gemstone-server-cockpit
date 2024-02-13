@@ -518,7 +518,7 @@ https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not
 					(Delay forMilliseconds: 800) wait ].
 				
 				proc stdinStream
-					nextPutAll: aStdinString;
+					nextPutAll: aStdinString withUnixLineEndings;
 					flush;
 					close.
 			].
