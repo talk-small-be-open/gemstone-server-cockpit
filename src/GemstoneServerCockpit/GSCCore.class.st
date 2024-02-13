@@ -583,10 +583,10 @@ https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not
 		
 		anArgsCollection ifNotBlank: [
 			"Since these arguments will be sent as a string to be executed by the
-			remote shell, we need to be careful with spaces. We detect it and escape them"
+			remote shell, we need to be careful with spaces."
 			anArgsCollection do: [ :each |
 				| sanitized |
-				sanitized := each copyReplaceAll: ' ' with: '\ '.
+				sanitized := '''', each, ''''.
 				a nextPut: sanitized
 			]
 		].

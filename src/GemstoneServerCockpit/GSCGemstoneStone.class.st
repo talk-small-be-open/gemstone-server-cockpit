@@ -175,7 +175,7 @@ GEM_MAX_SMALLTALK_STACK_DEPTH = 5000;
 { #category : #'as yet unclassified' }
 GSCGemstoneStone >> gemTempobjCacheSize [
 	"in KB"
-	^ self hasKeyfile ifTrue: [ 300 * 1024 ] ifFalse: [ 500 * 1024 ]
+	^ self hasKeyfile ifTrue: [ 500 * 1024 ] ifFalse: [ 300 * 1024 ]
 ]
 
 { #category : #accessing }
