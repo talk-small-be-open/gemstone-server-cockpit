@@ -715,6 +715,24 @@ GSCTool >> uiShowFullscreen: aRenderable [
 ]
 
 { #category : #'as yet unclassified' }
+GSCTool >> uiTailFile: aFilePath [
+	| content |
+	content := self core sudoTailFile: aFilePath lines: 100.
+
+	self uiViewText: content
+
+]
+
+{ #category : #'as yet unclassified' }
+GSCTool >> uiViewFile: aFilePath [
+	| content |
+	content := self core sudoReadFile: aFilePath.
+
+	self uiViewText: content
+
+]
+
+{ #category : #'as yet unclassified' }
 GSCTool >> uiViewText: aString [
 	^ self uiViewText: aString then: [  ]
 ]

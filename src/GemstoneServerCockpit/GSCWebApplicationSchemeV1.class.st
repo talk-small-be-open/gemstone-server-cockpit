@@ -109,7 +109,7 @@ GSCWebApplicationSchemeV1 >> defaultConfigurationBuilder [
 GSCWebApplicationSchemeV1 >> templateGemMonitConfig [
 	^ GSCSttTemplate sttString:
 '# GEM ON PORT <?stt= me portNumber ?>
-check process <?stt= me monitCheckName ?> with pidfile <?stt= me gsHome ?>/server/stones/<?stt= me stoneName ?>/logs/seaside<?stt= me gemIndex ?>_server-<?stt= me portNumber ?>.pid
+check process <?stt= me monitCheckName ?> with pidfile <?stt= me pidFilePath pathString ?>
 	DEPENDS ON <?stt= me stoneTool netldiMonitCheckName ?>
 	ONREBOOT START
 	GROUP gemstone_gems

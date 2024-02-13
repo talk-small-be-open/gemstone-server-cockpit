@@ -19,7 +19,7 @@ GSCLineInFile >> checkMe [
 
 { #category : #'as yet unclassified' }
 GSCLineInFile >> doShowFile [
-	self uiViewText: (self core sudoReadFile: filePath)
+	self uiViewFile: filePath
 ]
 
 { #category : #'as yet unclassified' }

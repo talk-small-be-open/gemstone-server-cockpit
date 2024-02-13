@@ -92,7 +92,7 @@ GSCGemstoneStone >> build [
 GSCGemstoneStone >> checkMe [
 	self beNotNeedsAttention.
 	
-	(self core fileExists: (self gemstoneGsHome / 'server/stones' / self stoneName / 'extents/extent0.dbf' )) ifFalse: [
+	(self core fileExists: (self basePath / 'extents/extent0.dbf' )) ifFalse: [
 		self beNeedsAttention: 'Stone does not exist' ]
 
 ]
@@ -125,6 +125,11 @@ exit
 
 	self runTopaz: topaz stone: self stoneName
 
+]
+
+{ #category : #'as yet unclassified' }
+GSCGemstoneStone >> doShowStoneLog [
+	self uiViewFile: self stoneLogPath
 ]
 
 { #category : #'as yet unclassified' }
@@ -214,6 +219,11 @@ GSCGemstoneStone >> renderBodyOn: html [
 	self renderLabel: 'Version' text: self stoneVersion on: html.
 	self renderLabel: 'Key file' text: self keyfilePath on: html.
 
+]
+
+{ #category : #'as yet unclassified' }
+GSCGemstoneStone >> stoneLogPath [
+	^ self basePath / 'log' / (self stoneName, '.log')
 ]
 
 { #category : #'as yet unclassified' }

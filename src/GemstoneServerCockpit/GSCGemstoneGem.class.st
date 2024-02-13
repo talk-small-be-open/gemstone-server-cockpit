@@ -21,6 +21,12 @@ GSCGemstoneGem >> build [
 	self add: GSCGemstoneGemWebserver
 ]
 
+{ #category : #'as yet unclassified' }
+GSCGemstoneGem >> doShowGemLog [
+
+	self uiTailFile: self gemLogPath
+]
+
 { #category : #starting }
 GSCGemstoneGem >> doStart [
 	monitCheck doStart
@@ -29,6 +35,11 @@ GSCGemstoneGem >> doStart [
 { #category : #starting }
 GSCGemstoneGem >> doStop [
 	monitCheck doStop
+]
+
+{ #category : #'as yet unclassified' }
+GSCGemstoneGem >> gemFilesBasename [
+	^ 'seaside', self gemIndex asString, '_server-', self portNumber asString
 ]
 
 { #category : #accessing }
@@ -41,6 +52,11 @@ GSCGemstoneGem >> gemIndex [
 GSCGemstoneGem >> gemIndex: anObject [
 
 	gemIndex := anObject
+]
+
+{ #category : #'as yet unclassified' }
+GSCGemstoneGem >> gemLogPath [
+	^ self stoneBasePath / 'logs' / (self gemFilesBasename, '.log')
 ]
 
 { #category : #accessing }
@@ -60,6 +76,11 @@ GSCGemstoneGem >> monitConfigTemplate [
 		yourself
 ]
 
+{ #category : #'as yet unclassified' }
+GSCGemstoneGem >> pidFilePath [
+	^ self stoneBasePath / 'logs' / (self gemFilesBasename, '.pid')
+]
+
 { #category : #accessing }
 GSCGemstoneGem >> portNumber [
 	^ self parent startPort + gemIndex - 1
@@ -68,6 +89,11 @@ GSCGemstoneGem >> portNumber [
 { #category : #rendering }
 GSCGemstoneGem >> renderBodyOn: html [
 	self renderLabel: 'Port' number: self portNumber on: html
+]
+
+{ #category : #'as yet unclassified' }
+GSCGemstoneGem >> stoneBasePath [
+	^ self stoneTool basePath
 ]
 
 { #category : #'as yet unclassified' }
