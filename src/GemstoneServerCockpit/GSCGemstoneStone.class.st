@@ -234,7 +234,7 @@ GSCGemstoneStone >> shrPageCacheSizeKb [
 	
 	total := self root stones size max: 1.
 	
-	limitKb := self hasKeyfile ifTrue: [ (1024*1024) ] ifFalse: [ 2 * (1024*1024) ].
+	limitKb := self hasKeyfile ifTrue: [ 2 * (1024*1024) ] ifFalse: [ (1024*1024) ].
 
 	^ (maxTotalKb // total) min: limitKb.
 

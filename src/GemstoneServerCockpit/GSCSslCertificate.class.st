@@ -56,7 +56,7 @@ GSCSslCertificate >> doGetCertificate [
 			s << ' -d '.
 			s << each ]
 	].
-	self runShellCommand: cmd
+	self runSudoShellCommand: cmd
 ]
 
 { #category : #'as yet unclassified' }
@@ -78,7 +78,7 @@ GSCSslCertificate >> doInstallCertificate [
 		s << '--reloadcmd "service nginx force-reload"'
 	].
 
-	self runShellCommand: cmd
+	self runSudoShellCommand: cmd
 ]
 
 { #category : #accessing }
