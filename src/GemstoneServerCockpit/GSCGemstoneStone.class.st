@@ -227,7 +227,10 @@ GSCGemstoneStone >> renderBodyOn: html [
 GSCGemstoneStone >> shrPageCacheSizeKb [
 	| maxTotalKb total limitKb |
 
-	"OPTIMIZE: Does not use alle the shared memory, if the GemStone license limits are hit. Maybe never the case, but
+	"Calculates the max shared memory size for this stone. Since there is a maximum linux systemwide, we need
+	to calculate the partial of it for that single stone"
+
+	"OPTIMIZE: Does not use all the shared memory, if the GemStone license limits are hit. Maybe never the case, but
 	the math should be preciser, for distributing the total shared memory"
 
 	maxTotalKb := (self root gsDevKit sharedMemoryMaxBytes) // 1024.
@@ -236,7 +239,8 @@ GSCGemstoneStone >> shrPageCacheSizeKb [
 	
 	limitKb := self hasKeyfile ifTrue: [ 2 * (1024*1024) ] ifFalse: [ (1024*1024) ].
 
-	^ (maxTotalKb // total) min: limitKb.
+	"Allow for a 8% leftover, since GemStone somehow takes approx 6% more than configured"
+	^ ((maxTotalKb * 0.92) // total) asInteger min: limitKb.
 
 ]
 

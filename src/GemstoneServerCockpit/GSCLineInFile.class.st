@@ -29,10 +29,10 @@ GSCLineInFile >> doWriteLine [
 
 	exists ifTrue: [
 		"replace"
-		self runSudoShellCommand: ('sed --in-place=bak "s/^.*', search, '.*$/', line, '/" "', filePath pathString, '"')
+		self runSudoShellCommand: ('sed --in-place=.bak "s/^.*', search, '.*$/', line, '/" "', filePath pathString, '"')
 	] ifFalse: [
 		"append"
-		self runSudoShellCommand: ('sed --in-place=bak ''$a\', line, ''' "', filePath pathString, '"')
+		self runSudoShellCommand: ('sed --in-place=.bak ''$a\', line, ''' "', filePath pathString, '"')
 "		self runSudoShellCommand: ('echo ""\n', line, '"" >> ', filePath pathString)"
 	]
 ]
