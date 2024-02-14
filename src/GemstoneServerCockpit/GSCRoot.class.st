@@ -70,6 +70,10 @@ GSCRoot >> gatherFacts [
 		self core readCommand: 'awk' args: { '/MemTotal:/ { printf "%0.f",$2 * 1024}'. '/proc/meminfo' } ) asInteger.
 	self factAt: 'memoryPageSizeBytes' put: (
 		self core readCommand: 'getconf' args: { 'PAGE_SIZE' } ) asInteger.
+		
+	"Evt get shared memory usage: 
+	lsipc -o RESOURCE,USE% | grep SHMALL
+	"
 ]
 
 { #category : #'as yet unclassified' }

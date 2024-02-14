@@ -188,8 +188,8 @@ check process <?stt= me netldiMonitCheckName ?> matching "^/opt/.*/sys/netldid <
 	ONREBOOT START
 	DEPENDS ON <?stt= me monitCheckName ?>
 	MODE ACTIVE
-	start program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> <?stt= me gsHome ?>/bin/startNetldi <?stt= me stoneName ?>''" as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>"
-	stop program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> <?stt= me gsHome ?>/bin/stopNetldi <?stt= me stoneName ?>''" as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>" with timeout 90 seconds
+	start program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> USER=<?stt= me serverUsername ?> <?stt= me gsHome ?>/bin/startNetldi <?stt= me stoneName ?>''" as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>"
+	stop program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> USER=<?stt= me serverUsername ?> <?stt= me gsHome ?>/bin/stopNetldi <?stt= me stoneName ?>''" as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>" with timeout 90 seconds
 	if 7 restarts within 10 cycles then stop
 	# if totalmem > 700 Mb then alert
 	if cpu > 60% for 4 cycles then alert
