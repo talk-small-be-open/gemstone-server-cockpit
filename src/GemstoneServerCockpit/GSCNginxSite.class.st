@@ -8,6 +8,11 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
+GSCNginxSite >> appUrlPathMain [
+	^ self appUrlPaths first
+]
+
+{ #category : #'as yet unclassified' }
 GSCNginxSite >> appUrlPaths [
 	^ self configAt: 'web:appUrlPaths'
 ]

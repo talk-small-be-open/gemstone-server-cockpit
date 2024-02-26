@@ -289,9 +289,9 @@ sttCachedLocations := '
 		fastcgi_pass unix:/run/php/php7.2-fpm.sock;
 	}
 
-	# If root is accessed, then redirect to app
+	# If root is accessed, then redirect to main app
 	location = / {
-		return 301 $scheme://$host/app;
+		return 301 $scheme://$host/<?stt me appUrlPathMain ?>;
 	}
 
 	<?stt me appUrlPaths do: [ :each | ?>
