@@ -291,7 +291,7 @@ sttCachedLocations := '
 
 	# If root is accessed, then redirect to main app
 	location = / {
-		return 301 $scheme://$host/<?stt= me appUrlPathMain ?>;
+		return 302 $scheme://$host/<?stt= me appUrlPathMain ?>;
 	}
 
 	<?stt me appUrlPaths do: [ :each | ?>
