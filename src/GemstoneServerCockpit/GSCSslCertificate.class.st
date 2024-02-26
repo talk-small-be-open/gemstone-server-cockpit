@@ -46,22 +46,32 @@ GSCSslCertificate >> doGetCertificate [
 
 "	self runShellCommand: ('certbot --standalone -n --agree-tos --email ', self email, ' --cert-name ""', self certificateName, '""  --domains ""', self domainsCommaList, '"" certonly')."
 
-	"Siehe https://github.com/acmesh-official/acme.sh"
+
+
+
+	"Siehe Documentation https://github.com/acmesh-official/acme.sh"
+
+
+
+	"!!! TODO! Does not really work. Needs sudo, but stops blabla. Try on CLI first manually"
+
 
 	| cmd |
 	cmd := String streamContents: [ :s |
 		s << self acmeShPath.
-		s << ' --issue --nginx '.
+		s << '--server letsencrypt --issue --nginx '.
 		self domains do: [ :each |
 			s << ' -d '.
 			s << each ]
 	].
-	self runSudoShellCommand: cmd
+	self runShellCommand: cmd
 ]
 
 { #category : #'as yet unclassified' }
 GSCSslCertificate >> doInstallCertificate [
-
+	
+	"TODO: Ensure Verzeichnis!!"
+	
 	| cmd |
 	cmd := String streamContents: [ :s |
 		s << self acmeShPath.
@@ -78,7 +88,7 @@ GSCSslCertificate >> doInstallCertificate [
 		s << '--reloadcmd "service nginx force-reload"'
 	].
 
-	self runSudoShellCommand: cmd
+	self runShellCommand: cmd
 ]
 
 { #category : #accessing }

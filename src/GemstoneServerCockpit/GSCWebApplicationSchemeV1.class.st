@@ -112,7 +112,7 @@ GSCWebApplicationSchemeV1 >> templateGemMonitConfig [
 check process <?stt= me monitCheckName ?> with pidfile <?stt= me pidFilePath pathString ?>
 	DEPENDS ON <?stt= me stoneTool netldiMonitCheckName ?>
 	ONREBOOT START
-	GROUP gemstone_gems
+	GROUP <?stt= me monitGroupName ?>
 	MODE ACTIVE
 	start program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> <?stt= me gsHome ?>/bin/todeIt <?stt= me stoneName ?> /home/seaside/gemServer --restart=seaside<?stt= me gemIndex ?>'' " as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>"
 	stop program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> <?stt= me gsHome ?>/bin/todeIt <?stt= me stoneName ?> /home/seaside/gemServer --stop=seaside<?stt= me gemIndex ?>'' " as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>" with timeout 90 seconds

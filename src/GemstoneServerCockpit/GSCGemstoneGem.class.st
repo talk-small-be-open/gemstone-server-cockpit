@@ -77,6 +77,11 @@ GSCGemstoneGem >> monitConfigTemplate [
 ]
 
 { #category : #'as yet unclassified' }
+GSCGemstoneGem >> monitGroupName [
+	^ self appShortCode, '_gemstone_gems'
+]
+
+{ #category : #'as yet unclassified' }
 GSCGemstoneGem >> pidFilePath [
 	^ self stoneBasePath / 'logs' / (self gemFilesBasename, '.pid')
 ]

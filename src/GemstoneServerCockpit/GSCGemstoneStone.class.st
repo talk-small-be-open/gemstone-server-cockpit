@@ -71,6 +71,14 @@ GSCGemstoneStone >> build [
 			contentTemplate: self gemConfTemplate
 	].
 
+	self add: GSCTextFile then: [ :file |
+		file
+			title: 'gem.conf file';
+			filePath: (self basePath / 'gem.conf');
+			beUserOwned;
+			contentTemplate: self gemConfTemplate
+	].
+
 	"TODO only if not installed already"
 	self add: GSCGeneralTool then: [ :tool |
 		tool title: 'Mount seaside in tode'.

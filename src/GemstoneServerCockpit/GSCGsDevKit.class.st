@@ -145,9 +145,16 @@ GSCGsDevKit >> seasideStonTemplate [
 
 { #category : #'as yet unclassified' }
 GSCGsDevKit >> sharedMemoryMaxBytes [
-	| ramBytes |
-	ramBytes := (self root factAt: 'memoryTotalBytes') max: (1024*1024*1024) . "Assuming some 1GB RAM, if not detected"
-	^ (ramBytes * (3/4)) asInteger.
+	| hardwareBytes |
+	
+	"This is subject to change some few bytes on reboot, if using a virtual server.
+	So we round it down to the next KB"
+	hardwareBytes := (self root factAt: 'memoryTotalBytes') truncateTo: 1024.
+	
+	hardwareBytes := hardwareBytes max: (1024*1024*1024) . "Assuming some 1GB RAM, if not detected a real plausible value"
+	
+	"Take 75% of total RAM as shared memory"
+	^ (hardwareBytes * (3/4)) asInteger.
 ]
 
 { #category : #accessing }
