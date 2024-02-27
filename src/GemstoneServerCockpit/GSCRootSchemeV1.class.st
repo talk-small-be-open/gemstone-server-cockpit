@@ -111,7 +111,7 @@ frontend stats
 { #category : #'as yet unclassified' }
 GSCRootSchemeV1 >> templateMonitConfig [
 	^ GSCSttTemplate sttString:
-'set daemon 60
+'set daemon 30
 	with start delay 30
 	
 set logfile /var/log/monit.log

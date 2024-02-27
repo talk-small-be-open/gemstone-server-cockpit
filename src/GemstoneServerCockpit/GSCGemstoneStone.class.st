@@ -167,6 +167,7 @@ KEYFILE = <?stt= me keyfilePath ?>;
 # SHR_PAGE_CACHE_SIZE_KB should always be > GEM_TEMPOBJ_CACHE_SIZE
 SHR_PAGE_CACHE_SIZE_KB = <?stt= me shrPageCacheSizeKb ?>;
 GEM_TEMPOBJ_CACHE_SIZE = <?stt= me gemTempobjCacheSize ?>;
+GEM_TEMPOBJ_POMGEN_PRUNE_ON_VOTE = 90;
 
 STN_TRAN_FULL_LOGGING = TRUE;
 STN_TRAN_LOG_DIRECTORIES = $GEMSTONE_TRANLOGDIR/, $GEMSTONE_TRANLOGDIR/;
@@ -181,7 +182,11 @@ GEM_MAX_SMALLTALK_STACK_DEPTH = 5000;
 { #category : #'as yet unclassified' }
 GSCGemstoneStone >> gemTempobjCacheSize [
 	"in KB"
-	^ self hasKeyfile ifTrue: [ 500 * 1024 ] ifFalse: [ 300 * 1024 ]
+	| could |
+	could := self hasKeyfile ifTrue: [ 500 * 1024 ] ifFalse: [ 300 * 1024 ].
+
+	"Limited by SHR_PAGE_CACHE_SIZE_KB"
+	^ could min: self shrPageCacheSizeKb
 ]
 
 { #category : #accessing }

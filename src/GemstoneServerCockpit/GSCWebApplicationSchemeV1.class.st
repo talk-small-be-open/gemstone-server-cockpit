@@ -113,6 +113,8 @@ check process <?stt= me monitCheckName ?> with pidfile <?stt= me pidFilePath pat
 	DEPENDS ON <?stt= me stoneTool netldiMonitCheckName ?>
 	ONREBOOT START
 	GROUP <?stt= me monitGroupName ?>
+	GROUP <?stt= me appShortCode ?>
+	GROUP gemstone_gems
 	MODE ACTIVE
 	start program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> <?stt= me gsHome ?>/bin/todeIt <?stt= me stoneName ?> /home/seaside/gemServer --restart=seaside<?stt= me gemIndex ?>'' " as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>"
 	stop program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> <?stt= me gsHome ?>/bin/todeIt <?stt= me stoneName ?> /home/seaside/gemServer --stop=seaside<?stt= me gemIndex ?>'' " as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>" with timeout 90 seconds
@@ -180,14 +182,14 @@ backend <?stt= me appShortCode ?>_gems
 { #category : #'as yet unclassified' }
 GSCWebApplicationSchemeV1 >> templateNetldiMonitConfig [
 
-	"TBD Maybe starting needs the USER and HOME env vars?!"
-
 	^ GSCSttTemplate sttString:
 '# NETLDI
 check process <?stt= me netldiMonitCheckName ?> matching "^/opt/.*/sys/netldid <?stt= me stoneName ?>_ldi .*$"
 	ONREBOOT START
 	DEPENDS ON <?stt= me monitCheckName ?>
 	MODE ACTIVE
+	GROUP <?stt= me appShortCode ?>
+	GROUP gemstone_netldis
 	start program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> USER=<?stt= me serverUsername ?> <?stt= me gsHome ?>/bin/startNetldi <?stt= me stoneName ?>''" as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>"
 	stop program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> USER=<?stt= me serverUsername ?> <?stt= me gsHome ?>/bin/stopNetldi <?stt= me stoneName ?>''" as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>" with timeout 90 seconds
 	if 7 restarts within 10 cycles then stop
@@ -368,6 +370,7 @@ GSCWebApplicationSchemeV1 >> templateStoneMonitConfig [
 check process <?stt= me monitCheckName ?> matching "^/opt/.*/sys/stoned <?stt= me stoneName ?> .*$"
 	ONREBOOT START
 	MODE ACTIVE
+	GROUP <?stt= me appShortCode ?>
 	start program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> <?stt= me gsHome ?>/bin/startStone <?stt= me stoneName ?>''" as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>"
 	stop program = "/bin/bash -c ''GS_HOME=<?stt= me gsHome ?> <?stt= me gsHome ?>/bin/stopStone <?stt= me stoneName ?>''" as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>"
 	if 7 restarts within 10 cycles then stop

@@ -85,7 +85,7 @@ GSCSslCertificate >> doInstallCertificate [
 		s << ' --fullchain-file '.
 		s << self fullchainFilePath.
 		
-		s << '--reloadcmd "service nginx force-reload"'
+		s << ' --reloadcmd "service nginx force-reload"'
 	].
 
 	self runShellCommand: cmd
