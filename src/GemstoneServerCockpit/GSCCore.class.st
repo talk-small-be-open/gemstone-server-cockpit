@@ -12,7 +12,8 @@ Class {
 		'sudoPrompt',
 		'subprocessTailLines',
 		'subprocessCommandLabel',
-		'hasPasswordlessSudo'
+		'hasPasswordlessSudo',
+		'gscInstallDir'
 	],
 	#classVars : [
 		'AccentNormalizationMap',
@@ -282,7 +283,7 @@ GSCCore >> getSudoPassword [
 
 { #category : #config }
 GSCCore >> gscInstallDir [
-	^ (self rootTool factAt: 'gscInstallDir') asPath
+	^ gscInstallDir
 ]
 
 { #category : #accessing }
@@ -817,11 +818,7 @@ GSCCore >> setup [
 	"Do some stuff inside Pharo to set things right"
 	self setupPharo.
 
-	self clearSubprocessTailLines.
-	self checkPermissions.
-	self ensureRunningSshControlMaster.
-
-	sudoPrompt := UUID new asString36.
+	self setupMyself.
 	
 	"Build root tools"
 	self setupRoot.
@@ -869,6 +866,17 @@ GSCCore >> setupExampleApplications [
 		app := scheme buildApplicationToolInto: rootTool.
 		
 	]
+]
+
+{ #category : #setup }
+GSCCore >> setupMyself [
+	self clearSubprocessTailLines.
+	self checkPermissions.
+	self ensureRunningSshControlMaster.
+
+	sudoPrompt := UUID new asString36.
+	gscInstallDir := FileSystem workingDirectory asPath.
+		
 ]
 
 { #category : #setup }

@@ -101,7 +101,7 @@ GSCGemstoneStone >> build [
 			minute: '0';
 			hour: '1,12';
 			title: 'GemStone DB backup';
-			command: ((self core fileDepotScriptsDir / 'backup_gemstone_db.sh') pathString, ' ', self stoneName) ]
+			command: ((self core fileDepotScriptsDir / 'backup-gemstone-db.sh') pathString, ' ', self stoneName) ]
 
 ]
 

@@ -31,7 +31,15 @@ GSCNginx >> build [
 	].
 
 "Dies not work, since sites have not been built yet.	self useSsl ifTrue: ["
-	self add: GSCAcmeCertificateClient
+	self add: GSCAcmeCertificateClient.
+	
+	"Install script for NGINX bad bots blocker"
+	self add: GSCShellCommand then: [ :shell |
+		shell
+			title: 'Install bad bots blocker';
+			depotScript: 'install-nginx-ultimate-bad-bot-blocker.sh';
+			checkMeBlock: [ :me | (me core fileExists: '/usr/local/sbin/install-ngxblocker') ifFalse: [ me beNeedsAttention: 'Is not installed' ] ]
+	]
 	
 "TODO
   - name: User {{remoteUser}} is in group www-data (uploaded files permission)
