@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'cmd',
 		'checkMeBlock',
-		'title'
+		'title',
+		'sudo'
 	],
 	#category : #'GemstoneServerCockpit-Model'
 }
@@ -58,7 +59,16 @@ GSCShellCommand >> depotScript: aScriptName args: anArgsString [
 
 { #category : #'as yet unclassified' }
 GSCShellCommand >> doExecute [
-	self runShellCommand: cmd
+	self isSudo ifTrue: [ 
+		self runSudoShellCommand: cmd
+	] ifFalse: [ 
+		self runShellCommand: cmd
+	]
+]
+
+{ #category : #testing }
+GSCShellCommand >> isSudo [
+	^ sudo = true
 ]
 
 { #category : #rendering }
@@ -74,4 +84,9 @@ GSCShellCommand >> title [
 { #category : #accessing }
 GSCShellCommand >> title: aString [
 	title := aString
+]
+
+{ #category : #'as yet unclassified' }
+GSCShellCommand >> useSudo [
+	sudo := true
 ]

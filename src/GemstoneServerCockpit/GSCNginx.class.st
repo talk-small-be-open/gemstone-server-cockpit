@@ -37,6 +37,7 @@ GSCNginx >> build [
 	self add: GSCShellCommand then: [ :shell |
 		shell
 			title: 'Install bad bots blocker';
+			useSudo;
 			depotScript: 'install-nginx-ultimate-bad-bot-blocker.sh';
 			checkMeBlock: [ :me | (me core fileExists: '/usr/local/sbin/install-ngxblocker') ifFalse: [ me beNeedsAttention: 'Is not installed' ] ]
 	]
