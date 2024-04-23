@@ -1,6 +1,9 @@
 Class {
 	#name : #GSCAcmeCertificateClient,
 	#superclass : #GSCTool,
+	#instVars : [
+		'acmeShScript'
+	],
 	#category : #'GemstoneServerCockpit-Model'
 }
 
@@ -11,10 +14,10 @@ GSCAcmeCertificateClient >> acmeShPath [
 
 { #category : #accessing }
 GSCAcmeCertificateClient >> acmeShTemplate [
-	| response |
-	response := (ZnEasy get: 'https://raw.githubusercontent.com/acmesh-official/acme.sh/master/acme.sh').
-	
-	^ GSCSimpleTemplate source: response entity contents
+
+	self cacheAcmeShScript.
+		
+	^ GSCSimpleTemplate source: acmeShScript
 ]
 
 { #category : #accessing }
@@ -30,6 +33,11 @@ GSCAcmeCertificateClient >> build [
 ]
 
 { #category : #'as yet unclassified' }
+GSCAcmeCertificateClient >> cacheAcmeShScript [
+	acmeShScript ifBlank: [ self downloadAcmeShScript ]
+]
+
+{ #category : #'as yet unclassified' }
 GSCAcmeCertificateClient >> checkMe [
 	self beNotNeedsAttention.
 	
@@ -41,6 +49,14 @@ GSCAcmeCertificateClient >> doInstall [
 	self runBashScript: ('
 cd ', self serverUserHome, '/acme-sh-installer
 ./acme.sh --install -m ', self serverAdminEmail)
+]
+
+{ #category : #accessing }
+GSCAcmeCertificateClient >> downloadAcmeShScript [
+	| response |
+	response := (ZnEasy get: 'https://raw.githubusercontent.com/acmesh-official/acme.sh/master/acme.sh').
+
+	response isSuccess ifTrue: [ acmeShScript := response entity contents ].
 ]
 
 { #category : #accessing }
