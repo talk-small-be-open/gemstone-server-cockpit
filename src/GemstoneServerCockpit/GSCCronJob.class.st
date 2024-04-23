@@ -13,6 +13,11 @@ Class {
 	#category : #'GemstoneServerCockpit-Model'
 }
 
+{ #category : #configuring }
+GSCCronJob >> beRoot [
+	user := 'root'
+]
+
 { #category : #building }
 GSCCronJob >> build [
 
@@ -74,8 +79,9 @@ GSCCronJob >> hour: anObject [
 { #category : #initialization }
 GSCCronJob >> initMe [
 	super initMe.	
-	mailto := self serverAdminEmail.
-	user := self serverUsername.
+
+	mailto ifNil: [ mailto := self serverAdminEmail ].
+	user ifNil: [ user := self serverUsername ].
 	
 ]
 

@@ -16,7 +16,7 @@ GSCRootSchemeV1 >> buildRootTool [
 		"hardcoded apt packages for the server setup"
 		"'mailutils' ""for ngxblocker to send emails"""
 		{'logrotate'. 'ufw'. 'git'. 'htop'. 'unzip'. 'zip'. 'pigz'. 'aptitude'. 'mosh'.
-		'cronic'. 'goaccess'. 'lnav'. 'ansible'. } do: [ :each |
+		'cronic'. 'goaccess'. 'lnav'. 'ansible'. 'fail2ban' } do: [ :each |
 			folder add: GSCAptPackage then: [ :apt |
 				apt packageName: each ] ].
 		

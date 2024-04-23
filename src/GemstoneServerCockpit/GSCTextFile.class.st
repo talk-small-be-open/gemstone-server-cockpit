@@ -59,6 +59,9 @@ GSCTextFile >> contentTemplate: anObject [
 
 { #category : #'as yet unclassified' }
 GSCTextFile >> doEditFile [
+	"Always get updated content"
+	self readFileContents.
+	
 	self uiEditText: self fileContents then: [ :newText |.
 		self writeFileContents: newText
 	]

@@ -40,6 +40,16 @@ GSCNginx >> build [
 			useSudo;
 			depotScript: 'install-nginx-ultimate-bad-bot-blocker.sh';
 			checkMeBlock: [ :me | (me core fileExists: '/usr/local/sbin/install-ngxblocker') ifFalse: [ me beNeedsAttention: 'Is not installed' ] ]
+	].
+
+	"Cron update for NGINX bad bots blocker"
+	self add: GSCCronJob then: [ :cron |
+		cron
+			title: 'Update NGINX bad bots blocker';
+			minute: 15;
+			hour: 3;
+			beRoot;
+			command: '/usr/local/sbin/update-ngxblocker -n -q'
 	]
 	
 "TODO
