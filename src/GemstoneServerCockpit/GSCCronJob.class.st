@@ -61,7 +61,7 @@ PATH=<?stt= me gemstoneGsHome pathString ?>/bin:/usr/bin:/bin:/usr/local/bin
 
 { #category : #accessing }
 GSCCronJob >> fileName [
-	^ ( self appShortCode, '_', (self core serverFilenameFor: self title) )
+	^ ( 'gsc_', (self core serverFilenameFor: self title) )
 ]
 
 { #category : #accessing }

@@ -99,7 +99,13 @@ GSCTool >> appShortCode [
 
 { #category : #accessing }
 GSCTool >> application [
-	^ self ancestors atLast: 2 ifAbsent: [ nil ]
+	"Works only if the caller is inside an application tree, but not on a top level branch"
+	| app |
+	app := self ancestors atLast: 2 ifAbsent: [ nil ].
+	
+	(app isKindOf: GSCApplication) ifFalse: [ self error: 'The calling tool is not inside an application tree.' ].
+	
+	^ app
 ]
 
 { #category : #'as yet unclassified' }

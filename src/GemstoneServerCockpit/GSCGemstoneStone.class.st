@@ -100,7 +100,7 @@ GSCGemstoneStone >> build [
 		cron
 			minute: '0';
 			hour: '1,12';
-			title: 'GemStone DB backup';
+			title: (self stoneName, ' GemStone DB backup');
 			command: ((self core fileDepotScriptsDir / 'backup-gemstone-db.sh') pathString, ' ', self stoneName) ]
 
 ]
