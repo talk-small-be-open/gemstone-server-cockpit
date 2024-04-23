@@ -220,8 +220,8 @@ sttBlockIdiots := '
 	# Nginx Bad Bot Blocker Includes
 	# REPO: https://github.com/mitchellkrogza/nginx-ultimate-bad-bot-blocker
 	##
-	#TODO include /etc/nginx/bots.d/ddos.conf;
-	#TODO include /etc/nginx/bots.d/blockbots.conf;
+	include /etc/nginx/bots.d/ddos.conf;
+	include /etc/nginx/bots.d/blockbots.conf;
 '.
 
 sttProxyToHaproxy := '
