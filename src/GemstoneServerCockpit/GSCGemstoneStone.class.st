@@ -93,7 +93,16 @@ GSCGemstoneStone >> build [
 				gitBranch: (conf at: 'gitBranch');
 				gitUrl: (conf at: 'gitUrl').
 		]
-	]
+	].
+
+	"Backup cron job"
+	self add: GSCCronJob then: [ :cron |
+		cron
+			minute: '0';
+			hour: '1,12';
+			title: 'GemStone DB backup';
+			command: ((self core fileDepotScriptsDir / 'backup_gemstone_db.sh') pathString, ' ', self stoneName) ]
+
 ]
 
 { #category : #'as yet unclassified' }

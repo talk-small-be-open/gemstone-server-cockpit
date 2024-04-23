@@ -15,6 +15,7 @@ Class {
 		'hasPasswordlessSudo'
 	],
 	#classVars : [
+		'AccentNormalizationMap',
 		'Instance'
 	],
 	#category : #'GemstoneServerCockpit-Model'
@@ -105,29 +106,29 @@ GSCCore >> OLDrunAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
 			] forkAt: Processor userInterruptPriority named: 'GSC shell process'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #config }
 GSCCore >> applicationUrl [
 	^ self seasideApplication url
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #sudo }
 GSCCore >> autoexpireSudoPassword [
 
 	(sudoPasswortTimestamp isNil or: [ sudoPasswortTimestamp < (DateAndTime now - 2 hours)]) ifTrue: [ 
 		temporarySudoPassword := nil ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 GSCCore >> beDevelopment [
 	isDevelopment := true
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 GSCCore >> beNotDevelopment [
 	isDevelopment := false
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #sudo }
 GSCCore >> checkPermissions [
 	| output |
 	output := self readCommand: 'sudo --non-interactive echo -n "yes"'.
@@ -141,7 +142,7 @@ GSCCore >> clearSubprocessTailLines [
 	subprocessTailLines := OrderedCollection new
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #sudo }
 GSCCore >> clearSudoPassword [
 	temporarySudoPassword := nil
 ]
@@ -207,7 +208,7 @@ GSCCore >> ensureRunningSshControlMaster [
 	]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 GSCCore >> ensureWebserver [
 	"Webserver starten"
 	| webserver |
@@ -216,9 +217,39 @@ GSCCore >> ensureWebserver [
 		self startWebserver ]
 ]
 
+{ #category : #config }
+GSCCore >> fileDepotDir [
+	^ self gscInstallDir / 'pharo-local' / 'iceberg' / 'talk-small-be-open' / 'gemstone-server-cockpit' / 'depot'
+]
+
+{ #category : #config }
+GSCCore >> fileDepotScriptsDir [
+	^ self fileDepotDir / 'shell-scripts'
+]
+
 { #category : #shell }
 GSCCore >> fileExists: aPathString [
 	^ self runSudoShellIsSuccess: ('test -f "', (aPathString asPath pathString), '"')
+]
+
+{ #category : #helpers }
+GSCCore >> filenameFor: aString [
+	| map sanitized |
+	"Konvertiert einen String in einen String passend für Filenamen
+	
+	IMPORTANT: Intended for download filenames. For real storing of files on the server use the stricter serverFilenameFor: 
+	"
+	
+	map := {
+		$* asInteger -> $_ asInteger.
+		$/ asInteger -> $_ asInteger.
+		$, asInteger -> $_ asInteger.
+		Character space asInteger -> $_ asInteger. 
+	} asDictionary.
+	
+	sanitized := aString copyWithout: $".
+	
+	^ (self translateString: sanitized map: map) asFileName "asDromedaryCase"
 ]
 
 { #category : #accessing }
@@ -236,7 +267,7 @@ GSCCore >> filesystemRoot: aString [
 	]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #sudo }
 GSCCore >> getSudoPassword [
 	
 	self autoexpireSudoPassword.
@@ -247,6 +278,11 @@ GSCCore >> getSudoPassword [
 	self timestampSudoPassword.
 	
 	^ temporarySudoPassword
+]
+
+{ #category : #config }
+GSCCore >> gscInstallDir [
+	^ (self rootTool factAt: 'gscInstallDir') asPath
 ]
 
 { #category : #accessing }
@@ -262,7 +298,21 @@ GSCCore >> initialize [
 	filesystemRoot := Path root.
 ]
 
-{ #category : #actions }
+{ #category : #initialization }
+GSCCore >> initializeAccentNormalizationMap [
+	| sourceChars targetChars |
+
+	sourceChars := #(193 225 192 224 194 226 461 462 258 259 195 227 7842 7843 7840 7841 196 228 197 229 256 257 260 261 7844 7845 7846 7847 7850 7851 7848 7849 7852 7853 7854 7855 7856 7857 7860 7861 7858 7859 7862 7863 506 507 262 263 264 265 268 269 266 267 199 231 270 271 272 273 201 233 200 232 202 234 282 283 276 277 7868 7869 7866 7867 278 279 203 235 274 275 280 281 7870 7871 7872 7873 7876 7877 7874 7875 7864 7865 7878 7879 286 287 284 285 288 289 290 291 292 293 294 295 205 237 204 236 300 301 206 238 463 464 207 239 296 297 302 303 298 299 7880 7881 7882 7883 308 309 310 311 313 314 317 318 315 316 321 322 319 320 323 324 327 328 209 241 325 326 211 243 210 242 334 335 212 244 7888 7889 7890 7891 7894 7895 7892 7893 465 466 214 246 336 337 213 245 216 248 510 511 332 333 7886 7887 416 417 7898 7899 7900 7901 7904 7905 7902 7903 7906 7907 7884 7885 7896 7897 7764 7765 7766 7767 340 341 344 345 342 343 346 347 348 349 352 353 350 351 356 357 354 355 358 359 218 250 217 249 364 365 219 251 467 468 366 367 220 252 471 472 475 476 473 474 469 470 368 369 360 361 370 371 362 363 7910 7911 431 432 7912 7913 7914 7915 7918 7919 7916 7917 7920 7921 7908 7909 7810 7811 7808 7809 372 373 7812 7813 221 253 7922 7923 374 375 376 255 7928 7929 7926 7927 7924 7925 377 378 381 382 379 380 208).
+
+	targetChars := #(A a A a A a A a A a A a A a A a A a A a A a A a A a A a A a A a A a A a A a A a A a A a A a C c C c C c C c C c D d D d E e E e E e E e E e E e E e E e E e E e E e E e E e E e E e E e E e G g G g G g G g H h H h I i I i I i I i I i I i I i I i I i I i I i J j K k L l L l L l L l L l N n N n N n N n O o O o O o O o O o O o O o O o O o O o O o O o O o O o O o O o O o O o O o O o O o O o O o O o P p P p R r R r R r S s S s S s S s T t T t T t U u U u U u U u U u U u U u U u U u U u U u U u U u U u U u U u U u U u U u U u U u U u U u W w W w W w W w Y y Y y Y y Y y Y y Y y Y y Z z Z z Z z D).
+
+	AccentNormalizationMap := IdentityDictionary new. 
+
+	sourceChars with: targetChars do: [:source :target |
+		AccentNormalizationMap at: source put: target first asInteger]
+]
+
+{ #category : #setup }
 GSCCore >> install [
 	self installStarterShellScript.
 
@@ -273,7 +323,7 @@ GSCCore >> install [
 	self setup.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #setup }
 GSCCore >> installSeasideComponents [
 	| app appPath |
 
@@ -291,7 +341,7 @@ GSCCore >> installSeasideComponents [
 "nicht, weil versteckt	WAAdmin defaultDispatcher defaultName: appPath"
 ]
 
-{ #category : #actions }
+{ #category : #setup }
 GSCCore >> installStarterShellScript [
 	| filename fileRef script |
 	filename := './start-gsc.sh'.
@@ -328,7 +378,7 @@ fi
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #config }
 GSCCore >> instanceId [
 	uuidString ifNil: [
 		uuidString := UUID new asString36.
@@ -362,7 +412,7 @@ GSCCore >> isSudoPasswordSet [
 	^ temporarySudoPassword notBlank
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #shell }
 GSCCore >> killShellProcess [
 	"Kill the OS subprocess. The Pharo process then will terminate automatically"
 	shellSubprocess ifNotNil: [
@@ -382,12 +432,18 @@ GSCCore >> needsSudoPassword [
 	^ (self isSudoPasswordSet or: [ self hasPasswordlessSudo ]) not
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #helpers }
+GSCCore >> normalizeAccents: aString [
+	AccentNormalizationMap ifNil: [self initializeAccentNormalizationMap].
+	^self translateString: aString map: AccentNormalizationMap
+]
+
+{ #category : #shell }
 GSCCore >> readCommand: aCommand [
 	^ self readCommand: aCommand args: #()
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #shell }
 GSCCore >> readCommand: aCommand args: aCollection [
 	^ self readCommand: aCommand sudo: false args: aCollection
 ]
@@ -428,7 +484,7 @@ GSCCore >> realPathForFile: aFileReferenceOrString [
 	^ path
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 GSCCore >> restartWebserver [
 	self stopWebserver.
 	self startWebserver
@@ -477,7 +533,7 @@ GSCCore >> runShell: aCommandString args: anArgsCollection sudo: aSudoBoolean [
 	^ self runShell: aCommandString args: anArgsCollection stdin: nil sudo: aSudoBoolean onOutput: nil onRun: nil onFinish: nil
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #shell }
 GSCCore >> runShell: aCommandString args: anArgsCollection tty: aTtyBoolean stdin: aStdinString sudo: aSudoBoolean onOutput: aLinesBlock onRun: aRunBlock onFinish: aFinishBlock [
 
 	| process cmd args envVars lineReader catchFirstSudoPrompt runBlockDone fireRunBlock linesBlock needSudoPassword |
@@ -722,9 +778,22 @@ GSCCore >> runSudoShellIsSuccess: aString [
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #helpers }
+GSCCore >> sanitizeToAscii: aString [
+	| sanitized |
+	sanitized := aString reject: [:c | c asciiValue > 127].
+	^ sanitized
+]
+
+{ #category : #config }
 GSCCore >> seasideApplication [
 	^ WAAdmin defaultDispatcher handlerAt: self instanceId asString
+]
+
+{ #category : #helpers }
+GSCCore >> serverFilenameFor: aString [
+	"Dateinamen filtern für den Gebrauch auf dem Server. Strenges filtern."
+	^(self filenameFor: (self sanitizeToAscii: (self normalizeAccents: aString))) asLowercase
 ]
 
 { #category : #shell }
@@ -732,14 +801,14 @@ GSCCore >> serverUsername [
 	^ self rootTool configAt: 'server:username'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #sudo }
 GSCCore >> setSudoPassword: aString [
 	temporarySudoPassword := aString.
 	
 	self timestampSudoPassword
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #setup }
 GSCCore >> setup [
 
 	"Ensure: Clear root tool first"
@@ -768,7 +837,7 @@ GSCCore >> setup [
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #setup }
 GSCCore >> setupApplicationsFromConfigFiles [
 	| confDir |
 	confDir := (GSCCore instance realPathForFile: '/etc/gsc/applications') asFileReference.
@@ -784,7 +853,7 @@ GSCCore >> setupApplicationsFromConfigFiles [
 	]]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #setup }
 GSCCore >> setupExampleApplications [
 	
 
@@ -802,12 +871,12 @@ GSCCore >> setupExampleApplications [
 	]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #setup }
 GSCCore >> setupPharo [
 	GSCHtmlCanvas selectAsDefault
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #setup }
 GSCCore >> setupRoot [
 	| rootConf scheme |
 
@@ -826,7 +895,7 @@ GSCCore >> setupRoot [
 
 ]
 
-{ #category : #'system startup' }
+{ #category : #setup }
 GSCCore >> startUp [
 	"on Pharo start"
 	
@@ -839,7 +908,7 @@ GSCCore >> startUp [
 	Transcript crShow: ('Open in browser: http://localhost:8888/', self instanceId asString).
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 GSCCore >> startWebserver [
 	"Start webserver, only on local network"
 	GSCZincServerAdaptor startOn: self webserverPort.
@@ -858,7 +927,7 @@ GSCCore >> stopSshControlMaster [
 		runAndWait
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 GSCCore >> stopWebserver [
 
 	| serverManager |
@@ -989,7 +1058,7 @@ GSCCore >> sudoEnsureDirectory: aDirPath owner: anOwnerString group: aGroupStrin
 	]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #shell }
 GSCCore >> sudoReadCommand: aCommand [
 	^ self sudoReadCommand: aCommand args: #()
 ]
@@ -1083,9 +1152,20 @@ GSCCore >> temporaryUniqueFile: anExtensionString [
 	^ file
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #sudo }
 GSCCore >> timestampSudoPassword [
 	sudoPasswortTimestamp := DateAndTime now
+]
+
+{ #category : #helpers }
+GSCCore >> translateString: aString map: aDictionary [
+	| translated |
+	translated := aString copy.
+	translated withIndexDo: [:char :index |
+		aDictionary at: char asInteger ifPresent: [:normalizedInteger |
+			translated at: index put: normalizedInteger asCharacter]].
+	
+	^translated
 ]
 
 { #category : #actions }
@@ -1096,12 +1176,12 @@ GSCCore >> update [
 		load
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #config }
 GSCCore >> webserverPort [
 	^ 8650 "Looks like: 8GSC"
 ]
 
-{ #category : #writing }
+{ #category : #shell }
 GSCCore >> writeLineToShellProcess: aString [
 	shellSubprocess stdinStream
 		nextPutAll: aString;
@@ -1110,7 +1190,7 @@ GSCCore >> writeLineToShellProcess: aString [
 		flush
 ]
 
-{ #category : #writing }
+{ #category : #shell }
 GSCCore >> writeToShellProcess: anObject [
 	shellSubprocess stdinStream
 		<< anObject;

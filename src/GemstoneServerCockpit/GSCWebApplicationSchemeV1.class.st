@@ -229,6 +229,9 @@ sttProxyToHaproxy := '
 	expires -1;
 	add_header Cache-Control "no-store, no-cache, must-revalidate, max-age=0, proxy-revalidate";
 
+	# Speed limits. Requests to the actual app behind HAProxy should be restricted.
+	limit_req zone=app burst=30;
+
 	# Allow connections from Browser to websocket
 	# add_header Content-Security-Policy "connect-src https: ''self'' wss://$host;";
 

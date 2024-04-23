@@ -191,11 +191,8 @@ http {
 	#
 	# Consider: Seaside uses 2 requests per hit (1 for redirect message)
 	
-	# Define request limit, used for demo and app.
-	
-	limit_req_zone $binary_remote_addr zone=demo:5m rate=2r/s;
-
-	# Consider: Users are often coming from the same class room, therefore same IP! Dont limit to hard!
+	# Define request limits
+	# Consider: Users are often coming from the same room, therefore same IP! Dont limit to hard!
 	# What we want is to ban idiots
 	limit_req_zone $binary_remote_addr zone=app:10m rate=20r/s;
 
