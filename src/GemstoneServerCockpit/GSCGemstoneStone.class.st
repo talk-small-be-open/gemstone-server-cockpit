@@ -101,7 +101,15 @@ GSCGemstoneStone >> build [
 			minute: '0';
 			hour: '1,12';
 			title: (self stoneName, ' GemStone DB backup');
-			command: ((self core fileDepotScriptsDir / 'backup-gemstone-db.sh') pathString, ' ', self stoneName) ]
+			command: ((self core fileDepotScriptsDir / 'backup-gemstone-db.sh') pathString, ' ', self stoneName) ].
+
+	"Cleanup tranlogs cron job"
+	self add: GSCCronJob then: [ :cron |
+		cron
+			minute: '0';
+			hour: '3';
+			title: (self stoneName, ' GemStone cleanup (tranlogs, objectlog, logfiles, ...)');
+			command: ((self core fileDepotScriptsDir / 'cleanup.sh') pathString, ' ', self stoneName) ]
 
 ]
 
