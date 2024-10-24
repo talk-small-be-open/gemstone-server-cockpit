@@ -870,12 +870,13 @@ GSCCore >> setupExampleApplications [
 
 { #category : #setup }
 GSCCore >> setupMyself [
+	sudoPrompt := UUID new asString36.
+	gscInstallDir := FileSystem workingDirectory asPath.
+
 	self clearSubprocessTailLines.
 	self checkPermissions.
 	self ensureRunningSshControlMaster.
 
-	sudoPrompt := UUID new asString36.
-	gscInstallDir := FileSystem workingDirectory asPath.
 		
 ]
 
