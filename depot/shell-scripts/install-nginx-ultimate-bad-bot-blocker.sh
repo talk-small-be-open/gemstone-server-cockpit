@@ -12,4 +12,6 @@ cd $BINDIR
 ./install-ngxblocker -x
 chmod +x $BINDIR/setup-ngxblocker
 chmod +x $BINDIR/update-ngxblocker
+
+# -z = no configuration of vhosts. We do that ourself.
 ./setup-ngxblocker -x -z
