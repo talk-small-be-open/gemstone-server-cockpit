@@ -1,53 +1,55 @@
 Class {
-	#name : #GSCShellCommand,
-	#superclass : #GSCTool,
+	#name : 'GSCShellCommand',
+	#superclass : 'GSCTool',
 	#instVars : [
 		'cmd',
 		'checkMeBlock',
 		'title',
 		'sudo'
 	],
-	#category : #'GemstoneServerCockpit-Model'
+	#category : 'GemstoneServerCockpit-Model',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Model'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCShellCommand >> checkMe [
 	self beNotNeedsAttention.
 	
 	checkMeBlock ifNotNil: [ checkMeBlock cull: self ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCShellCommand >> checkMeBlock [
 
 	^ checkMeBlock
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCShellCommand >> checkMeBlock: anObject [
 
 	checkMeBlock := anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCShellCommand >> cmd [
 
 	^ cmd
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCShellCommand >> cmd: anObject [
 
 	cmd := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCShellCommand >> depotScript: aScriptName [
 	^ self depotScript: aScriptName args: nil
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCShellCommand >> depotScript: aScriptName args: anArgsString [
 	| command |
 	command := (self core fileDepotScriptsDir / aScriptName) pathString.
@@ -57,7 +59,7 @@ GSCShellCommand >> depotScript: aScriptName args: anArgsString [
 	self cmd: command
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCShellCommand >> doExecute [
 	self isSudo ifTrue: [ 
 		self runSudoShellCommand: cmd
@@ -66,27 +68,27 @@ GSCShellCommand >> doExecute [
 	]
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 GSCShellCommand >> isSudo [
 	^ sudo = true
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCShellCommand >> renderBodyOn: html [
 	self renderLabel: 'Command' text: self cmd on: html.
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCShellCommand >> title [
 	^ 'Shell: ', (title ifBlank: [ cmd ])
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCShellCommand >> title: aString [
 	title := aString
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCShellCommand >> useSudo [
 	sudo := true
 ]

@@ -1,44 +1,46 @@
 Class {
-	#name : #GSCConfigurationEditor,
-	#superclass : #GSCTool,
+	#name : 'GSCConfigurationEditor',
+	#superclass : 'GSCTool',
 	#instVars : [
 		'title',
 		'editedConfig'
 	],
-	#category : #'GemstoneServerCockpit-Model'
+	#category : 'GemstoneServerCockpit-Model',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Model'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCConfigurationEditor >> checkMe [
 	self beNotNeedsAttention.
 
 	editedConfig isFileDifferent ifTrue: [ ^ self beNeedsAttention: 'File differs from config, maybe save it?' ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCConfigurationEditor >> config: anObject [
 
 	editedConfig := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCConfigurationEditor >> doEditConfig [
 	self uiEditText: editedConfig textString then: [ :newText |.
 		editedConfig textString: newText.
 		editedConfig storeToFile ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCConfigurationEditor >> doReloadConfigFile [
 	editedConfig loadFromFile
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCConfigurationEditor >> doSaveConfigFile [
 	editedConfig storeToFile.
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCConfigurationEditor >> renderBodyOn: html [
 	self renderLabel: 'File path' text: editedConfig filePath pathString on: html.
 
@@ -46,13 +48,13 @@ GSCConfigurationEditor >> renderBodyOn: html [
 		html text: editedConfig printString ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCConfigurationEditor >> title [
 
 	^ title
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCConfigurationEditor >> title: anObject [
 
 	title := anObject

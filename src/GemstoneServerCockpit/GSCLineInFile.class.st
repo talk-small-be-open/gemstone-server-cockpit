@@ -1,15 +1,17 @@
 Class {
-	#name : #GSCLineInFile,
-	#superclass : #GSCTool,
+	#name : 'GSCLineInFile',
+	#superclass : 'GSCTool',
 	#instVars : [
 		'filePath',
 		'search',
 		'line'
 	],
-	#category : #'GemstoneServerCockpit-Model'
+	#category : 'GemstoneServerCockpit-Model',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Model'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCLineInFile >> checkMe [
 	self beNotNeedsAttention.
 	
@@ -17,12 +19,12 @@ GSCLineInFile >> checkMe [
 		self beNeedsAttention: 'line in file not found' ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCLineInFile >> doShowFile [
 	self uiViewFile: filePath
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCLineInFile >> doWriteLine [
 	| exists |
 	exists := (self core sudoReadFile: self filePath) lines anySatisfy: [ :each | each includesSubstring: search ].
@@ -37,31 +39,31 @@ GSCLineInFile >> doWriteLine [
 	]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCLineInFile >> filePath [
 
 	^ filePath
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCLineInFile >> filePath: anObject [
 
 	filePath := self core realPathForFile: anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCLineInFile >> line [
 
 	^ line
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCLineInFile >> line: anObject [
 
 	line := anObject
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCLineInFile >> renderBodyOn: html [
 
 	self renderLabel: 'File path' text: filePath pathString on: html.
@@ -69,19 +71,19 @@ GSCLineInFile >> renderBodyOn: html [
 	self renderLabel: 'Target line' text: line on: html.
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCLineInFile >> search [
 
 	^ search
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCLineInFile >> search: anObject [
 
 	search := anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCLineInFile >> title [
 	^ 'Line in ', filePath pathString, ' (', search, ')'
 ]

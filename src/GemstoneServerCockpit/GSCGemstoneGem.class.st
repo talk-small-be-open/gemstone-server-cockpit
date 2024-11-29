@@ -1,14 +1,16 @@
 Class {
-	#name : #GSCGemstoneGem,
-	#superclass : #GSCTool,
+	#name : 'GSCGemstoneGem',
+	#superclass : 'GSCTool',
 	#instVars : [
 		'gemIndex',
 		'monitCheck'
 	],
-	#category : #'GemstoneServerCockpit-Model'
+	#category : 'GemstoneServerCockpit-Model',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Model'
 }
 
-{ #category : #building }
+{ #category : 'building' }
 GSCGemstoneGem >> build [
 
 	monitCheck := self add: GSCMonitCheck then: [ :check |
@@ -21,97 +23,97 @@ GSCGemstoneGem >> build [
 	self add: GSCGemstoneGemWebserver
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneGem >> doShowGemLog [
 
 	self uiTailFile: self gemLogPath
 ]
 
-{ #category : #starting }
+{ #category : 'starting' }
 GSCGemstoneGem >> doStart [
 	monitCheck doStart
 ]
 
-{ #category : #starting }
+{ #category : 'starting' }
 GSCGemstoneGem >> doStop [
 	monitCheck doStop
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneGem >> gemFilesBasename [
 	^ 'seaside', self gemIndex asString, '_server-', self portNumber asString
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCGemstoneGem >> gemIndex [
 
 	^ gemIndex
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCGemstoneGem >> gemIndex: anObject [
 
 	gemIndex := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneGem >> gemLogPath [
 	^ self stoneBasePath / 'logs' / (self gemFilesBasename, '.log')
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCGemstoneGem >> gsHome [
 	^ self gemstoneGsHome pathString
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneGem >> monitCheckName [
 	^ (self appShortCode, '_gemstone_gem_', self gemIndex asString)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneGem >> monitConfigTemplate [
 	^ self scheme templateGemMonitConfig
 		tool: self;
 		yourself
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneGem >> monitGroupName [
 	^ self appShortCode, '_gemstone_gems'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneGem >> pidFilePath [
 	^ self stoneBasePath / 'logs' / (self gemFilesBasename, '.pid')
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCGemstoneGem >> portNumber [
 	^ self parent startPort + gemIndex - 1
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCGemstoneGem >> renderBodyOn: html [
 	self renderLabel: 'Port' number: self portNumber on: html
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneGem >> stoneBasePath [
 	^ self stoneTool basePath
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneGem >> stoneName [
 	^ self appShortCode
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneGem >> stoneTool [
 	^ self appFindTool: GSCGemstoneStone
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCGemstoneGem >> title [
 	^ 'web gem ', gemIndex asString
 ]

@@ -1,25 +1,27 @@
 Class {
-	#name : #GSCExternalWebTool,
-	#superclass : #GSCTool,
+	#name : 'GSCExternalWebTool',
+	#superclass : 'GSCTool',
 	#instVars : [
 		'url'
 	],
-	#category : #'GemstoneServerCockpit-Model'
+	#category : 'GemstoneServerCockpit-Model',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Model'
 }
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCExternalWebTool >> renderBodyOn: html [
 	html iframe
 		url: url
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCExternalWebTool >> url [
 
 	^ url
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCExternalWebTool >> url: anObject [
 
 	url := anObject

@@ -1,21 +1,23 @@
 Class {
-	#name : #GSCSimpleTemplate,
-	#superclass : #GSCTextTemplate,
+	#name : 'GSCSimpleTemplate',
+	#superclass : 'GSCTextTemplate',
 	#instVars : [
 		'source',
 		'replacements'
 	],
-	#category : #'GemstoneServerCockpit-Model'
+	#category : 'GemstoneServerCockpit-Model',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Model'
 }
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCSimpleTemplate class >> source: aString [
 	^ self new
 		source: aString;
 		yourself
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCSimpleTemplate >> contentString [
 	| out |
 	out := source.
@@ -27,25 +29,25 @@ GSCSimpleTemplate >> contentString [
 	^ out
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCSimpleTemplate >> initialize [
 	super initialize.
 	
 	replacements := Dictionary new
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCSimpleTemplate >> replace: aString with: anotherString [
 	replacements at: aString put: anotherString
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCSimpleTemplate >> source [
 
 	^ source
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCSimpleTemplate >> source: anObject [
 
 	source := anObject

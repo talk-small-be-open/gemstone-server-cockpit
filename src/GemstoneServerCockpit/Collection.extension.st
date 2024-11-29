@@ -1,11 +1,11 @@
-Extension { #name : #Collection }
+Extension { #name : 'Collection' }
 
-{ #category : #'*GemstoneServerCockpit' }
+{ #category : '*GemstoneServerCockpit' }
 Collection >> asD [
 	^ self asDictionary
 ]
 
-{ #category : #'*GemstoneServerCockpit' }
+{ #category : '*GemstoneServerCockpit' }
 Collection >> asOD [
 	^ self asOrderedDictionary
 ]

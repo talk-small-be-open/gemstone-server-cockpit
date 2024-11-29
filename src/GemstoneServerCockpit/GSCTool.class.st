@@ -1,6 +1,6 @@
 Class {
-	#name : #GSCTool,
-	#superclass : #Object,
+	#name : 'GSCTool',
+	#superclass : 'Object',
 	#instVars : [
 		'children',
 		'parent',
@@ -9,15 +9,17 @@ Class {
 		'facts',
 		'errorMessage'
 	],
-	#category : #'GemstoneServerCockpit-Model'
+	#category : 'GemstoneServerCockpit-Model',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Model'
 }
 
-{ #category : #adding }
+{ #category : 'adding' }
 GSCTool >> add: aToolClass [
 	^ self add: aToolClass then: nil
 ]
 
-{ #category : #adding }
+{ #category : 'adding' }
 GSCTool >> add: aToolClass then: aBlock [
 	| child |
 	
@@ -37,7 +39,7 @@ GSCTool >> add: aToolClass then: aBlock [
 	^ child
 ]
 
-{ #category : #adding }
+{ #category : 'adding' }
 GSCTool >> addTool: aTool [
 	aTool parent: self.
 	children add: aTool.
@@ -46,7 +48,7 @@ GSCTool >> addTool: aTool [
 	^ aTool
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTool >> ancestors [
 	| collection |
 	collection := OrderedCollection new.
@@ -55,7 +57,7 @@ GSCTool >> ancestors [
 	^ collection
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTool >> ancestorsDetect: aBlock [
 	self ancestorsDo: [ :each | 
 		(aBlock value: each) ifTrue: [ ^ each ]
@@ -64,12 +66,12 @@ GSCTool >> ancestorsDetect: aBlock [
 	^ nil
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> ancestorsDetectKindOf: aClass [
 	^ self ancestorsDetect: [ :each | each isKindOf: aClass ]
 ]
 
-{ #category : #enumerating }
+{ #category : 'enumerating' }
 GSCTool >> ancestorsDo: aBlock [
 	parent ifNotNil: [ 
 		aBlock value: parent.
@@ -77,27 +79,27 @@ GSCTool >> ancestorsDo: aBlock [
 	]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> appFindTool: aClass [
 	^ self application descendantsDetectKindOf: aClass
 ]
 
-{ #category : #'config-access' }
+{ #category : 'config-access' }
 GSCTool >> appIndex [
 	^ self application appIndex
 ]
 
-{ #category : #'config-access' }
+{ #category : 'config-access' }
 GSCTool >> appName [
 	^ self application longName
 ]
 
-{ #category : #'config-access' }
+{ #category : 'config-access' }
 GSCTool >> appShortCode [
 	^ self application shortCode
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTool >> application [
 	"Works only if the caller is inside an application tree, but not on a top level branch"
 	| app |
@@ -108,29 +110,29 @@ GSCTool >> application [
 	^ app
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> beNeedsAttention [
 	needsAttention := true
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> beNeedsAttention: aLogString [
 	self log: aLogString.
 	self beNeedsAttention
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> beNotNeedsAttention [
 	needsAttention := false
 ]
 
-{ #category : #building }
+{ #category : 'building' }
 GSCTool >> build [
 	"subclasses"
 ]
 
-{ #category : #checking }
+{ #category : 'checking' }
 GSCTool >> check [
 
 	needsAttention := false.
@@ -140,48 +142,48 @@ GSCTool >> check [
 	
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 GSCTool >> checkChildren [
 	self children do: [ :each | each check ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> checkMe [
 	"subclasses"
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> childNeedsAttention [
 	^ self children anySatisfy: [ :each | each needsAttention ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTool >> children [
 
 	^ children
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> clearError [
 	errorMessage := nil
 ]
 
-{ #category : #logging }
+{ #category : 'logging' }
 GSCTool >> clearFacts [
 	facts := Dictionary new
 ]
 
-{ #category : #logging }
+{ #category : 'logging' }
 GSCTool >> clearLog [
 	log := OrderedCollection new
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTool >> config [
 	^ self scheme config
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTool >> configAt: aConfigKey [
 	| value |
 	value := self config at: aConfigKey.
@@ -193,19 +195,19 @@ GSCTool >> configAt: aConfigKey [
 	^ value
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTool >> configAt: aConfigKey default: aBlock [
 	^ (self configAt: aConfigKey) ifNil: [
 		(self configAt: aConfigKey put: aBlock value)
 	]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTool >> configAt: aConfigKey ifBlank: aBlock [
 	^ (self configAt: aConfigKey) ifBlank: aBlock
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTool >> configAt: aConfigKey put: aValue [
 	| c value |
 	c := self config.
@@ -217,19 +219,19 @@ GSCTool >> configAt: aConfigKey put: aValue [
 	^ value
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> core [
 	^ GSCCore instance
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> descendantNeedsAttention [
 	self descendantsDo: [ :each | each needsAttention ifTrue: [ ^ true ] ].
 	
 	^ false
 ]
 
-{ #category : #enumerating }
+{ #category : 'enumerating' }
 GSCTool >> descendantsCollect: aBlock [
 	| collection |
 	collection := OrderedCollection new.
@@ -237,25 +239,25 @@ GSCTool >> descendantsCollect: aBlock [
 	^ collection
 ]
 
-{ #category : #enumerating }
+{ #category : 'enumerating' }
 GSCTool >> descendantsDetect: aBlock [
 	self descendantsDo: [ :each | (aBlock value: each) ifTrue: [ ^ each ] ].
 	^ nil
 ]
 
-{ #category : #enumerating }
+{ #category : 'enumerating' }
 GSCTool >> descendantsDetectKindOf: aClass [
 	^ self descendantsDetect: [ :each | each isKindOf: aClass ]
 ]
 
-{ #category : #enumerating }
+{ #category : 'enumerating' }
 GSCTool >> descendantsDo: aBlock [
 	children do: [ :each |
 		aBlock value: each.
 		each descendantsDo: aBlock ]
 ]
 
-{ #category : #enumerating }
+{ #category : 'enumerating' }
 GSCTool >> descendantsSelect: aBlock [
 	| collection |
 	collection := OrderedCollection new.
@@ -263,74 +265,74 @@ GSCTool >> descendantsSelect: aBlock [
 	^ collection
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> doCheck [
 	self core doInBackground: [
 		self check ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> doCheckMe [
 	self checkMe
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> doClearLog [
 	self clearLog
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTool >> errorMessage [
 	^ errorMessage
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTool >> errorMessage: aString [
 	errorMessage := aString
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTool >> factAt: aName [
 	^ facts at: aName ifAbsent: [ self errorMessage: 'Unknown fact'. nil ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTool >> factAt: aName put: aValue [
 	facts at: aName put: aValue
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> gatherFacts [
 	"subclasses"
 ]
 
-{ #category : #'config-access' }
+{ #category : 'config-access' }
 GSCTool >> gemstoneGsHome [
 	^ self root gemstoneGsHome
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 GSCTool >> hasChildren [
 	^ children notBlank
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 GSCTool >> init [
 	self initMe.
 	self initChildren.
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 GSCTool >> initChildren [
 	self children do: [ :each | each init ]
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 GSCTool >> initMe [
 	"subclasses"
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 GSCTool >> initialize [
 	super initialize.
 	
@@ -341,45 +343,45 @@ GSCTool >> initialize [
 	needsAttention := false
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 GSCTool >> isInApplication [
 	"Answers if the current tool is inside an application tree branch, or outside"
 	^ self application notNil
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 GSCTool >> isRoot [
 	^ false
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTool >> log: aMessage [
 	log add: aMessage
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> logTail [
 	^ log copyWithoutBlanks lastAtMost: 10
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 GSCTool >> needsAttention [
 	^ needsAttention
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTool >> parent [
 
 	^ parent
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTool >> parent: anObject [
 
 	parent := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> performToolAction: aSelector [
 	^ [
 		self clearError.
@@ -395,13 +397,13 @@ GSCTool >> performToolAction: aSelector [
 	]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTool >> refresh [
 	self initMe.
 	self checkMe.
 ]
 
-{ #category : #adding }
+{ #category : 'adding' }
 GSCTool >> removeTool: aTool [
 
 	aTool parent: nil.
@@ -411,7 +413,7 @@ GSCTool >> removeTool: aTool [
 	^ aTool
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCTool >> renderActionsOn: html [
 	html div: [
 		self toolActionSelectors do: [ :each |
@@ -423,12 +425,12 @@ GSCTool >> renderActionsOn: html [
 	] ]
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCTool >> renderBodyOn: html [
 	"subclasses"
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCTool >> renderFactsOn: html [
 	facts ifNotBlank: [
 		facts keysAndValuesDo: [ :key :value |
@@ -439,7 +441,7 @@ GSCTool >> renderFactsOn: html [
 					html tableData: value ] ]" ] ]
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCTool >> renderLabel: aString number: aNumber on: html [
 
 	html div class: 'labelAndValue'; with: [
@@ -448,7 +450,7 @@ GSCTool >> renderLabel: aString number: aNumber on: html [
 		html span: aNumber printString ]
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCTool >> renderLabel: aString text: aString2 on: html [
 
 	html div class: 'labelAndValue'; with: [
@@ -457,7 +459,7 @@ GSCTool >> renderLabel: aString text: aString2 on: html [
 		html span: aString2 ]
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCTool >> renderListEntryOn: html [
 	self needsAttention ifTrue: [
 		html span: '! '
@@ -472,7 +474,7 @@ GSCTool >> renderListEntryOn: html [
 				ifFalse: [ html span: '>' ] ] ]
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCTool >> renderListHeadEntryOn: html [
 
 	"In a pane, render myself again on top of the children list, for UX convenience.
@@ -484,7 +486,7 @@ GSCTool >> renderListHeadEntryOn: html [
 	html span: '< Main'.
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCTool >> renderLogOn: html [
 	log ifNotEmpty: [ 
 		html div class: 'log'; with: [
@@ -501,7 +503,7 @@ GSCTool >> renderLogOn: html [
 	]
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCTool >> renderOn: html [
 	html heading: self title.
 
@@ -521,22 +523,22 @@ GSCTool >> renderOn: html [
 	self renderLogOn: html.
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTool >> root [
 	^ self ancestors last
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> rootFindTool: aClass [
 	^ self root descendantsDetectKindOf: aClass
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> rootFindTools: aClass [
 	^ self root descendantsSelect: [ :each | each isKindOf: aClass ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> runAndPrintSmalltalk: aString stone: aStoneName [
 	| smalltalkCode bash |
 
@@ -564,7 +566,7 @@ cat /tmp/gscSmalltalkOutput.log
 	^ self runBashScript: bash.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> runBashScript: aString [
 	| lines |
 
@@ -586,12 +588,12 @@ GSCTool >> runBashScript: aString [
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> runShellCommand: aString [
 	self runShellCommand: aString then: nil
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> runShellCommand: aString then: aBlock [
 	self log: 'Shell command: ', aString.
 	
@@ -603,7 +605,7 @@ GSCTool >> runShellCommand: aString then: aBlock [
 	]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> runSmalltalk: aString stone: aStoneName [
 	| smalltalkCode bash |
 
@@ -630,12 +632,12 @@ EOF
 	^ self runBashScript: bash.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> runSudoShellCommand: aString [
 	self runSudoShellCommand: aString then: nil
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> runSudoShellCommand: aString then: aBlock [
 	self log: 'Shell sudo command: ', aString.
 
@@ -647,12 +649,12 @@ GSCTool >> runSudoShellCommand: aString then: aBlock [
 	]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> runTodeCommand: aCommand stone: aStoneName [
 	self runShellCommand: 'todeIt ', aStoneName, ' ', aCommand
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> runTopaz: aString stone: aStoneName [
 	| bash |
 
@@ -664,43 +666,43 @@ EOF
 	^ self runBashScript: bash.
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTool >> scheme [
 	^ self application ifNil: [ self root scheme ] ifNotNil: [ :app |
 		app scheme ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> serverAdminEmail [
 	^ self root configAt: 'server:adminEmail'
 ]
 
-{ #category : #'config-access' }
+{ #category : 'config-access' }
 GSCTool >> serverGroupname [
 	^ self serverUsername
 ]
 
-{ #category : #'config-access' }
+{ #category : 'config-access' }
 GSCTool >> serverUserHome [
 	^ self root userHome
 ]
 
-{ #category : #'config-access' }
+{ #category : 'config-access' }
 GSCTool >> serverUsername [
 	^ self root configAt: 'server:username'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> showFullLog [
 	self uiViewText: log joinUsingLf
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTool >> title [
 	^ self className
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> toolActionSelectors [
 	| selectors |
 	selectors := (self class allSelectorsBelow: GSCTool superclass) select: [:each |
@@ -708,7 +710,7 @@ GSCTool >> toolActionSelectors [
 	^ selectors sorted
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> ui [
 	| mainComponent |
 	mainComponent := (WACurrentRequestContext value) session presenter.
@@ -716,17 +718,17 @@ GSCTool >> ui [
 	^ mainComponent
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> uiEditText: aString then: aBlock [
 	self ui editText: aString then: aBlock
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> uiShowFullscreen: aRenderable [
 	self ui showFullscreen: aRenderable
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> uiTailFile: aFilePath [
 	| content |
 	content := self core sudoTailFile: aFilePath lines: 100.
@@ -735,7 +737,7 @@ GSCTool >> uiTailFile: aFilePath [
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> uiViewFile: aFilePath [
 	| content |
 	content := self core sudoReadFile: aFilePath.
@@ -744,12 +746,12 @@ GSCTool >> uiViewFile: aFilePath [
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> uiViewText: aString [
 	^ self uiViewText: aString then: [  ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTool >> uiViewText: aString then: aBlock [
 	self ui viewText: aString then: aBlock
 ]

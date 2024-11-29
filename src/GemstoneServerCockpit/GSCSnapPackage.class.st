@@ -1,13 +1,15 @@
 Class {
-	#name : #GSCSnapPackage,
-	#superclass : #GSCTool,
+	#name : 'GSCSnapPackage',
+	#superclass : 'GSCTool',
 	#instVars : [
 		'packageName'
 	],
-	#category : #'GemstoneServerCockpit-Model'
+	#category : 'GemstoneServerCockpit-Model',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Model'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCSnapPackage >> checkMe [
 	self beNotNeedsAttention.
 	
@@ -16,30 +18,30 @@ GSCSnapPackage >> checkMe [
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCSnapPackage >> doInstall [
 	self runSudoShellCommand: ('snap install --classic ', packageName)
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 GSCSnapPackage >> isInstalled [
 	^ self core runShellIsSuccess: ('snap list ', packageName)
 
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCSnapPackage >> packageName [
 
 	^ packageName
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCSnapPackage >> packageName: anObject [
 
 	packageName := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCSnapPackage >> title [
 	^ 'SNAP ', packageName
 ]

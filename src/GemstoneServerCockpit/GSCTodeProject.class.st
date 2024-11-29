@@ -1,16 +1,18 @@
 Class {
-	#name : #GSCTodeProject,
-	#superclass : #GSCTool,
+	#name : 'GSCTodeProject',
+	#superclass : 'GSCTool',
 	#instVars : [
 		'gitUrl',
 		'gitBranch',
 		'projectName',
 		'metacelloLoadList'
 	],
-	#category : #'GemstoneServerCockpit-Model'
+	#category : 'GemstoneServerCockpit-Model',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Model'
 }
 
-{ #category : #building }
+{ #category : 'building' }
 GSCTodeProject >> build [
 	self add: GSCGitRepository then: [ :git |
 		git
@@ -20,7 +22,7 @@ GSCTodeProject >> build [
 	]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTodeProject >> checkMe [
 	self beNotNeedsAttention.
 	
@@ -28,7 +30,7 @@ GSCTodeProject >> checkMe [
 		self beNeedsAttention: 'Metacello project not installed' ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTodeProject >> doCreateEntry [
 "	self
 		runTodeCommand: ('project entry --baseline=', self metacelloName, ' --repo=\""filetree://', self localRepoPath pathString, '/src\"" /sys/local/server/projects')
@@ -40,12 +42,12 @@ GSCTodeProject >> doCreateEntry [
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTodeProject >> doGet [
 	self runTodeCommand: ('project get ', self projectName) stone: self stoneName
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTodeProject >> doLoad [
 	| loadString |
 	
@@ -64,75 +66,75 @@ GSCTodeProject >> doLoad [
 
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTodeProject >> gitBranch [
 
 	^ gitBranch
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTodeProject >> gitBranch: anObject [
 
 	gitBranch := anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTodeProject >> gitUrl [
 
 	^ gitUrl
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTodeProject >> gitUrl: anObject [
 
 	gitUrl := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTodeProject >> localRepoPath [
 	^ self gemstoneGsHome / 'shared/repos' / self projectName asLowercase
 
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTodeProject >> metacelloLoadList [
 	^ metacelloLoadList ifBlank: [ #('default') ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTodeProject >> metacelloLoadList: anObject [
 
 	metacelloLoadList := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTodeProject >> metacelloName [
 	^ self projectName capitalized
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTodeProject >> projectName [
 
 	^ projectName
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTodeProject >> projectName: anObject [
 
 	projectName := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTodeProject >> stoneName [
 	^ self stoneTool stoneName
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTodeProject >> stoneTool [
 	^ self ancestorsDetectKindOf: GSCGemstoneStone
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTodeProject >> title [
 	^ 'tode project ', projectName
 ]

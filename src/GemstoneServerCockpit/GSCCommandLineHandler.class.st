@@ -6,22 +6,24 @@ Commands:
 - tbd
 "
 Class {
-	#name : #GSCCommandLineHandler,
-	#superclass : #CommandLineHandler,
-	#category : #'GemstoneServerCockpit-Misc'
+	#name : 'GSCCommandLineHandler',
+	#superclass : 'CommandLineHandler',
+	#category : 'GemstoneServerCockpit-Misc',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Misc'
 }
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCCommandLineHandler class >> commandName [
 	^ 'gsc'
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCCommandLineHandler class >> description [
 	^ 'GemStone Server Cockpit'
 ]
 
-{ #category : #activation }
+{ #category : 'activation' }
 GSCCommandLineHandler >> activate [
 
 	self activateHelp ifTrue: [ ^ self ].
@@ -63,19 +65,19 @@ GSCCommandLineHandler >> activate [
 		ifFalse: [ self openGui ]"
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCCommandLineHandler >> doInstall [
 	GSCCore install.
 	^ self exitSuccess 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCCommandLineHandler >> doUpdate [
 	GSCCore update.
 	^ self exitSuccess 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCCommandLineHandler >> doUrl [
 	self stdout 
 		nextPutAll: GSCCore instance applicationUrl;
@@ -84,12 +86,12 @@ GSCCommandLineHandler >> doUrl [
 	^ self exitSuccess
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCCommandLineHandler >> openGui [
 	GSCProjectCockpitGui open
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCCommandLineHandler >> subCommand [
 	| firstArg |
 	firstArg := self argumentAt: 1.

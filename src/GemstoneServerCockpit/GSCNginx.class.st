@@ -1,10 +1,12 @@
 Class {
-	#name : #GSCNginx,
-	#superclass : #GSCTool,
-	#category : #'GemstoneServerCockpit-Model'
+	#name : 'GSCNginx',
+	#superclass : 'GSCTool',
+	#category : 'GemstoneServerCockpit-Model',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Model'
 }
 
-{ #category : #building }
+{ #category : 'building' }
 GSCNginx >> build [
 
 	self add: GSCAptPackage then: [ :apt |
@@ -57,7 +59,7 @@ GSCNginx >> build [
 "
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCNginx >> defaultVhostConfigTemplate [
 	^ GSCSttTemplate tool: self sttString:
 '# Reject access with just the IP. We do not want bots or other dark forces to annoy us
@@ -78,35 +80,35 @@ server {
 '
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCNginx >> doCheckSyntax [
 	self runSudoShellCommand: 'nginx -t'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCNginx >> nginxConfigTemplate [
 	^ self scheme templateNginxConfig
 		tool: self;
 		yourself
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCNginx >> nginxSites [
 	^ (self rootFindTools: GSCNginxSite)
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCNginx >> renderBodyOn: html [
 "	html iframe
 		contents: [ :h | h paragraph: 'HIIII' ]"
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCNginx >> title [
 	^ 'NGINX web server'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCNginx >> useSsl [
 	^ self nginxSites anySatisfy: [ :each | each useSsl ]
 ]

@@ -1,6 +1,6 @@
 Class {
-	#name : #GSCPipeLinesReadStream,
-	#superclass : #Object,
+	#name : 'GSCPipeLinesReadStream',
+	#superclass : 'Object',
 	#instVars : [
 		'lines',
 		'currentLineBuffer',
@@ -10,10 +10,12 @@ Class {
 		'lastCharAt',
 		'ignoreLeadingLinesCounter'
 	],
-	#category : #'GemstoneServerCockpit-Misc'
+	#category : 'GemstoneServerCockpit-Misc',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Misc'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCPipeLinesReadStream >> autoNewlineIfTimeout: aMsInteger [
 	self hasBuffered ifTrue: [
 		(Time millisecondClockValue - lastCharAt) > aMsInteger ifTrue: [
@@ -21,18 +23,18 @@ GSCPipeLinesReadStream >> autoNewlineIfTimeout: aMsInteger [
 	] ]
 ]
 
-{ #category : #clearing }
+{ #category : 'clearing' }
 GSCPipeLinesReadStream >> clearBuffer [
 	currentLineBuffer := nil
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCPipeLinesReadStream >> complete [
 	self lineComplete.
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCPipeLinesReadStream >> consumePipe: anOssPipe [
 
 	[
@@ -45,24 +47,24 @@ GSCPipeLinesReadStream >> consumePipe: anOssPipe [
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCPipeLinesReadStream >> currentLineBufferString [
 	^ String streamContents: [ :s |
 		currentLineBuffer do: [ :each |
 			s nextPut: each ] ]
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 GSCPipeLinesReadStream >> hasBuffered [
 	^ currentLineBuffer notNil
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCPipeLinesReadStream >> ignoreLeadingLines: anInteger [
 	ignoreLeadingLinesCounter := anInteger
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 GSCPipeLinesReadStream >> initialize [
 	super initialize.
 	
@@ -74,7 +76,7 @@ GSCPipeLinesReadStream >> initialize [
 	ignoreLeadingLinesCounter := 0
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCPipeLinesReadStream >> lastLine [
 	^ self hasBuffered
 		ifTrue: [ self currentLineBufferString ]
@@ -83,7 +85,7 @@ GSCPipeLinesReadStream >> lastLine [
 		]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCPipeLinesReadStream >> lineComplete [
 	| line |
 	
@@ -100,20 +102,20 @@ GSCPipeLinesReadStream >> lineComplete [
 	lines add: line.
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 GSCPipeLinesReadStream >> newLine [
 	currentLineBuffer := OrderedCollection new
 
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCPipeLinesReadStream >> nextLine [
 	lines ifEmpty: [ ^ nil ].
 	
 	^ lines removeFirst
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCPipeLinesReadStream >> nextLines [
 	| all |
 	
@@ -124,7 +126,7 @@ GSCPipeLinesReadStream >> nextLines [
 	^ all
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCPipeLinesReadStream >> nextPut: aCharacter [
 
 	| lastCharacter |
@@ -151,7 +153,7 @@ GSCPipeLinesReadStream >> nextPut: aCharacter [
 
 ]
 
-{ #category : #removing }
+{ #category : 'removing' }
 GSCPipeLinesReadStream >> removeLastLine [
 	self hasBuffered ifTrue: [ self clearBuffer ] ifFalse: [ lines removeLast ]
 ]

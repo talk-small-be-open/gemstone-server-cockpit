@@ -8,25 +8,27 @@ Example:
 	me whateverElseYouNeedInYourConfigDictionary: 123.
 "
 Class {
-	#name : #GSCEasyConfigurationBuilder,
-	#superclass : #Object,
+	#name : 'GSCEasyConfigurationBuilder',
+	#superclass : 'Object',
 	#instVars : [
 		'values'
 	],
-	#category : #'GemstoneServerCockpit-Model'
+	#category : 'GemstoneServerCockpit-Model',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Model'
 }
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCEasyConfigurationBuilder >> __ [
 	^ self comment
 ]
 
-{ #category : #converting }
+{ #category : 'converting' }
 GSCEasyConfigurationBuilder >> asGscConfiguration [
 	^ GSCConfiguration fromDictionary: self asNestedDictionary
 ]
 
-{ #category : #converting }
+{ #category : 'converting' }
 GSCEasyConfigurationBuilder >> asJsonString [
 	^ String streamContents: [ :s |
 		(STON jsonWriter on: s)
@@ -35,7 +37,7 @@ GSCEasyConfigurationBuilder >> asJsonString [
 			nextPut: self asNestedDictionary ]
 ]
 
-{ #category : #converting }
+{ #category : 'converting' }
 GSCEasyConfigurationBuilder >> asNestedDictionary [
 	^ (Dictionary newFrom: values) collect: [ :each |
 		(each isKindOf: GSCEasyConfigurationBuilder)
@@ -44,37 +46,37 @@ GSCEasyConfigurationBuilder >> asNestedDictionary [
 	]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCEasyConfigurationBuilder >> at: aKey [
 	^ values at: aKey asSymbol ifAbsentPut: [ GSCEasyConfigurationBuilder new ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCEasyConfigurationBuilder >> at: aKey ifAbsent: aBlock [
 	^ values at: aKey asSymbol ifAbsent: aBlock
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCEasyConfigurationBuilder >> at: aKey put: aValue [
 	^ values at: aKey asSymbol put: aValue
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 GSCEasyConfigurationBuilder >> clear [
 	values := IdentityDictionary new
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCEasyConfigurationBuilder >> comment [
 	^ self at: '__comment'
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCEasyConfigurationBuilder >> comment: aString [
 	^ self at: '__comment' put: aString
 ]
 
-{ #category : #'reflective operations' }
+{ #category : 'reflective operations' }
 GSCEasyConfigurationBuilder >> doesNotUnderstand: aMessage [
 	| sel |
 	sel := aMessage selector.
@@ -88,7 +90,7 @@ GSCEasyConfigurationBuilder >> doesNotUnderstand: aMessage [
 	super doesNotUnderstand: aMessage
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 GSCEasyConfigurationBuilder >> initialize [
 	super initialize.
 	self clear

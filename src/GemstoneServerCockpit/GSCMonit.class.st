@@ -1,10 +1,12 @@
 Class {
-	#name : #GSCMonit,
-	#superclass : #GSCTool,
-	#category : #'GemstoneServerCockpit-Model'
+	#name : 'GSCMonit',
+	#superclass : 'GSCTool',
+	#category : 'GemstoneServerCockpit-Model',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Model'
 }
 
-{ #category : #building }
+{ #category : 'building' }
 GSCMonit >> build [
 
 	self add: GSCAptPackage then: [ :apt |
@@ -27,44 +29,44 @@ GSCMonit >> build [
 	]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCMonit >> doReload [
 	self runSudoShellCommand: 'monit reload'
 ]
 
-{ #category : #starting }
+{ #category : 'starting' }
 GSCMonit >> doReport [
 	self runSudoShellCommand: ('monit report')
 ]
 
-{ #category : #starting }
+{ #category : 'starting' }
 GSCMonit >> doStartAll [
 	self runSudoShellCommand: ('monit start all')
 ]
 
-{ #category : #starting }
+{ #category : 'starting' }
 GSCMonit >> doStopAll [
 	self runSudoShellCommand: ('monit stop all')
 ]
 
-{ #category : #starting }
+{ #category : 'starting' }
 GSCMonit >> doSummary [
 	self runSudoShellCommand: ('monit summary')
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCMonit >> doSyntaxCheck [
 	self runSudoShellCommand: 'monit -t'
 ]
 
-{ #category : #building }
+{ #category : 'building' }
 GSCMonit >> monitConfigTemplate [
 	^ self scheme templateMonitConfig
 		tool: self;
 		yourself
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCMonit >> title [
 	^ 'Monit monitoring'
 ]

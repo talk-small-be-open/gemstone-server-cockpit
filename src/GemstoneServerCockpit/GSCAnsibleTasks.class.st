@@ -1,20 +1,22 @@
 Class {
-	#name : #GSCAnsibleTasks,
-	#superclass : #GSCTool,
+	#name : 'GSCAnsibleTasks',
+	#superclass : 'GSCTool',
 	#instVars : [
 		'tasks'
 	],
-	#category : #'GemstoneServerCockpit-Model'
+	#category : 'GemstoneServerCockpit-Model',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Model'
 }
 
-{ #category : #adding }
+{ #category : 'adding' }
 GSCAnsibleTasks >> addTaskDictionary: aDictionary [
 	aDictionary isDictionary ifFalse: [ self error: 'invalid format' ].
 
 	tasks add: aDictionary
 ]
 
-{ #category : #adding }
+{ #category : 'adding' }
 GSCAnsibleTasks >> addTaskJson: aString [
 	| dict |
 	dict := STONJSON fromString: aString.
@@ -22,7 +24,7 @@ GSCAnsibleTasks >> addTaskJson: aString [
 	self addTaskDictionary: dict
 ]
 
-{ #category : #adding }
+{ #category : 'adding' }
 GSCAnsibleTasks >> addTasksJson: aString [
 	| array |
 	array := STONJSON fromString: aString.
@@ -33,7 +35,7 @@ GSCAnsibleTasks >> addTasksJson: aString [
 		self addTaskDictionary: each ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCAnsibleTasks >> ansibleEnvironmentDictionary [
 	| gsHome |
 	gsHome := self gemstoneGsHome pathString.
@@ -44,12 +46,12 @@ GSCAnsibleTasks >> ansibleEnvironmentDictionary [
 	} asD
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCAnsibleTasks >> ansibleTasksCollection [
 	^ tasks asArray
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCAnsibleTasks >> ansibleVarsDictionary [
 	| dict |
 	dict := self config asDictionary.
@@ -59,31 +61,31 @@ GSCAnsibleTasks >> ansibleVarsDictionary [
 	^ dict
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCAnsibleTasks >> doPlay [
 	self core sudoAsyncWriteFile: '/tmp/playbook.json' with: self playbookJson then: [
 		self runSudoShellCommand: 'ansible-playbook /tmp/playbook.json' ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCAnsibleTasks >> doPlayCheckOnly [
 	self core sudoAsyncWriteFile: '/tmp/playbook-checkonly.json' with: self playbookJson then: [
 		self runSudoShellCommand: 'ansible-playbook --check /tmp/playbook-checkonly.json' ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCAnsibleTasks >> doShowPlaybook [
 	self uiViewText: self playbookJson
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 GSCAnsibleTasks >> initialize [
 	super initialize.
 	
 	tasks := OrderedCollection new
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCAnsibleTasks >> playbookData [
 	| play |
 	
@@ -100,7 +102,7 @@ GSCAnsibleTasks >> playbookData [
 	^ { play }
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCAnsibleTasks >> playbookJson [
 	^ String streamContents: [ :s |
 		(STON jsonWriter on: s)
@@ -109,7 +111,7 @@ GSCAnsibleTasks >> playbookJson [
 			nextPut: self playbookData ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCAnsibleTasks >> title [
 	^ 'Ansible script'
 ]

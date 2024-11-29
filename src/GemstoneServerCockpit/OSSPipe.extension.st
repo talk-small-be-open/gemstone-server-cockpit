@@ -1,6 +1,6 @@
-Extension { #name : #OSSPipe }
+Extension { #name : 'OSSPipe' }
 
-{ #category : #'*GemstoneServerCockpit' }
+{ #category : '*GemstoneServerCockpit' }
 OSSPipe >> end [
 	"Signal in the stream, that we have no more data. Programms like
 	sed or tee keep the stdin open, waiting for data. Simply closing this
@@ -8,7 +8,7 @@ OSSPipe >> end [
 	self nextPut: Character end
 ]
 
-{ #category : #'*GemstoneServerCockpit' }
+{ #category : '*GemstoneServerCockpit' }
 OSSPipe >> lf [
 	self nextPut: Character lf
 ]

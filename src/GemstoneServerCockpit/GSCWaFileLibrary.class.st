@@ -1,10 +1,12 @@
 Class {
-	#name : #GSCWaFileLibrary,
-	#superclass : #WAFileLibrary,
-	#category : #'GemstoneServerCockpit-View'
+	#name : 'GSCWaFileLibrary',
+	#superclass : 'WAFileLibrary',
+	#category : 'GemstoneServerCockpit-View',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'View'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCWaFileLibrary >> baseCss [
 	^ '
 body {
@@ -76,7 +78,7 @@ h3 {
 '
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCWaFileLibrary >> resetCss [
 	^ '
 /***
@@ -171,12 +173,12 @@ meter {
 '
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCWaFileLibrary >> selectorsToInclude [
 	^#(resetCss baseCss styleCss)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCWaFileLibrary >> styleCss [
 	^ '
 body {

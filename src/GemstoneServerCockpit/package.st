@@ -1,1 +1,1 @@
-Package { #name : #GemstoneServerCockpit }
+Package { #name : 'GemstoneServerCockpit' }

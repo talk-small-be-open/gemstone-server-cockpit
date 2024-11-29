@@ -1,13 +1,15 @@
 Class {
-	#name : #GSCGemstoneStone,
-	#superclass : #GSCTool,
+	#name : 'GSCGemstoneStone',
+	#superclass : 'GSCTool',
 	#instVars : [
 		'monitCheck'
 	],
-	#category : #'GemstoneServerCockpit-Model'
+	#category : 'GemstoneServerCockpit-Model',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Model'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneStone >> OPTIMIZEInstallGermanDateNames [
 	| smalltalk |
 	
@@ -43,12 +45,12 @@ at: 12 put: #''Dezember''.
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneStone >> basePath [
 	^ self gemstoneGsHome / 'server/stones' / self stoneName
 ]
 
-{ #category : #building }
+{ #category : 'building' }
 GSCGemstoneStone >> build [
 
 	monitCheck := self add: GSCMonitCheck then: [ :check |
@@ -113,7 +115,7 @@ GSCGemstoneStone >> build [
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneStone >> checkMe [
 	self beNotNeedsAttention.
 	
@@ -122,12 +124,12 @@ GSCGemstoneStone >> checkMe [
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneStone >> doCreateStone [
 	self runShellCommand: ('createStone ', self stoneName, ' ', self stoneVersion)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneStone >> doInstallSwissTimeZone [
 	| topaz |
 	
@@ -152,27 +154,27 @@ exit
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneStone >> doShowStoneLog [
 	self uiViewFile: self stoneLogPath
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneStone >> doShowStoneTime [
 	self log: (self runAndPrintSmalltalk: 'DateAndTime now asString, '' in TimeZone '', TimeZone default asString' stone: self stoneName)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneStone >> doStartStone [
 	self runShellCommand: ('startStone -b ', self stoneName)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneStone >> doStopStone [
 	self runShellCommand: ('stopStone -b ', self stoneName)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneStone >> gemConfTemplate [
 	^ GSCSttTemplate tool: self sttString:
 '#
@@ -196,7 +198,7 @@ GEM_MAX_SMALLTALK_STACK_DEPTH = 5000;
 '
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneStone >> gemTempobjCacheSize [
 	"in KB"
 	| could |
@@ -206,46 +208,51 @@ GSCGemstoneStone >> gemTempobjCacheSize [
 	^ could min: self shrPageCacheSizeKb
 ]
 
-{ #category : #accessing }
+{ #category : 'as yet unclassified' }
+GSCGemstoneStone >> gemsTool [
+	^ self appFindTool: GSCGemstoneGems
+]
+
+{ #category : 'accessing' }
 GSCGemstoneStone >> gsHome [
 	^ self gemstoneGsHome pathString
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 GSCGemstoneStone >> hasKeyfile [
 	^ self keyfilePath notBlank
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneStone >> keyfilePath [
 	^ self configAt: 'gemstone:keyfile'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneStone >> monitCheckName [
 	^ (self appShortCode, '_gemstone_stone')
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneStone >> monitConfigTemplate [
 	^ self scheme templateStoneMonitConfig
 		tool: self;
 		yourself
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneStone >> netldiMonitCheckName [
 	^ (self appShortCode, '_gemstone_netldi')
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneStone >> netldiMonitConfigTemplate [
 	^ self scheme templateNetldiMonitConfig
 		tool: self;
 		yourself
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCGemstoneStone >> renderBodyOn: html [
 	self renderLabel: 'Stone name' text: self stoneName on: html.
 	self renderLabel: 'Version' text: self stoneVersion on: html.
@@ -253,9 +260,9 @@ GSCGemstoneStone >> renderBodyOn: html [
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneStone >> shrPageCacheSizeKb [
-	| maxTotalKb total limitKb |
+	| maxTotalKb totalGems myGems limitKb myShare |
 
 	"Calculates the max shared memory size for this stone. Since there is a maximum linux systemwide, we need
 	to calculate the partial of it for that single stone"
@@ -265,31 +272,33 @@ GSCGemstoneStone >> shrPageCacheSizeKb [
 
 	maxTotalKb := (self root gsDevKit sharedMemoryMaxBytes) // 1024.
 	
-	total := self root stones size max: 1.
+	"Get total of gems"
+	totalGems := (self root stones sumNumbers: [ :each | each gemsTool gemsCount ]) max: 1.
+	myGems := self gemsTool gemsCount.
+	myShare := myGems / totalGems.
 	
 	limitKb := self hasKeyfile ifTrue: [ 2 * (1024*1024) ] ifFalse: [ (1024*1024) ].
 
 	"Allow for a 8% leftover, since GemStone somehow takes approx 6% more than configured"
-	^ ((maxTotalKb * 0.92) // total) asInteger min: limitKb.
-
+	^ ((maxTotalKb * 0.92) * myShare) asInteger min: limitKb.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneStone >> stoneLogPath [
 	^ self basePath / 'logs' / (self stoneName, '.log')
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneStone >> stoneName [
 	^ self appShortCode
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneStone >> stoneVersion [
 	^ self configAt: 'gemstone:version' ifBlank: [ '3.6.5' ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCGemstoneStone >> title [
 	^ 'GemStone stone'
 ]

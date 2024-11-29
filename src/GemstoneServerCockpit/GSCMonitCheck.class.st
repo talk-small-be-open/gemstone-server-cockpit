@@ -1,14 +1,16 @@
 Class {
-	#name : #GSCMonitCheck,
-	#superclass : #GSCTool,
+	#name : 'GSCMonitCheck',
+	#superclass : 'GSCTool',
 	#instVars : [
 		'checkName',
 		'configTemplate'
 	],
-	#category : #'GemstoneServerCockpit-Model'
+	#category : 'GemstoneServerCockpit-Model',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Model'
 }
 
-{ #category : #building }
+{ #category : 'building' }
 GSCMonitCheck >> build [
 
 	self add: GSCTextFile then: [ :file |
@@ -21,56 +23,56 @@ GSCMonitCheck >> build [
 
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCMonitCheck >> checkName [
 
 	^ checkName
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCMonitCheck >> checkName: anObject [
 
 	checkName := anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCMonitCheck >> configTemplate [
 
 	^ configTemplate
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCMonitCheck >> configTemplate: anObject [
 
 	configTemplate := anObject
 ]
 
-{ #category : #starting }
+{ #category : 'starting' }
 GSCMonitCheck >> doMonitor [
 	self runSudoShellCommand: ('monit monitor "', checkName, '"')
 ]
 
-{ #category : #starting }
+{ #category : 'starting' }
 GSCMonitCheck >> doStart [
 	self runSudoShellCommand: ('monit start "', checkName, '"')
 ]
 
-{ #category : #starting }
+{ #category : 'starting' }
 GSCMonitCheck >> doStatus [
 	self runSudoShellCommand: ('monit status "', checkName, '"')
 ]
 
-{ #category : #starting }
+{ #category : 'starting' }
 GSCMonitCheck >> doStop [
 	self runSudoShellCommand: ('monit stop "', checkName, '"')
 ]
 
-{ #category : #starting }
+{ #category : 'starting' }
 GSCMonitCheck >> doUnmonitor [
 	self runSudoShellCommand: ('monit unmonitor "', checkName, '"')
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCMonitCheck >> title [
 	^ 'Monit check ', checkName
 ]

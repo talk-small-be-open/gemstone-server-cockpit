@@ -1,6 +1,6 @@
 Class {
-	#name : #GSCCore,
-	#superclass : #Object,
+	#name : 'GSCCore',
+	#superclass : 'Object',
 	#instVars : [
 		'rootTool',
 		'uuidString',
@@ -19,33 +19,35 @@ Class {
 		'AccentNormalizationMap',
 		'Instance'
 	],
-	#category : #'GemstoneServerCockpit-Model'
+	#category : 'GemstoneServerCockpit-Model',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Model'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCCore class >> enableAutomation [
 	Smalltalk addToStartUpList: self.
 "	Smalltalk addToShutDownList: self"
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 GSCCore class >> initialize [
 	super initialize.
 	self enableAutomation
 ]
 
-{ #category : #actions }
+{ #category : 'actions' }
 GSCCore class >> install [
 	self instance install
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCCore class >> instance [
 	Instance ifNil: [ Instance := self new ].
 	^ Instance
 ]
 
-{ #category : #'system startup' }
+{ #category : 'system startup' }
 GSCCore class >> startUp: isComingUp [
 	isComingUp ifTrue: [
 		"Automatic read in the config files on the server"
@@ -53,12 +55,12 @@ GSCCore class >> startUp: isComingUp [
 	]
 ]
 
-{ #category : #actions }
+{ #category : 'actions' }
 GSCCore class >> update [
 	self instance update
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> OLDrunAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
 	self isShellProcessRunning ifTrue: [ self error: 'Another shell process is running' ].
 
@@ -107,29 +109,29 @@ GSCCore >> OLDrunAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
 			] forkAt: Processor userInterruptPriority named: 'GSC shell process'
 ]
 
-{ #category : #config }
+{ #category : 'config' }
 GSCCore >> applicationUrl [
 	^ self seasideApplication url
 ]
 
-{ #category : #sudo }
+{ #category : 'sudo' }
 GSCCore >> autoexpireSudoPassword [
 
 	(sudoPasswortTimestamp isNil or: [ sudoPasswortTimestamp < (DateAndTime now - 2 hours)]) ifTrue: [ 
 		temporarySudoPassword := nil ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCCore >> beDevelopment [
 	isDevelopment := true
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCCore >> beNotDevelopment [
 	isDevelopment := false
 ]
 
-{ #category : #sudo }
+{ #category : 'sudo' }
 GSCCore >> checkPermissions [
 	| output |
 	output := self readCommand: 'sudo --non-interactive echo -n "yes"'.
@@ -138,17 +140,17 @@ GSCCore >> checkPermissions [
 
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCCore >> clearSubprocessTailLines [
 	subprocessTailLines := OrderedCollection new
 ]
 
-{ #category : #sudo }
+{ #category : 'sudo' }
 GSCCore >> clearSudoPassword [
 	temporarySudoPassword := nil
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> createOSSUnixSubprocess [
 	| process gsHome path |
 	
@@ -165,12 +167,12 @@ GSCCore >> createOSSUnixSubprocess [
 	^ process
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> dirExists: aPathString [
 	^ self runSudoShellIsSuccess: ('test -d "', (aPathString asPath pathString), '"')
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> doInBackground: aBlock [
 
 "	self isShellProcessRunning ifTrue: [ 
@@ -189,7 +191,7 @@ GSCCore >> doInBackground: aBlock [
 	]
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> ensureRunningSshControlMaster [
 	| process |
 
@@ -209,7 +211,7 @@ GSCCore >> ensureRunningSshControlMaster [
 	]
 ]
 
-{ #category : #actions }
+{ #category : 'actions' }
 GSCCore >> ensureWebserver [
 	"Webserver starten"
 	| webserver |
@@ -218,22 +220,22 @@ GSCCore >> ensureWebserver [
 		self startWebserver ]
 ]
 
-{ #category : #config }
+{ #category : 'config' }
 GSCCore >> fileDepotDir [
 	^ self gscInstallDir / 'pharo-local' / 'iceberg' / 'talk-small-be-open' / 'gemstone-server-cockpit' / 'depot'
 ]
 
-{ #category : #config }
+{ #category : 'config' }
 GSCCore >> fileDepotScriptsDir [
 	^ self fileDepotDir / 'shell-scripts'
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> fileExists: aPathString [
 	^ self runSudoShellIsSuccess: ('test -f "', (aPathString asPath pathString), '"')
 ]
 
-{ #category : #helpers }
+{ #category : 'helpers' }
 GSCCore >> filenameFor: aString [
 	| map sanitized |
 	"Konvertiert einen String in einen String passend für Filenamen
@@ -253,13 +255,13 @@ GSCCore >> filenameFor: aString [
 	^ (self translateString: sanitized map: map) asFileName "asDromedaryCase"
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCCore >> filesystemRoot [
 
 	^ filesystemRoot
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCCore >> filesystemRoot: aString [
 	filesystemRoot := aString asPath.
 	
@@ -268,7 +270,7 @@ GSCCore >> filesystemRoot: aString [
 	]
 ]
 
-{ #category : #sudo }
+{ #category : 'sudo' }
 GSCCore >> getSudoPassword [
 	
 	self autoexpireSudoPassword.
@@ -281,17 +283,17 @@ GSCCore >> getSudoPassword [
 	^ temporarySudoPassword
 ]
 
-{ #category : #config }
+{ #category : 'config' }
 GSCCore >> gscInstallDir [
 	^ gscInstallDir
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCCore >> hasPasswordlessSudo [
 	^ hasPasswordlessSudo = true
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 GSCCore >> initialize [
 	super initialize.
 
@@ -299,7 +301,7 @@ GSCCore >> initialize [
 	filesystemRoot := Path root.
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 GSCCore >> initializeAccentNormalizationMap [
 	| sourceChars targetChars |
 
@@ -313,7 +315,7 @@ GSCCore >> initializeAccentNormalizationMap [
 		AccentNormalizationMap at: source put: target first asInteger]
 ]
 
-{ #category : #setup }
+{ #category : 'setup' }
 GSCCore >> install [
 	self installStarterShellScript.
 
@@ -324,7 +326,7 @@ GSCCore >> install [
 	self setup.
 ]
 
-{ #category : #setup }
+{ #category : 'setup' }
 GSCCore >> installSeasideComponents [
 	| app appPath |
 
@@ -342,7 +344,7 @@ GSCCore >> installSeasideComponents [
 "nicht, weil versteckt	WAAdmin defaultDispatcher defaultName: appPath"
 ]
 
-{ #category : #setup }
+{ #category : 'setup' }
 GSCCore >> installStarterShellScript [
 	| filename fileRef script |
 	filename := './start-gsc.sh'.
@@ -379,7 +381,7 @@ fi
 
 ]
 
-{ #category : #config }
+{ #category : 'config' }
 GSCCore >> instanceId [
 	uuidString ifNil: [
 		uuidString := UUID new asString36.
@@ -392,28 +394,28 @@ GSCCore >> instanceId [
 	^ uuidString
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 GSCCore >> isDevelopment [
 	^ isDevelopment
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 GSCCore >> isShellProcessPresent [
 	^ shellSubprocess notNil
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 GSCCore >> isShellProcessRunning [
 	^ shellSubprocess notNil and: [ shellSubprocess isComplete not ]
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 GSCCore >> isSudoPasswordSet [
 	self autoexpireSudoPassword.
 	^ temporarySudoPassword notBlank
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> killShellProcess [
 	"Kill the OS subprocess. The Pharo process then will terminate automatically"
 	shellSubprocess ifNotNil: [
@@ -423,33 +425,33 @@ GSCCore >> killShellProcess [
 	].
 ]
 
-{ #category : #logging }
+{ #category : 'logging' }
 GSCCore >> log: aString [
 	Transcript crShow: aString
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 GSCCore >> needsSudoPassword [
 	^ (self isSudoPasswordSet or: [ self hasPasswordlessSudo ]) not
 ]
 
-{ #category : #helpers }
+{ #category : 'helpers' }
 GSCCore >> normalizeAccents: aString [
 	AccentNormalizationMap ifNil: [self initializeAccentNormalizationMap].
 	^self translateString: aString map: AccentNormalizationMap
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> readCommand: aCommand [
 	^ self readCommand: aCommand args: #()
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> readCommand: aCommand args: aCollection [
 	^ self readCommand: aCommand sudo: false args: aCollection
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> readCommand: aCommand sudo: aBoolean args: aCollection [
 
 	| lines |
@@ -467,7 +469,7 @@ GSCCore >> readCommand: aCommand sudo: aBoolean args: aCollection [
 	^ lines joinUsingLf
 ]
 
-{ #category : #helpers }
+{ #category : 'helpers' }
 GSCCore >> realPathForFile: aFileReferenceOrString [
 	| path |
 	path := aFileReferenceOrString asPath.
@@ -485,29 +487,29 @@ GSCCore >> realPathForFile: aFileReferenceOrString [
 	^ path
 ]
 
-{ #category : #actions }
+{ #category : 'actions' }
 GSCCore >> restartWebserver [
 	self stopWebserver.
 	self startWebserver
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCCore >> rootTool [
 
 	^ rootTool
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> runAsyncShell: aString onOutput: aBlock [
 	^ self runAsyncShell: aString onOutput: aBlock onFinish: nil
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> runAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
 	^ self runAsyncShell: aString sudo: false onOutput: aBlock onFinish: aFinishBlock
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> runAsyncShell: aString sudo: aSudoBoolean onOutput: aBlock onFinish: aFinishBlock [
 
 	self doInBackground: [
@@ -522,19 +524,19 @@ GSCCore >> runAsyncShell: aString sudo: aSudoBoolean onOutput: aBlock onFinish: 
 	]
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> runShell: aCommandString args: anArgsCollection stdin: aStdinString sudo: aSudoBoolean onOutput: aLinesBlock onRun: aRunBlock onFinish: aFinishBlock [
 
 	^ self runShell: aCommandString args: anArgsCollection tty: false stdin: aStdinString sudo: aSudoBoolean onOutput: aLinesBlock onRun: aRunBlock onFinish: aFinishBlock
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> runShell: aCommandString args: anArgsCollection sudo: aSudoBoolean [
 
 	^ self runShell: aCommandString args: anArgsCollection stdin: nil sudo: aSudoBoolean onOutput: nil onRun: nil onFinish: nil
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> runShell: aCommandString args: anArgsCollection tty: aTtyBoolean stdin: aStdinString sudo: aSudoBoolean onOutput: aLinesBlock onRun: aRunBlock onFinish: aFinishBlock [
 
 	| process cmd args envVars lineReader catchFirstSudoPrompt runBlockDone fireRunBlock linesBlock needSudoPassword |
@@ -749,7 +751,7 @@ https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not
 	^ process isSuccess
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> runShellIsSuccess: aString [
 
 	^ self
@@ -758,18 +760,18 @@ GSCCore >> runShellIsSuccess: aString [
 		  sudo: false
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> runSudoAsyncShell: aString onOutput: aBlock [
 	^ self runSudoAsyncShell: aString onOutput: aBlock onFinish: nil
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> runSudoAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
 	
 	self runAsyncShell: aString sudo: true onOutput: aBlock onFinish: aFinishBlock
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> runSudoShellIsSuccess: aString [
 
 	^ self
@@ -779,37 +781,37 @@ GSCCore >> runSudoShellIsSuccess: aString [
 
 ]
 
-{ #category : #helpers }
+{ #category : 'helpers' }
 GSCCore >> sanitizeToAscii: aString [
 	| sanitized |
 	sanitized := aString reject: [:c | c asciiValue > 127].
 	^ sanitized
 ]
 
-{ #category : #config }
+{ #category : 'config' }
 GSCCore >> seasideApplication [
 	^ WAAdmin defaultDispatcher handlerAt: self instanceId asString
 ]
 
-{ #category : #helpers }
+{ #category : 'helpers' }
 GSCCore >> serverFilenameFor: aString [
 	"Dateinamen filtern für den Gebrauch auf dem Server. Strenges filtern."
 	^(self filenameFor: (self sanitizeToAscii: (self normalizeAccents: aString))) asLowercase
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> serverUsername [
 	^ self rootTool configAt: 'server:username'
 ]
 
-{ #category : #sudo }
+{ #category : 'sudo' }
 GSCCore >> setSudoPassword: aString [
 	temporarySudoPassword := aString.
 	
 	self timestampSudoPassword
 ]
 
-{ #category : #setup }
+{ #category : 'setup' }
 GSCCore >> setup [
 
 	"Ensure: Clear root tool first"
@@ -834,7 +836,7 @@ GSCCore >> setup [
 
 ]
 
-{ #category : #setup }
+{ #category : 'setup' }
 GSCCore >> setupApplicationsFromConfigFiles [
 	| confDir |
 	confDir := (GSCCore instance realPathForFile: '/etc/gsc/applications') asFileReference.
@@ -850,7 +852,7 @@ GSCCore >> setupApplicationsFromConfigFiles [
 	]]
 ]
 
-{ #category : #setup }
+{ #category : 'setup' }
 GSCCore >> setupExampleApplications [
 	
 
@@ -860,6 +862,7 @@ GSCCore >> setupExampleApplications [
 		conf := GSCConfiguration fromFile: ('/etc/gsc/applications/', index asTwoCharacterString, '_example', index asString, '.conf').
 		conf at: 'project:shortCode' put: ('ExampleApp', index asString).
 		conf at: 'project:name' put: ('Example Webapp ', index asString).
+		conf at: 'web:workersCount' put: index + 1.
 
 		scheme config: conf.
 		
@@ -868,7 +871,7 @@ GSCCore >> setupExampleApplications [
 	]
 ]
 
-{ #category : #setup }
+{ #category : 'setup' }
 GSCCore >> setupMyself [
 	sudoPrompt := UUID new asString36.
 	gscInstallDir := FileSystem workingDirectory asPath.
@@ -880,12 +883,12 @@ GSCCore >> setupMyself [
 		
 ]
 
-{ #category : #setup }
+{ #category : 'setup' }
 GSCCore >> setupPharo [
 	GSCHtmlCanvas selectAsDefault
 ]
 
-{ #category : #setup }
+{ #category : 'setup' }
 GSCCore >> setupRoot [
 	| rootConf scheme |
 
@@ -904,7 +907,7 @@ GSCCore >> setupRoot [
 
 ]
 
-{ #category : #setup }
+{ #category : 'setup' }
 GSCCore >> startUp [
 	"on Pharo start"
 	
@@ -917,13 +920,13 @@ GSCCore >> startUp [
 	Transcript crShow: ('Open in browser: http://localhost:8888/', self instanceId asString).
 ]
 
-{ #category : #actions }
+{ #category : 'actions' }
 GSCCore >> startWebserver [
 	"Start webserver, only on local network"
 	GSCZincServerAdaptor startOn: self webserverPort.
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> stopSshControlMaster [
 	| cmd process |
 
@@ -936,7 +939,7 @@ GSCCore >> stopSshControlMaster [
 		runAndWait
 ]
 
-{ #category : #actions }
+{ #category : 'actions' }
 GSCCore >> stopWebserver [
 
 	| serverManager |
@@ -950,19 +953,19 @@ GSCCore >> stopWebserver [
 	GSCZincServerAdaptor default ifNotNil: [ :server | server stop ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCCore >> subprocessCommandLabel [
 
 	^ subprocessCommandLabel
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCCore >> subprocessTailLines [
 
 	^ subprocessTailLines
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> sudoAsyncWriteFile: aFilePath owner: anOwnerString group: aGroupString mode: aModeString with: aString then: aBlock [
 
 	"	self runSudoOSSUnixSubprocess: 'touch """"', aFilePath, '""""' onRun: [ :process |
@@ -1023,19 +1026,19 @@ GSCCore >> sudoAsyncWriteFile: aFilePath owner: anOwnerString group: aGroupStrin
 	]
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> sudoAsyncWriteFile: aFilePath with: aString then: aBlock [
 
 	self sudoAsyncWriteFile: aFilePath owner: nil group: nil mode: nil with: aString then: aBlock
 
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> sudoEnsureDirectory: aDirPath owner: anOwnerString group: aGroupString mode: aModeString [
 	self sudoEnsureDirectory: aDirPath owner: anOwnerString group: aGroupString mode: aModeString then: nil
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> sudoEnsureDirectory: aDirPath owner: anOwnerString group: aGroupString mode: aModeString then: aBlock [
 
 	| path |
@@ -1067,17 +1070,17 @@ GSCCore >> sudoEnsureDirectory: aDirPath owner: anOwnerString group: aGroupStrin
 	]
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> sudoReadCommand: aCommand [
 	^ self sudoReadCommand: aCommand args: #()
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> sudoReadCommand: aCommand args: aCollection [
 	^ self readCommand: aCommand sudo: true args: aCollection
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> sudoReadFile: aFilePath [
 	| path |
 	path := aFilePath asPath.
@@ -1085,7 +1088,7 @@ GSCCore >> sudoReadFile: aFilePath [
 	^ self sudoReadCommand: 'cat' args: { path pathString }
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> sudoTailFile: aFilePath lines: aNumber [
 	| path |
 	path := aFilePath asPath.
@@ -1093,7 +1096,7 @@ GSCCore >> sudoTailFile: aFilePath lines: aNumber [
 	^ self sudoReadCommand: 'tail' args: { '-n'. aNumber asString. path pathString }
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> sudoWriteFile: aFilePath owner: anOwnerString group: aGroupString mode: aModeString with: aString [
 
 	"	self runSudoOSSUnixSubprocess: 'touch """"', aFilePath, '""""' onRun: [ :process |
@@ -1146,12 +1149,12 @@ GSCCore >> sudoWriteFile: aFilePath owner: anOwnerString group: aGroupString mod
 			onFinish: nil ]
 ]
 
-{ #category : #helpers }
+{ #category : 'helpers' }
 GSCCore >> temporaryFolder [
 	^ '/tmp' asPath
 ]
 
-{ #category : #helpers }
+{ #category : 'helpers' }
 GSCCore >> temporaryUniqueFile: anExtensionString [
 	| uuid file |
 	uuid := UUID new.
@@ -1161,12 +1164,12 @@ GSCCore >> temporaryUniqueFile: anExtensionString [
 	^ file
 ]
 
-{ #category : #sudo }
+{ #category : 'sudo' }
 GSCCore >> timestampSudoPassword [
 	sudoPasswortTimestamp := DateAndTime now
 ]
 
-{ #category : #helpers }
+{ #category : 'helpers' }
 GSCCore >> translateString: aString map: aDictionary [
 	| translated |
 	translated := aString copy.
@@ -1177,7 +1180,7 @@ GSCCore >> translateString: aString map: aDictionary [
 	^translated
 ]
 
-{ #category : #actions }
+{ #category : 'actions' }
 GSCCore >> update [
 	"TODO: Update git repository and load that code, but how?!"
 	Metacello registry
@@ -1185,12 +1188,12 @@ GSCCore >> update [
 		load
 ]
 
-{ #category : #config }
+{ #category : 'config' }
 GSCCore >> webserverPort [
 	^ 8650 "Looks like: 8GSC"
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> writeLineToShellProcess: aString [
 	shellSubprocess stdinStream
 		nextPutAll: aString;
@@ -1199,7 +1202,7 @@ GSCCore >> writeLineToShellProcess: aString [
 		flush
 ]
 
-{ #category : #shell }
+{ #category : 'shell' }
 GSCCore >> writeToShellProcess: anObject [
 	shellSubprocess stdinStream
 		<< anObject;

@@ -1,35 +1,37 @@
 Class {
-	#name : #GSCShellConsole,
-	#superclass : #GSCTool,
+	#name : 'GSCShellConsole',
+	#superclass : 'GSCTool',
 	#instVars : [
 		'cmd'
 	],
-	#category : #'GemstoneServerCockpit-Model'
+	#category : 'GemstoneServerCockpit-Model',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Model'
 }
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCShellConsole >> cmd [
 
 	^ cmd
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCShellConsole >> cmd: anObject [
 
 	cmd := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCShellConsole >> doExecute [
 	self runShellCommand: cmd
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCShellConsole >> doExecuteSudo [
 	self runSudoShellCommand: cmd
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCShellConsole >> renderBodyOn: html [
 	html form: [ 
 		html textInput on: #cmd of: self.
@@ -43,7 +45,7 @@ GSCShellConsole >> renderBodyOn: html [
 	]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCShellConsole >> title [
 	^ 'Shell console'
 ]

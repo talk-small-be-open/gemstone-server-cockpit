@@ -1,32 +1,34 @@
 Class {
-	#name : #GSCTextViewer,
-	#superclass : #GSCDialogComponent,
+	#name : 'GSCTextViewer',
+	#superclass : 'GSCDialogComponent',
 	#instVars : [
 		'content'
 	],
-	#category : #'GemstoneServerCockpit-View'
+	#category : 'GemstoneServerCockpit-View',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'View'
 }
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTextViewer class >> content: aString [
 	^ self new
 		content: aString;
 		yourself
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTextViewer >> content [
 
 	^ content
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTextViewer >> content: anObject [
 
 	content := anObject
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCTextViewer >> renderContentOn: html [
 	html anchorButton
 		callback: [ self cancel ];

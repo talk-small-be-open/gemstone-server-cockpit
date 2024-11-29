@@ -1,10 +1,12 @@
 Class {
-	#name : #GSCRootSchemeV1,
-	#superclass : #GSCRootScheme,
-	#category : #'GemstoneServerCockpit-Scheme'
+	#name : 'GSCRootSchemeV1',
+	#superclass : 'GSCRootScheme',
+	#category : 'GemstoneServerCockpit-Scheme',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Scheme'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCRootSchemeV1 >> buildRootTool [
 	| root |
 
@@ -66,7 +68,7 @@ GSCRootSchemeV1 >> buildRootTool [
 	^ root
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCRootSchemeV1 >> templateHaproxyConfig [
 	^ GSCSttTemplate sttString:
 'global
@@ -108,7 +110,7 @@ frontend stats
 <?stt= each contentString ?><?stt ] ?>'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCRootSchemeV1 >> templateMonitConfig [
 	^ GSCSttTemplate sttString:
 'set daemon 30
@@ -135,7 +137,7 @@ include /etc/monit/conf.d/*
 '
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCRootSchemeV1 >> templateNginxConfig [
 	^ GSCSttTemplate sttString:
 'user www-data;
@@ -175,7 +177,13 @@ http {
 	# Logging Settings
 	##
 
-	access_log /var/log/nginx/access.log;
+	# borrowed from Apache
+	# (Could use $host instead of $server_name to log vhost aliases separately)
+	log_format vhost_combined ''$server_name $remote_addr - $remote_user [$time_local] ''
+		''"$request" $status $body_bytes_sent ''
+		''"$http_referer" "$http_user_agent"'';
+
+	access_log /var/log/nginx/access.log vhost_combined;
 	error_log /var/log/nginx/error.log;
 
 	##

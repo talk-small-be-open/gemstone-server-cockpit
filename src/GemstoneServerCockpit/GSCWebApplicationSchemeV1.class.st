@@ -1,10 +1,12 @@
 Class {
-	#name : #GSCWebApplicationSchemeV1,
-	#superclass : #GSCApplicationScheme,
-	#category : #'GemstoneServerCockpit-Scheme'
+	#name : 'GSCWebApplicationSchemeV1',
+	#superclass : 'GSCApplicationScheme',
+	#category : 'GemstoneServerCockpit-Scheme',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Scheme'
 }
 
-{ #category : #building }
+{ #category : 'building' }
 GSCWebApplicationSchemeV1 >> buildApplicationToolInto: aRootTool [
 	| app |
 
@@ -51,7 +53,7 @@ GSCWebApplicationSchemeV1 >> buildApplicationToolInto: aRootTool [
 	^ app
 ]
 
-{ #category : #building }
+{ #category : 'building' }
 GSCWebApplicationSchemeV1 >> defaultConfigurationBuilder [
 	
 	| builder |
@@ -105,7 +107,7 @@ GSCWebApplicationSchemeV1 >> defaultConfigurationBuilder [
 	^ builder
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCWebApplicationSchemeV1 >> templateGemMonitConfig [
 	^ GSCSttTemplate sttString:
 '# GEM ON PORT <?stt= me portNumber ?>
@@ -125,7 +127,7 @@ check process <?stt= me monitCheckName ?> with pidfile <?stt= me pidFilePath pat
 '
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCWebApplicationSchemeV1 >> templateHaproxySite [
 	^ GSCSttTemplate sttString:
 'frontend <?stt= me appShortCode ?>_nginx
@@ -179,7 +181,7 @@ backend <?stt= me appShortCode ?>_gems
 '
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCWebApplicationSchemeV1 >> templateNetldiMonitConfig [
 
 	^ GSCSttTemplate sttString:
@@ -198,7 +200,7 @@ check process <?stt= me netldiMonitCheckName ?> matching "^/opt/.*/sys/netldid <
 '
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCWebApplicationSchemeV1 >> templateNginxSiteVhost [
 	| sttListenPort sttBlockIdiots sttProxyToHaproxy sttCachedLocations |
 	
@@ -348,7 +350,7 @@ sttCachedLocations := '
 	error_page 500 /errors/500.html;
 	error_page 502 /errors/502.html;
 	error_page 503 /errors/503.html;
-	error_page 504 /errors/503.html;
+	error_page 504 /errors/504.html;
 
 	location /errors/ {
 	  internal;
@@ -366,7 +368,7 @@ server {
 <?stt ] ?>'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCWebApplicationSchemeV1 >> templateStoneMonitConfig [
 	^ GSCSttTemplate sttString:
 '# STONE

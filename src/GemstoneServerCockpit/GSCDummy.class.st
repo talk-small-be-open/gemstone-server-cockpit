@@ -1,5 +1,7 @@
 Class {
-	#name : #GSCDummy,
-	#superclass : #GSCTool,
-	#category : #'GemstoneServerCockpit-Model'
+	#name : 'GSCDummy',
+	#superclass : 'GSCTool',
+	#category : 'GemstoneServerCockpit-Model',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Model'
 }

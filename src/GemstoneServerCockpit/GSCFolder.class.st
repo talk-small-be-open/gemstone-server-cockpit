@@ -1,25 +1,27 @@
 Class {
-	#name : #GSCFolder,
-	#superclass : #GSCTool,
+	#name : 'GSCFolder',
+	#superclass : 'GSCTool',
 	#instVars : [
 		'name'
 	],
-	#category : #'GemstoneServerCockpit-Model'
+	#category : 'GemstoneServerCockpit-Model',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Model'
 }
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCFolder >> name [
 
 	^ name
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCFolder >> name: anObject [
 
 	name := anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCFolder >> title [
 	^ self name
 ]

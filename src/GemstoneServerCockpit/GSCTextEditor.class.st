@@ -1,40 +1,42 @@
 Class {
-	#name : #GSCTextEditor,
-	#superclass : #GSCDialogComponent,
+	#name : 'GSCTextEditor',
+	#superclass : 'GSCDialogComponent',
 	#instVars : [
 		'content',
 		'originalContent'
 	],
-	#category : #'GemstoneServerCockpit-View'
+	#category : 'GemstoneServerCockpit-View',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'View'
 }
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTextEditor class >> content: aString [
 	^ self new
 		originalContent: aString;
 		yourself
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTextEditor >> content [
 
 	^ content
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTextEditor >> content: anObject [
 
 	content := anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTextEditor >> originalContent: anObject [
 
 	originalContent := anObject.
 	self content: anObject
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCTextEditor >> renderContentOn: html [
 	html form: [ 
 		html textArea
@@ -54,7 +56,7 @@ GSCTextEditor >> renderContentOn: html [
 
 ]
 
-{ #category : #actions }
+{ #category : 'actions' }
 GSCTextEditor >> save [
 	self close
 ]

@@ -1,35 +1,37 @@
 Class {
-	#name : #GSCConfigurationDictionary,
-	#superclass : #Object,
+	#name : 'GSCConfigurationDictionary',
+	#superclass : 'Object',
 	#instVars : [
 		'data'
 	],
-	#category : #'GemstoneServerCockpit-Model'
+	#category : 'GemstoneServerCockpit-Model',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Model'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCConfigurationDictionary class >> commentPrefix [
 	^ '__'
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 GSCConfigurationDictionary class >> fromDictionary: aDictionary [
 	^ self new
 		data: aDictionary;
 		yourself
 ]
 
-{ #category : #arithmetic }
+{ #category : 'arithmetic' }
 GSCConfigurationDictionary >> / aString [
 	^ self at: aString
 ]
 
-{ #category : #converting }
+{ #category : 'converting' }
 GSCConfigurationDictionary >> asDictionary [
 	^ self dataCopy
 ]
 
-{ #category : #arithmetic }
+{ #category : 'arithmetic' }
 GSCConfigurationDictionary >> at: aPathlikeStructure [
 	| parts dict |
 	parts := self getKeySequence: aPathlikeStructure.
@@ -39,18 +41,18 @@ GSCConfigurationDictionary >> at: aPathlikeStructure [
 	^ self transformForReadout: (dict at: (parts last asString) ifAbsent: [ nil ])
 ]
 
-{ #category : #arithmetic }
+{ #category : 'arithmetic' }
 GSCConfigurationDictionary >> at: aSymbol default: aBlock [
 	^ (self at: aSymbol) ifNil: [ 
 		self at: aSymbol put: aBlock value ]
 ]
 
-{ #category : #arithmetic }
+{ #category : 'arithmetic' }
 GSCConfigurationDictionary >> at: aSymbol ifAbsent: aBlock [
 	^ (self at: aSymbol) ifNil: aBlock
 ]
 
-{ #category : #arithmetic }
+{ #category : 'arithmetic' }
 GSCConfigurationDictionary >> at: aPathlikeStructure put: aValue [
 	| parts dict |
 	parts := self getKeySequence: aPathlikeStructure.
@@ -60,18 +62,18 @@ GSCConfigurationDictionary >> at: aPathlikeStructure put: aValue [
 	^ self transformForReadout: (dict at: (parts last asString) put: aValue)
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCConfigurationDictionary >> copyWith: another [
 	^ self copy overwriteWith: another
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCConfigurationDictionary >> data: aDictionary [
 	data := self dictionaryClass new.
 	self recurseCopyDataFrom: aDictionary to: data
 ]
 
-{ #category : #copying }
+{ #category : 'copying' }
 GSCConfigurationDictionary >> dataCopy [
 	| newDict |
 
@@ -81,7 +83,7 @@ GSCConfigurationDictionary >> dataCopy [
 	^ newDict
 ]
 
-{ #category : #enumerating }
+{ #category : 'enumerating' }
 GSCConfigurationDictionary >> dataDo: aBlockWithKeyAndValue [
 	"Official method to enumerate through real data, without the comments"
 	self keysAndValuesDo: [ :key :value |
@@ -89,14 +91,14 @@ GSCConfigurationDictionary >> dataDo: aBlockWithKeyAndValue [
 			aBlockWithKeyAndValue value: key value: value ] ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCConfigurationDictionary >> dictionaryClass [
 	"keep it Dictionary, since then STON is cleaner, instead of IdentityDictionary.
 	TODO: Maybe OrderedDictionary would work with STON?"
 	^ Dictionary
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCConfigurationDictionary >> entriesCount [
 	| counter |
 	counter := 0.
@@ -104,7 +106,7 @@ GSCConfigurationDictionary >> entriesCount [
 	^ counter
 ]
 
-{ #category : #enumerating }
+{ #category : 'enumerating' }
 GSCConfigurationDictionary >> entriesDo: aTwoArgBlock [
 	"keyPath value"
 	self nodesDo: [ :keyPath :value |
@@ -112,7 +114,7 @@ GSCConfigurationDictionary >> entriesDo: aTwoArgBlock [
 	]
 ]
 
-{ #category : #arithmetic }
+{ #category : 'arithmetic' }
 GSCConfigurationDictionary >> getKeySequence: aPathlikeStructure [
 
 	aPathlikeStructure isString ifTrue: [
@@ -127,12 +129,12 @@ GSCConfigurationDictionary >> getKeySequence: aPathlikeStructure [
 
 ]
 
-{ #category : #arithmetic }
+{ #category : 'arithmetic' }
 GSCConfigurationDictionary >> getNestedDictionary: aKeysCollection [
 	^ self getNestedDictionary: aKeysCollection ifAbsent: nil
 ]
 
-{ #category : #arithmetic }
+{ #category : 'arithmetic' }
 GSCConfigurationDictionary >> getNestedDictionary: aKeysCollection ifAbsent: aBlock [
 	| current |
 	
@@ -153,19 +155,19 @@ GSCConfigurationDictionary >> getNestedDictionary: aKeysCollection ifAbsent: aBl
 	^ current
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 GSCConfigurationDictionary >> initialize [
 	super initialize.
 	
 	data := self dictionaryClass new
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 GSCConfigurationDictionary >> isCommentKey: aString [
 	^ aString beginsWith: self class commentPrefix
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 GSCConfigurationDictionary >> isEqualConfig: anotherConfig [
 
 	self entriesCount = anotherConfig entriesCount ifFalse: [ ^ false ].
@@ -177,25 +179,25 @@ GSCConfigurationDictionary >> isEqualConfig: anotherConfig [
 	^ true
 ]
 
-{ #category : #enumerating }
+{ #category : 'enumerating' }
 GSCConfigurationDictionary >> keysAndValuesDo: aBlock [
 	data keys sorted do: [ :each |
 		aBlock value: each value: (self at: each) ]
 ]
 
-{ #category : #enumerating }
+{ #category : 'enumerating' }
 GSCConfigurationDictionary >> nodesDo: aTwoArgBlock [
 	self recurseIn: data path: OrderedCollection new do: aTwoArgBlock
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCConfigurationDictionary >> overwriteWith: another [
 	another entriesDo: [ :keyPath :value |
 		self at: keyPath put: value
 	]
 ]
 
-{ #category : #copying }
+{ #category : 'copying' }
 GSCConfigurationDictionary >> postCopy [
 	| originalData |
 	
@@ -211,7 +213,7 @@ GSCConfigurationDictionary >> postCopy [
 	self recurseCopyDataFrom: originalData to: data.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCConfigurationDictionary >> presetFrom: another [
 	another entriesDo: [ :keyPath :value |
 "		value ifNotBlank: ["
@@ -219,7 +221,7 @@ GSCConfigurationDictionary >> presetFrom: another [
 	]
 ]
 
-{ #category : #enumerating }
+{ #category : 'enumerating' }
 GSCConfigurationDictionary >> recurseCopyDataFrom: aSourceDictionary to: aTargetDictionary [
 	"Copy the nested dictionary structure"
 
@@ -237,7 +239,7 @@ GSCConfigurationDictionary >> recurseCopyDataFrom: aSourceDictionary to: aTarget
 	]
 ]
 
-{ #category : #enumerating }
+{ #category : 'enumerating' }
 GSCConfigurationDictionary >> recurseIn: aDictionary path: aKeysCollection do: aTwoArgBlock [
 
 	"aTwoArgBlock takes keyPathInStructure dictionaryAtThisPath"
@@ -256,14 +258,14 @@ GSCConfigurationDictionary >> recurseIn: aDictionary path: aKeysCollection do: a
 	]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCConfigurationDictionary >> transformForReadout: anObject [
 	anObject isDictionary ifTrue: [ ^ GSCConfigurationDictionary fromDictionary: anObject ].
 	
 	^ anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCConfigurationDictionary >> values [
 	^ data values
 ]

@@ -1,19 +1,21 @@
 Class {
-	#name : #GSCSttTemplate,
-	#superclass : #GSCTextTemplate,
+	#name : 'GSCSttTemplate',
+	#superclass : 'GSCTextTemplate',
 	#instVars : [
 		'mclSmalltalkTemplate',
 		'tool'
 	],
-	#category : #'GemstoneServerCockpit-Model'
+	#category : 'GemstoneServerCockpit-Model',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Model'
 }
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 GSCSttTemplate class >> sttString: aString [
 	^ self tool: nil sttString: aString
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 GSCSttTemplate class >> tool: aGscTool sttString: aString [
 	^ self new
 		tool: aGscTool;
@@ -21,7 +23,7 @@ GSCSttTemplate class >> tool: aGscTool sttString: aString [
 		yourself
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCSttTemplate >> contentString [
 "	| me |
 	me := GSCSmalltalkTemplateDataGateway tool: tool.
@@ -32,18 +34,18 @@ GSCSttTemplate >> contentString [
 	^ mclSmalltalkTemplate evaluateFor: tool
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCSttTemplate >> sttString: aString [
 	mclSmalltalkTemplate := MCLSmalltalkTemplate on: aString
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCSttTemplate >> tool [
 
 	^ tool
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCSttTemplate >> tool: anObject [
 
 	tool := anObject

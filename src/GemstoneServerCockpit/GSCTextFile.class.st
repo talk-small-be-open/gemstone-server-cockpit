@@ -1,6 +1,6 @@
 Class {
-	#name : #GSCTextFile,
-	#superclass : #GSCTool,
+	#name : 'GSCTextFile',
+	#superclass : 'GSCTool',
 	#instVars : [
 		'shouldContent',
 		'contentTemplate',
@@ -12,24 +12,26 @@ Class {
 		'title',
 		'fileDiff'
 	],
-	#category : #'GemstoneServerCockpit-Model'
+	#category : 'GemstoneServerCockpit-Model',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Model'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTextFile >> beRootOwned [
 	owner := 'root'.
 	group := 'root'.
 	mode := 'u=rw'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTextFile >> beUserOwned [
 	owner := self serverUsername.
 	group := self serverGroupname.
 	mode := 'u=rw,g=rw'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTextFile >> checkMe [
 	self beNotNeedsAttention.
 
@@ -45,19 +47,19 @@ GSCTextFile >> checkMe [
 	
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTextFile >> contentTemplate [
 
 	^ contentTemplate
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTextFile >> contentTemplate: anObject [
 
 	contentTemplate := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCTextFile >> doEditFile [
 	"Always get updated content"
 	self readFileContents.
@@ -67,7 +69,7 @@ GSCTextFile >> doEditFile [
 	]
 ]
 
-{ #category : #'tool-actions' }
+{ #category : 'tool-actions' }
 GSCTextFile >> doGetDiff [
 
 "	fileDiff := (TextDiffBuilder buildDisplayPatchFrom: self fileContents to: self contentTemplate contentString)"
@@ -88,19 +90,19 @@ GSCTextFile >> doGetDiff [
 		onFinish: nil.
 ]
 
-{ #category : #'tool-actions' }
+{ #category : 'tool-actions' }
 GSCTextFile >> doWriteTemplate [
 	self writeFileContents: contentTemplate contentString
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTextFile >> fileContents [
 	fileContents ifNil: [ self readFileContents ].
 	
 	^ fileContents
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTextFile >> filePath: aString [
 	
 	filePath := self core realPathForFile: aString.
@@ -109,19 +111,19 @@ GSCTextFile >> filePath: aString [
 	
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTextFile >> group [
 
 	^ group
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTextFile >> group: anObject [
 
 	group := anObject
 ]
 
-{ #category : #'private - initialization' }
+{ #category : 'private - initialization' }
 GSCTextFile >> initMe [
 	super initMe.
 "	self isExisting ifFalse: [ self log: 'File does not exist' ] ifTrue: [
@@ -135,50 +137,50 @@ GSCTextFile >> initMe [
 		group := self serverGroupname ].
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 GSCTextFile >> initialize [
 	super initialize.
 	
 	self beRootOwned
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 GSCTextFile >> isExisting [
 	^ filePath notNil and: [
 		self core fileExists: filePath ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTextFile >> mode [
 
 	^ mode
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTextFile >> mode: anObject [
 
 	mode := anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTextFile >> owner [
 
 	^ owner
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTextFile >> owner: anObject [
 
 	owner := anObject
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTextFile >> readFileContents [
 	"sudo, has always permission"
 	fileContents := self core sudoReadFile: filePath
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCTextFile >> renderBodyOn: html [
 
 	self renderLabel: 'File path' text: filePath pathString on: html.
@@ -216,18 +218,18 @@ GSCTextFile >> renderBodyOn: html [
 		] ] 
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTextFile >> title [
 	^ title ifBlank: [ filePath basename ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCTextFile >> title: anObject [
 
 	title := anObject
 ]
 
-{ #category : #'tool-actions' }
+{ #category : 'tool-actions' }
 GSCTextFile >> writeFileContents: aString [
 
 	filePath ifNil: [ self log: 'File path not defined'. ^ self ].

@@ -1,26 +1,28 @@
 Class {
-	#name : #GSCMainCockpit,
-	#superclass : #WAComponent,
+	#name : 'GSCMainCockpit',
+	#superclass : 'WAComponent',
 	#instVars : [
 		'core',
 		'selectedToolChain'
 	],
-	#category : #'GemstoneServerCockpit-View'
+	#category : 'GemstoneServerCockpit-View',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'View'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCMainCockpit >> checkAll [
 	core doInBackground: [
 		core rootTool check ]
 	
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCMainCockpit >> currentTool [
 	^ self selectedTools atLast: 1 ifAbsent: [ nil ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCMainCockpit >> editText: aString then: aBlock [
 	| editor |
 	editor := (GSCTextEditor content: aString).
@@ -32,12 +34,12 @@ GSCMainCockpit >> editText: aString then: aBlock [
 	]
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 GSCMainCockpit >> gotoHome [
 	selectedToolChain := IdentityDictionary new.
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 GSCMainCockpit >> initialize [
 	super initialize.
 	
@@ -47,23 +49,23 @@ GSCMainCockpit >> initialize [
 	self gotoHome
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 GSCMainCockpit >> isSelectedTool: aTool [
 	^ self selectedTools includes: aTool
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCMainCockpit >> killShellProcess [
 	core killShellProcess 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCMainCockpit >> reSetup [
 	(self confirm: 'This will destroy all non-saved configurations and reload the config from the files. Continue?') ifTrue: [
 		core setup ]
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCMainCockpit >> renderContentOn: html [
 
 	self renderLogoOn: html.
@@ -89,7 +91,7 @@ GSCMainCockpit >> renderContentOn: html [
 	]
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCMainCockpit >> renderCoreToolbarOn: html [
 
 	html div class: 'coreToolbar'; with: [
@@ -125,7 +127,7 @@ GSCMainCockpit >> renderCoreToolbarOn: html [
 	]
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCMainCockpit >> renderLogoOn: html [
 	html span
 		class: 'gscLogo';
@@ -364,7 +366,7 @@ GSCMainCockpit >> renderLogoOn: html [
 ]]
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCMainCockpit >> renderPane: anIndex head: aHeadTool list: aCollection on: html [
 	| selected |
 
@@ -393,7 +395,7 @@ GSCMainCockpit >> renderPane: anIndex head: aHeadTool list: aCollection on: html
 	]
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCMainCockpit >> renderPanesOn: html [
 	html div class: 'toolsPanes'; with: [
 		self selectedTools withIndexDo: [ :each :index |
@@ -404,7 +406,7 @@ GSCMainCockpit >> renderPanesOn: html [
 	]
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCMainCockpit >> renderRootToolbarOn: html [
 	html div: [
 		self rootTool renderOn: html ]
@@ -413,7 +415,7 @@ GSCMainCockpit >> renderRootToolbarOn: html [
 
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCMainCockpit >> renderSubprocessLogOn: html [
 	core subprocessTailLines ifNotBlank: [ :lines |
 		html heading level1; with: 'Last subprocess output'.
@@ -423,7 +425,7 @@ GSCMainCockpit >> renderSubprocessLogOn: html [
 
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCMainCockpit >> renderSubprocessOn: html [
 
 	core isShellProcessPresent ifTrue: [
@@ -455,7 +457,7 @@ GSCMainCockpit >> renderSubprocessOn: html [
 
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCMainCockpit >> renderTheToolOn: html [
 	html div: [
 		self currentTool ifNotNil: [ :tool |
@@ -463,12 +465,12 @@ GSCMainCockpit >> renderTheToolOn: html [
 	]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCMainCockpit >> rootTool [
 	^ core rootTool
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCMainCockpit >> selectTool: aChildTool [
 	"If already selected, we deselect the child. Kind of backwards navigating selection"
 	(self isSelectedTool: aChildTool) ifTrue: [
@@ -480,12 +482,12 @@ GSCMainCockpit >> selectTool: aChildTool [
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCMainCockpit >> selectedInPane: anIndex [
 	^ self selectedTools at: anIndex + 1 ifAbsent: [ nil ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCMainCockpit >> selectedTools [
 	| this next all |
 
@@ -510,7 +512,7 @@ GSCMainCockpit >> selectedTools [
 	^ all
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 GSCMainCockpit >> setSudoPassword [
 	| pw |
 	pw := self request: 'Password?'.
@@ -522,19 +524,19 @@ GSCMainCockpit >> setSudoPassword [
 	]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCMainCockpit >> showFullscreen: aRenderable [
 	self show: aRenderable
 ]
 
-{ #category : #updating }
+{ #category : 'updating' }
 GSCMainCockpit >> updateRoot: anHtmlRoot [
 	super updateRoot: anHtmlRoot.
 	
 	anHtmlRoot title: 'GSC GemStone Server Cockpit'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCMainCockpit >> viewText: aString then: aBlock [
 	| editor |
 	editor := (GSCTextViewer content: aString).
@@ -544,12 +546,12 @@ GSCMainCockpit >> viewText: aString then: aBlock [
 	]
 ]
 
-{ #category : #writing }
+{ #category : 'writing' }
 GSCMainCockpit >> writeLineToSubprocess: aString [
 	core writeLineToShellProcess: aString
 ]
 
-{ #category : #writing }
+{ #category : 'writing' }
 GSCMainCockpit >> writeToSubprocess: aString [
 	core writeToShellProcess: aString
 ]

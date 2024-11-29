@@ -1,6 +1,6 @@
-Extension { #name : #SequenceableCollection }
+Extension { #name : 'SequenceableCollection' }
 
-{ #category : #'*GemstoneServerCockpit' }
+{ #category : '*GemstoneServerCockpit' }
 SequenceableCollection >> joinUsingLf [
 	^ self joinUsing: Character lf
 ]

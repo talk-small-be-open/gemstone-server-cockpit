@@ -1,10 +1,12 @@
 Class {
-	#name : #GSCRootScheme,
-	#superclass : #GSCSchemeBase,
-	#category : #'GemstoneServerCockpit-Scheme'
+	#name : 'GSCRootScheme',
+	#superclass : 'GSCSchemeBase',
+	#category : 'GemstoneServerCockpit-Scheme',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Scheme'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCRootScheme >> buildRootTool [
 	| root |
 
@@ -16,7 +18,7 @@ GSCRootScheme >> buildRootTool [
 	^ root
 ]
 
-{ #category : #building }
+{ #category : 'building' }
 GSCRootScheme >> defaultConfigurationBuilder [
 	| builder |
 	

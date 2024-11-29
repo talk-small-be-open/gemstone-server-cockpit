@@ -1,31 +1,33 @@
 Class {
-	#name : #GSCSslCertificate,
-	#superclass : #GSCTool,
+	#name : 'GSCSslCertificate',
+	#superclass : 'GSCTool',
 	#instVars : [
 		'domains',
 		'certificateName'
 	],
-	#category : #'GemstoneServerCockpit-Model'
+	#category : 'GemstoneServerCockpit-Model',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Model'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCSslCertificate >> acmeShPath [
 	^ (self rootFindTool: GSCAcmeCertificateClient) acmeShPath
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCSslCertificate >> certificateName [
 
 	^ certificateName ifBlank: [ self domains first ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCSslCertificate >> certificateName: anObject [
 
 	certificateName := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCSslCertificate >> checkMe [
 	self beNotNeedsAttention.
 	
@@ -34,7 +36,7 @@ GSCSslCertificate >> checkMe [
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCSslCertificate >> doGetCertificate [
 
 "  - name: Ensure port 80 not in use by nginx
@@ -67,7 +69,7 @@ GSCSslCertificate >> doGetCertificate [
 	self runShellCommand: cmd
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCSslCertificate >> doInstallCertificate [
 	
 	"TODO: Ensure Verzeichnis!!"
@@ -91,44 +93,44 @@ GSCSslCertificate >> doInstallCertificate [
 	self runShellCommand: cmd
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCSslCertificate >> domain: aString [
 	self domains: { aString }
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCSslCertificate >> domains [
 
 	^ domains
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCSslCertificate >> domains: anObject [
 
 	domains := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCSslCertificate >> domainsCommaList [
 	^ domains joinUsing: ','
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCSslCertificate >> email [
 	^ self configAt: 'project:email'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCSslCertificate >> fullchainFilePath [
 	^ '/etc/gsc/certificates/', self certificateName, '/fullchain.pem'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCSslCertificate >> keyFilePath [
 	^ '/etc/gsc/certificates/', self certificateName, '/key.pem'
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCSslCertificate >> title [
 	^ 'SSL Certificate'
 ]

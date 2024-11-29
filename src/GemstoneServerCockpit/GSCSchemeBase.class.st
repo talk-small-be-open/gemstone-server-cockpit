@@ -1,24 +1,26 @@
 Class {
-	#name : #GSCSchemeBase,
-	#superclass : #Object,
+	#name : 'GSCSchemeBase',
+	#superclass : 'Object',
 	#instVars : [
 		'config'
 	],
-	#category : #'GemstoneServerCockpit-Scheme'
+	#category : 'GemstoneServerCockpit-Scheme',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Scheme'
 }
 
-{ #category : #building }
+{ #category : 'building' }
 GSCSchemeBase >> buildDefaultConfiguration [
 	^ self defaultConfigurationBuilder asGscConfiguration
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCSchemeBase >> config [
 
 	^ config
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCSchemeBase >> config: anObject [
 
 	config := anObject.
@@ -26,7 +28,7 @@ GSCSchemeBase >> config: anObject [
 	self ensureDefaultConfig
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCSchemeBase >> defaultConfigurationBuilder [
 	| builder |
 	
@@ -37,7 +39,7 @@ GSCSchemeBase >> defaultConfigurationBuilder [
 	^ builder
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCSchemeBase >> ensureDefaultConfig [
 	
 	config presetFrom: self buildDefaultConfiguration

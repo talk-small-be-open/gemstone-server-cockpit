@@ -1,27 +1,29 @@
 Class {
-	#name : #GSCGitRepository,
-	#superclass : #GSCTool,
+	#name : 'GSCGitRepository',
+	#superclass : 'GSCTool',
 	#instVars : [
 		'url',
 		'folderPath',
 		'branch'
 	],
-	#category : #'GemstoneServerCockpit-Model'
+	#category : 'GemstoneServerCockpit-Model',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Model'
 }
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCGitRepository >> branch [
 
 	^ branch ifBlank: [ 'master' ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCGitRepository >> branch: anObject [
 
 	branch := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGitRepository >> checkMe [
 	self beNotNeedsAttention.
 	
@@ -35,7 +37,7 @@ GSCGitRepository >> checkMe [
 		]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGitRepository >> doCloneFromGitRepo [
 	| path |
 	path := self folderPath pathString.
@@ -46,7 +48,7 @@ GSCGitRepository >> doCloneFromGitRepo [
 			self runShellCommand: ('git clone --branch ', self branch, ' ', self url, ' ', path) ] ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGitRepository >> doPull [
 	| path |
 	path := self folderPath pathString.
@@ -54,24 +56,24 @@ GSCGitRepository >> doPull [
 	self runShellCommand: (self gitCommand: 'pull')
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCGitRepository >> folderPath [
 
 	^ folderPath
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCGitRepository >> folderPath: anObject [
 
 	folderPath := self core realPathForFile: anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGitRepository >> gitCommand: aString [
 	^ self gitDefaultCommand, ' ', aString
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGitRepository >> gitDefaultCommand [
 	| path |
 	path := self folderPath pathString.
@@ -79,7 +81,7 @@ GSCGitRepository >> gitDefaultCommand [
 	^ 'git -C "', path, '"'
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCGitRepository >> renderBodyOn: html [
 	self renderLabel: 'URL' text: url on: html.
 	self renderLabel: 'Target' text: folderPath pathString on: html.
@@ -87,18 +89,18 @@ GSCGitRepository >> renderBodyOn: html [
 
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCGitRepository >> title [
 	^ 'git ', (url ifBlank: [ 'repository' ])
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCGitRepository >> url [
 
 	^ url
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCGitRepository >> url: anObject [
 
 	url := anObject

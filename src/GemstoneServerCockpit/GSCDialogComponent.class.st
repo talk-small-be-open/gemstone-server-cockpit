@@ -1,15 +1,17 @@
 Class {
-	#name : #GSCDialogComponent,
-	#superclass : #WAComponent,
-	#category : #'GemstoneServerCockpit-View'
+	#name : 'GSCDialogComponent',
+	#superclass : 'WAComponent',
+	#category : 'GemstoneServerCockpit-View',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'View'
 }
 
-{ #category : #actions }
+{ #category : 'actions' }
 GSCDialogComponent >> cancel [
 	self answer: #cancel
 ]
 
-{ #category : #actions }
+{ #category : 'actions' }
 GSCDialogComponent >> close [
 	self answer
 ]

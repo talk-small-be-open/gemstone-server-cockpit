@@ -1,5 +1,7 @@
 Class {
-	#name : #GSCConfigError,
-	#superclass : #GSCError,
-	#category : #'GemstoneServerCockpit-Misc'
+	#name : 'GSCConfigError',
+	#superclass : 'GSCError',
+	#category : 'GemstoneServerCockpit-Misc',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Misc'
 }

@@ -1,13 +1,15 @@
 Class {
-	#name : #GSCHaproxy,
-	#superclass : #GSCTool,
+	#name : 'GSCHaproxy',
+	#superclass : 'GSCTool',
 	#instVars : [
 		'statusHtml'
 	],
-	#category : #'GemstoneServerCockpit-Model'
+	#category : 'GemstoneServerCockpit-Model',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Model'
 }
 
-{ #category : #building }
+{ #category : 'building' }
 GSCHaproxy >> build [
 
 	self add: GSCAptPackage then: [ :apt |
@@ -28,34 +30,34 @@ GSCHaproxy >> build [
 		web url: '/ha-status' ]"
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCHaproxy >> configFilePath [
 	^ '/etc/haproxy/haproxy.cfg' asPath
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCHaproxy >> doCheckSyntax [
 	self runSudoShellCommand: 'haproxy -c -- ', self configFilePath pathString
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCHaproxy >> doViewWebStatus [
 	statusHtml := self core sudoReadCommand: 'curl' args: { '--silent'. 'http://127.0.0.1:8404/stats'. }.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCHaproxy >> haproxyConfigTemplate [
 	^ self scheme templateHaproxyConfig
 		tool: self;
 		yourself
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCHaproxy >> haproxySiteConfigs [
 	^ (self rootFindTools: GSCHaproxySite) collect: [ :each | each haproxyConfigTemplate ]
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCHaproxy >> renderBodyOn: html [
 	statusHtml ifNotBlank: [
 		html iframe
@@ -63,7 +65,7 @@ GSCHaproxy >> renderBodyOn: html [
 			contents: [ :h | h html: statusHtml ] ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCHaproxy >> title [
 	^ 'HAproxy balancer'
 ]

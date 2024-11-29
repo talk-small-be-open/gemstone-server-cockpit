@@ -1,25 +1,27 @@
 Class {
-	#name : #GSCLogFileViewer,
-	#superclass : #GSCTool,
+	#name : 'GSCLogFileViewer',
+	#superclass : 'GSCTool',
 	#instVars : [
 		'filePath'
 	],
-	#category : #'GemstoneServerCockpit-Model'
+	#category : 'GemstoneServerCockpit-Model',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Model'
 }
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCLogFileViewer >> filePath [
 
 	^ filePath
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCLogFileViewer >> filePath: anObject [
 
 	filePath := self core realPathForFile: anObject
 ]
 
-{ #category : #rendering }
+{ #category : 'rendering' }
 GSCLogFileViewer >> renderBodyOn: html [
 
 	| tail |
@@ -29,7 +31,7 @@ GSCLogFileViewer >> renderBodyOn: html [
 	html preformatted: tail.
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCLogFileViewer >> title [
 	^ 'Log file'
 ]

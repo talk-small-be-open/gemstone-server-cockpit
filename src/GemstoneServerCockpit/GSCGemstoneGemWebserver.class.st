@@ -1,10 +1,12 @@
 Class {
-	#name : #GSCGemstoneGemWebserver,
-	#superclass : #GSCTool,
-	#category : #'GemstoneServerCockpit-Model'
+	#name : 'GSCGemstoneGemWebserver',
+	#superclass : 'GSCTool',
+	#category : 'GemstoneServerCockpit-Model',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Model'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneGemWebserver >> checkMe [
 	self beNotNeedsAttention.
 
@@ -13,7 +15,7 @@ GSCGemstoneGemWebserver >> checkMe [
 	"self beNeedsAttention: 'GemServer not registered'"
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGemstoneGemWebserver >> doRegisterZincWebserver [
 	"Register Servers in tODE"
 	| p i |
@@ -22,13 +24,13 @@ GSCGemstoneGemWebserver >> doRegisterZincWebserver [
 	self runTodeCommand: ('/home/seaside/gemServer --register=seaside', i, ' --type=zinc --port=', p) stone: self gemTool stoneName
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCGemstoneGemWebserver >> gemTool [
 
 	^ self parent
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCGemstoneGemWebserver >> title [
 	^ 'Seaside internal Zinc webserver'
 ]

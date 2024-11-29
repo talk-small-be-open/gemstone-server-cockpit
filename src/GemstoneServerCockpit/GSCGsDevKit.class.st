@@ -1,10 +1,12 @@
 Class {
-	#name : #GSCGsDevKit,
-	#superclass : #GSCTool,
-	#category : #'GemstoneServerCockpit-Model'
+	#name : 'GSCGsDevKit',
+	#superclass : 'GSCTool',
+	#category : 'GemstoneServerCockpit-Model',
+	#package : 'GemstoneServerCockpit',
+	#tag : 'Model'
 }
 
-{ #category : #building }
+{ #category : 'building' }
 GSCGsDevKit >> build [
 	| shmmax pageSize |
 	self add: GSCGitRepository then: [ :git |
@@ -80,7 +82,7 @@ export PATH=$GS_HOME/bin:$PATH'))
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGsDevKit >> checkMe [
 	self beNotNeedsAttention.
 	
@@ -88,12 +90,12 @@ GSCGsDevKit >> checkMe [
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGsDevKit >> doInstallScript [
 	self runShellCommand: 'installServerClient'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGsDevKit >> doStartTodeClient [
 	"Does only work, if the SSH tunnel is established with X11 forwarding"
 	"Will daemonize itself"
@@ -106,18 +108,18 @@ GSCGsDevKit >> doStartTodeClient [
 	self runShellCommand: ('DISPLAY="', display, '" nohup startClient tode')
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGsDevKit >> gsHome [
 	^ self gemstoneGsHome
 ]
 
-{ #category : #testing }
+{ #category : 'testing' }
 GSCGsDevKit >> isInstalled [
 	^ self core fileExists: self gemstoneGsHome / 'bin/.gsdevkitSetup'
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGsDevKit >> repoUrl [
 "	^ 'https://github.com/GsDevKit/GsDevKit_home.git'"
 	
@@ -126,7 +128,7 @@ GSCGsDevKit >> repoUrl [
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGsDevKit >> seasideStonTemplate [
 	^ GSCSimpleTemplate source:
 'TDObjectGatewayLeafNode{#name:''Seaside3'',#contents:''^ TDProjectSpecEntryDefinition new
@@ -143,7 +145,7 @@ GSCGsDevKit >> seasideStonTemplate [
     yourself''}'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : 'as yet unclassified' }
 GSCGsDevKit >> sharedMemoryMaxBytes [
 	| hardwareBytes |
 	
@@ -157,7 +159,7 @@ GSCGsDevKit >> sharedMemoryMaxBytes [
 	^ (hardwareBytes * (3/4)) asInteger.
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 GSCGsDevKit >> title [
 	^ 'GsDevKit'
 ]
