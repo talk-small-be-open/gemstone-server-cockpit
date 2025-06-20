@@ -18,6 +18,11 @@ GSCMainCockpit >> checkAll [
 ]
 
 { #category : 'accessing' }
+GSCMainCockpit >> core [
+	^ core
+]
+
+{ #category : 'accessing' }
 GSCMainCockpit >> currentTool [
 	^ self selectedTools atLast: 1 ifAbsent: [ nil ]
 ]
@@ -57,6 +62,13 @@ GSCMainCockpit >> isSelectedTool: aTool [
 { #category : 'as yet unclassified' }
 GSCMainCockpit >> killShellProcess [
 	core killShellProcess 
+]
+
+{ #category : 'as yet unclassified' }
+GSCMainCockpit >> quitPharo [
+	"No need to save, since the image is pristine, only on app updates we would need to save the image"
+	self core isProduction ifTrue: [ 
+		Smalltalk snapshot: false andQuit: true ]
 ]
 
 { #category : 'as yet unclassified' }
@@ -113,6 +125,10 @@ GSCMainCockpit >> renderCoreToolbarOn: html [
 			html anchorButton
 				callback: [ self reSetup ];
 				with: 'Re-Config'.
+
+			html anchorButton
+				callback: [ self quitPharo ];
+				with: 'Quit'.
 
 			html span: ' Base path: '.
 			html textInput

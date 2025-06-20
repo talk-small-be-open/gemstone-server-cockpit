@@ -400,6 +400,11 @@ GSCCore >> isDevelopment [
 ]
 
 { #category : 'testing' }
+GSCCore >> isProduction [
+	^ self isDevelopment not
+]
+
+{ #category : 'testing' }
 GSCCore >> isShellProcessPresent [
 	^ shellSubprocess notNil
 ]

@@ -61,6 +61,11 @@ PATH=<?stt= me gemstoneGsHome pathString ?>/bin:/usr/bin:/bin:/usr/local/bin
 '
 ]
 
+{ #category : 'as yet unclassified' }
+GSCCronJob >> doExecuteJobNow [
+	self runSudoShellCommand: ('su ', self user, ' ', self command)
+]
+
 { #category : 'accessing' }
 GSCCronJob >> fileName [
 	^ ( 'gsc_', (self core serverFilenameFor: self title) )
