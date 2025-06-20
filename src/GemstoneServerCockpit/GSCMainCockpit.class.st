@@ -118,7 +118,7 @@ GSCMainCockpit >> renderCoreToolbarOn: html [
 			html textInput
 				callback: [ :value | core filesystemRoot: value ];
 				with: core filesystemRoot pathString.
-			core filesystemRoot isRoot ifFalse: [ html span: ' NON-ROOT! ' ].
+			core filesystemRoot isRoot ifFalse: [ html span: '(NON-ROOT-PATH!) ' ].
 			html submitButton: 'Save'.
 
 		].

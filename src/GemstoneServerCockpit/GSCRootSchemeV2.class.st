@@ -1,8 +1,8 @@
 "
-Uses old GsDevKit_home components
+Uses new GsDevKit_stones components
 "
 Class {
-	#name : 'GSCRootSchemeV1',
+	#name : 'GSCRootSchemeV2',
 	#superclass : 'GSCRootScheme',
 	#category : 'GemstoneServerCockpit-Scheme',
 	#package : 'GemstoneServerCockpit',
@@ -10,7 +10,7 @@ Class {
 }
 
 { #category : 'as yet unclassified' }
-GSCRootSchemeV1 >> buildRootTool [
+GSCRootSchemeV2 >> buildRootTool [
 	| root |
 
 	root := super buildRootTool.
@@ -44,7 +44,7 @@ GSCRootSchemeV1 >> buildRootTool [
 	
 	root add: GSCMonit.
 	
-	root add: GSCGsDevKit.
+	root add: GSCGsDevKitUnderscoreStones.
 
 	root add: GSCAnsibleTasks then: [ :ansible |
 		ansible addTasksJson: '
@@ -72,7 +72,7 @@ GSCRootSchemeV1 >> buildRootTool [
 ]
 
 { #category : 'as yet unclassified' }
-GSCRootSchemeV1 >> templateHaproxyConfig [
+GSCRootSchemeV2 >> templateHaproxyConfig [
 	^ GSCSttTemplate sttString:
 'global
 	log /dev/log	 local0
@@ -114,7 +114,7 @@ frontend stats
 ]
 
 { #category : 'as yet unclassified' }
-GSCRootSchemeV1 >> templateMonitConfig [
+GSCRootSchemeV2 >> templateMonitConfig [
 	^ GSCSttTemplate sttString:
 'set daemon 30
 	with start delay 30
@@ -141,7 +141,7 @@ include /etc/monit/conf.d/*
 ]
 
 { #category : 'as yet unclassified' }
-GSCRootSchemeV1 >> templateNginxConfig [
+GSCRootSchemeV2 >> templateNginxConfig [
 	^ GSCSttTemplate sttString:
 'user www-data;
 worker_processes auto;

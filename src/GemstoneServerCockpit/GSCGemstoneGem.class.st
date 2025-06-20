@@ -30,12 +30,12 @@ GSCGemstoneGem >> doShowGemLog [
 ]
 
 { #category : 'starting' }
-GSCGemstoneGem >> doStart [
+GSCGemstoneGem >> doStartViaMonit [
 	monitCheck doStart
 ]
 
 { #category : 'starting' }
-GSCGemstoneGem >> doStop [
+GSCGemstoneGem >> doStopViaMonit [
 	monitCheck doStop
 ]
 
@@ -80,7 +80,7 @@ GSCGemstoneGem >> monitConfigTemplate [
 
 { #category : 'as yet unclassified' }
 GSCGemstoneGem >> monitGroupName [
-	^ self appShortCode, '_gemstone_gems'
+	^ self parent monitGroupName
 ]
 
 { #category : 'as yet unclassified' }

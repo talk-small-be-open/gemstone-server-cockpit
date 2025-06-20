@@ -114,7 +114,7 @@ GSCApplication >> renderBodyOn: html [
 			rows: 20;
 			callback: [ :newValue | (self configAt: 'remarks' put: newValue) ];
 			value: (self configAt: 'remarks').
-		html submitButton
+		html submitButton with: 'Save'
 	 ]
 	
 

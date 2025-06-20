@@ -17,6 +17,16 @@ GSCGemstoneGems >> build [
 ]
 
 { #category : 'as yet unclassified' }
+GSCGemstoneGems >> doStartGemGroupViaMonit [
+	self runSudoShellCommand: ('monit start -g "', self monitGroupName, '"')
+]
+
+{ #category : 'as yet unclassified' }
+GSCGemstoneGems >> doStopGemGroupViaMonit [
+	self runSudoShellCommand: ('monit stop -g "', self monitGroupName, '"')
+]
+
+{ #category : 'as yet unclassified' }
 GSCGemstoneGems >> gemPorts [
 	| start |
 	start := self startPort.
@@ -28,6 +38,11 @@ GSCGemstoneGems >> gemPorts [
 { #category : 'as yet unclassified' }
 GSCGemstoneGems >> gemsCount [
 	^ (self configAt: 'web:workersCount')
+]
+
+{ #category : 'as yet unclassified' }
+GSCGemstoneGems >> monitGroupName [
+	^ self appShortCode, '_gemstone_gems'
 ]
 
 { #category : 'as yet unclassified' }

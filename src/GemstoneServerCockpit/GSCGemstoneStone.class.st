@@ -195,6 +195,9 @@ STN_TRAN_LOG_SIZES = 100, 100;
 # Some regular expressions take 2 levels per character. So we assume texts up to 2500 characters and need 5000 depth
 # default would be 1000, has been proven to be to low.
 GEM_MAX_SMALLTALK_STACK_DEPTH = 5000;
+
+# We often develop using symbols like Strings. So better to garbage collect them, too
+STN_SYMBOL_GC_ENABLED = TRUE;
 '
 ]
 
@@ -279,8 +282,8 @@ GSCGemstoneStone >> shrPageCacheSizeKb [
 	
 	limitKb := self hasKeyfile ifTrue: [ 2 * (1024*1024) ] ifFalse: [ (1024*1024) ].
 
-	"Allow for a 8% leftover, since GemStone somehow takes approx 6% more than configured"
-	^ ((maxTotalKb * 0.92) * myShare) asInteger min: limitKb.
+	"Allow for a some % leftover, since GemStone somehow takes approx 6% more than configured"
+	^ ((maxTotalKb * 0.9) * myShare) asInteger min: limitKb.
 ]
 
 { #category : 'as yet unclassified' }

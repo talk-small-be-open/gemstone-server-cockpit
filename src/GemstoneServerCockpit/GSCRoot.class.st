@@ -65,7 +65,7 @@ GSCRoot >> doTestShell [
 { #category : 'private - initialization' }
 GSCRoot >> gatherFacts [
 	self factAt: 'hostname' put: (
-		self core readCommand: 'hostname' ).
+		self core readCommand: 'uname -n' ).
 	self factAt: 'userHome' put: (
 		self core readCommand: 'echo -n ~', self serverUsername ).
 	self factAt: 'memoryTotalBytes' put: (

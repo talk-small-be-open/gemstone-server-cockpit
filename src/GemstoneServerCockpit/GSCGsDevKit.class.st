@@ -1,9 +1,9 @@
 Class {
 	#name : 'GSCGsDevKit',
 	#superclass : 'GSCTool',
-	#category : 'GemstoneServerCockpit-Model',
+	#category : 'GemstoneServerCockpit-GsDevKitHome',
 	#package : 'GemstoneServerCockpit',
-	#tag : 'Model'
+	#tag : 'GsDevKitHome'
 }
 
 { #category : 'building' }
