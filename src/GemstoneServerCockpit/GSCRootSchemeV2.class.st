@@ -44,7 +44,7 @@ GSCRootSchemeV2 >> buildRootTool [
 	
 	root add: GSCMonit.
 	
-	root add: GSCGsDevKitUnderscoreStones.
+	root add: GSCGsDevPlain.
 
 	root add: GSCAnsibleTasks then: [ :ansible |
 		ansible addTasksJson: '

@@ -25,6 +25,8 @@ GSCConfiguration >> createScheme [
 GSCConfiguration >> createSchemeDefault: aSchemeClass [
 	| scheme schemeClass className |
 	
+	"Read in the configured scheme or set it to the default scheme"
+	
 	className := self at: #configurationScheme default: [
 
 		"no default given"

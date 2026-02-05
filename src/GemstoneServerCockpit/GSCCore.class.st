@@ -843,7 +843,7 @@ GSCCore >> setup [
 { #category : 'setup' }
 GSCCore >> setupApplicationsFromConfigFiles [
 	| confDir |
-	confDir := (GSCCore instance realPathForFile: '/etc/gsc/applications') asFileReference.
+	confDir := (self realPathForFile: '/etc/gsc/applications') asFileReference.
 	confDir exists ifTrue: [
 		(confDir filesMatching: '*.conf') do: [ :each |
 			| conf scheme app |
@@ -901,7 +901,8 @@ GSCCore >> setupRoot [
 	"Get root config from external file"
 	rootConf := GSCConfiguration fromFile: ('/etc/gsc/gsc.conf').
 
-	scheme := rootConf createSchemeDefault: GSCRootSchemeV1.
+	"Create the configed scheme - or default"
+	scheme := rootConf createSchemeDefault: GSCRootSchemeV2.
 
 	"Store it back to the file (could have added some new default values)"
 "?Why	rootConf storeToFile."

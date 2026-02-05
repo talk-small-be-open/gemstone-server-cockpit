@@ -47,7 +47,7 @@ at: 12 put: #''Dezember''.
 
 { #category : 'as yet unclassified' }
 GSCGemstoneStone >> basePath [
-	^ '/opt/gemstone/applications' asPath / self appShortCode
+	^ (self core realPathForFile: '/opt/gemstone/applications') / self appShortCode
 ]
 
 { #category : 'building' }
@@ -87,15 +87,15 @@ GSCGemstoneStone >> build [
 		tool actionBlock: [ tool runTodeCommand: 'mount @/sys/stone/dirs/Seaside3/tode /home seaside' stone: self stoneName ].
 	]."
 
-"Maybe reuse somehow for git files in metacello directory? Or metacello does it on its own?
+
 	(self configAt: 'sourceCode') dataDo: [ :key :conf |
-		self add: GSCTodeProject then: [ :project |
+		self add: GSCMetacelloProject then: [ :project |
 			project
 				projectName: (conf at: 'metacelloName');
 				gitBranch: (conf at: 'gitBranch');
 				gitUrl: (conf at: 'gitUrl').
 		]
-	]."
+	].
 
 	"Backup cron job"
 	self add: GSCCronJob then: [ :cron |
@@ -256,11 +256,11 @@ GSCGemstoneStone >> gemstoneBinPath [
 { #category : 'as yet unclassified' }
 GSCGemstoneStone >> gemstoneProductPath [
 	"OPTIMIZE?"
-	^ (self
+	^ self core realPathForFile: (self
 		configAt: 'gemstone:product'
 		ifBlank: [
 			'/opt/gemstone/products/GemStone64Bit', self stoneVersion, '-x86_64.Linux' ]
-	) asPath
+	)
 ]
 
 { #category : 'testing' }
