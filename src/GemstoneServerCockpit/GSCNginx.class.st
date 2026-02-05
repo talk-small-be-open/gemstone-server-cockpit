@@ -32,6 +32,15 @@ GSCNginx >> build [
 			contentTemplate: self defaultVhostConfigTemplate
 	].
 
+	self add: GSCTextFile then: [ :file |
+		file
+			title: 'nginx status page';
+			filePath: ('/etc/nginx/sites-available/status');
+			beRootOwned;
+			contentTemplate: self statusConfigTemplate
+	].
+
+
 "Dies not work, since sites have not been built yet.	self useSsl ifTrue: ["
 	self add: GSCAcmeCertificateClient.
 	
@@ -101,6 +110,23 @@ GSCNginx >> nginxSites [
 GSCNginx >> renderBodyOn: html [
 "	html iframe
 		contents: [ :h | h paragraph: 'HIIII' ]"
+]
+
+{ #category : 'as yet unclassified' }
+GSCNginx >> statusConfigTemplate [
+	^ GSCSimpleTemplate source:
+'# Make the status numbers available, for munin monitoring or others
+server {
+	listen 127.0.0.1;
+	server_name localhost;
+	location /nginx_status {
+		stub_status on;
+		access_log   off;
+		allow 127.0.0.1;
+		deny all;
+	}
+}
+'
 ]
 
 { #category : 'accessing' }

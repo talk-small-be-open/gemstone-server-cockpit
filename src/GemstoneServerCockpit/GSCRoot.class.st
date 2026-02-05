@@ -42,7 +42,7 @@ GSCRoot >> doAddApplication [
 	| schemeClass scheme conf |
 
 	"TODO: Let choose version"
-	schemeClass := GSCWebApplicationSchemeV1.
+	schemeClass := GSCWebApplicationSchemeV2.
 
 	"TODO: Name it."
 
@@ -80,6 +80,7 @@ GSCRoot >> gatherFacts [
 
 { #category : 'as yet unclassified' }
 GSCRoot >> gemstoneGsHome [
+	self deprecated: 'GsDevKit is deprecated'.
 	^ ((self configAt: 'gemstone:gsHome') ifBlank: [ '/opt/GsDevKit_home' ]) asPath.
 ]
 

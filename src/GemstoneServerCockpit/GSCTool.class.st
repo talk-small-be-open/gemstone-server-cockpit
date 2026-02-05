@@ -590,19 +590,29 @@ GSCTool >> runBashScript: aString [
 
 { #category : 'as yet unclassified' }
 GSCTool >> runShellCommand: aString [
-	self runShellCommand: aString then: nil
+	^ self runShellCommand: aString then: nil
 ]
 
 { #category : 'as yet unclassified' }
-GSCTool >> runShellCommand: aString then: aBlock [
+GSCTool >> runShellCommand: aString args: anArgsCollection [
+	^ self runShellCommand: aString args: anArgsCollection then: nil
+]
+
+{ #category : 'as yet unclassified' }
+GSCTool >> runShellCommand: aString args: anArgsCollection then: aBlock [
 	self log: 'Shell command: ', aString.
 	
-	self core runAsyncShell: aString onOutput: [ :lines |
+	self core runAsyncShell: aString args: anArgsCollection onOutput: [ :lines |
 		"log addAll: lines" ] onFinish: [ :success |
 "			self refresh."
 			aBlock ifNotNil: [
 				success ifTrue: aBlock ]	
 	]
+]
+
+{ #category : 'as yet unclassified' }
+GSCTool >> runShellCommand: aString then: aBlock [
+	^ self runShellCommand: aString args: {  } then: aBlock
 ]
 
 { #category : 'as yet unclassified' }

@@ -47,7 +47,7 @@ at: 12 put: #''Dezember''.
 
 { #category : 'as yet unclassified' }
 GSCGemstoneStone >> basePath [
-	^ self gemstoneGsHome / 'server/stones' / self stoneName
+	^ '/opt/gemstone/applications' asPath / self appShortCode
 ]
 
 { #category : 'building' }
@@ -68,7 +68,7 @@ GSCGemstoneStone >> build [
 	self add: GSCTextFile then: [ :file |
 		file
 			title: 'stone.conf file';
-			filePath: (self basePath / (self stoneName, '.conf'));
+			filePath: self stoneConfFilePath;
 			beUserOwned;
 			contentTemplate: self gemConfTemplate
 	].
@@ -76,7 +76,7 @@ GSCGemstoneStone >> build [
 	self add: GSCTextFile then: [ :file |
 		file
 			title: 'gem.conf file';
-			filePath: (self basePath / 'gem.conf');
+			filePath: self gemConfFilePath;
 			beUserOwned;
 			contentTemplate: self gemConfTemplate
 	].
@@ -165,13 +165,45 @@ GSCGemstoneStone >> doShowStoneTime [
 ]
 
 { #category : 'as yet unclassified' }
+GSCGemstoneStone >> doStartNetldi [
+"	self runShellCommand: ('startStone -b ', self stoneName)"
+	self
+		runShellCommand: (self gemstoneBinPath / 'startnetldi') pathString
+		args: { '-g'. '-l'. self stoneName. }
+]
+
+{ #category : 'as yet unclassified' }
 GSCGemstoneStone >> doStartStone [
-	self runShellCommand: ('startStone -b ', self stoneName)
+"	self runShellCommand: ('startStone -b ', self stoneName)"
+	self
+		runShellCommand: (self gemstoneBinPath / 'startstone') pathString
+		args: {'-z'. self stoneConfFilePath pathString. '-l'. self stoneLogPath pathString. self stoneName. }.
+		
+	self doStartNetldi
+]
+
+{ #category : 'as yet unclassified' }
+GSCGemstoneStone >> doStopNetldi [
+"	self runShellCommand: ('startStone -b ', self stoneName)"
+	self
+		runShellCommand: (self gemstoneBinPath / 'stopnetldi') pathString
+		args: { self stoneName }
 ]
 
 { #category : 'as yet unclassified' }
 GSCGemstoneStone >> doStopStone [
-	self runShellCommand: ('stopStone -b ', self stoneName)
+"	self runShellCommand: ('stopStone -b ', self stoneName)"
+	self doStopNetldi.
+	
+	self
+		runShellCommand: (self gemstoneBinPath / 'stopstone') pathString
+		args: { self stoneName }
+]
+
+{ #category : 'as yet unclassified' }
+GSCGemstoneStone >> gemConfFilePath [
+	^ (self basePath / 'gem.conf')
+
 ]
 
 { #category : 'as yet unclassified' }
@@ -216,9 +248,20 @@ GSCGemstoneStone >> gemsTool [
 	^ self appFindTool: GSCGemstoneGems
 ]
 
-{ #category : 'accessing' }
-GSCGemstoneStone >> gsHome [
-	^ self gemstoneGsHome pathString
+{ #category : 'as yet unclassified' }
+GSCGemstoneStone >> gemstoneBinPath [
+	^ self gemstoneProductPath / 'bin'
+]
+
+{ #category : 'as yet unclassified' }
+GSCGemstoneStone >> gemstoneProductPath [
+	"OPTIMIZE?"
+	^ (self
+		configAt: 'gemstone:product'
+		ifBlank: [
+			"OPTIMIZE Use non gsdevkit neutral location, like /opt/gemstone/products/"
+			'/opt/GsDevKit_home/shared/downloads/products/GemStone64Bit', self stoneVersion, '-x86_64.Linux' ]
+	) asPath
 ]
 
 { #category : 'testing' }
@@ -284,6 +327,12 @@ GSCGemstoneStone >> shrPageCacheSizeKb [
 
 	"Allow for a some % leftover, since GemStone somehow takes approx 6% more than configured"
 	^ ((maxTotalKb * 0.9) * myShare) asInteger min: limitKb.
+]
+
+{ #category : 'as yet unclassified' }
+GSCGemstoneStone >> stoneConfFilePath [
+	^ self basePath / (self stoneName, '.conf')
+
 ]
 
 { #category : 'as yet unclassified' }

@@ -37,13 +37,15 @@ GSCAnsibleTasks >> addTasksJson: aString [
 
 { #category : 'as yet unclassified' }
 GSCAnsibleTasks >> ansibleEnvironmentDictionary [
-	| gsHome |
+"	| gsHome |
 	gsHome := self gemstoneGsHome pathString.
 
 	^ {
 		'GS_HOME' -> gsHome.
 		'PATH' -> (gsHome, '/bin:{{ ansible_env.PATH }}').
-	} asD
+	} asD"
+	
+	^ Dictionary new
 ]
 
 { #category : 'as yet unclassified' }

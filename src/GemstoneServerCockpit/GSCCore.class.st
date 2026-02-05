@@ -505,6 +505,26 @@ GSCCore >> rootTool [
 ]
 
 { #category : 'shell' }
+GSCCore >> runAsyncShell: aString args: anArgsCollection onOutput: aBlock onFinish: aFinishBlock [
+	^ self runAsyncShell: aString args: anArgsCollection sudo: false onOutput: aBlock onFinish: aFinishBlock
+]
+
+{ #category : 'shell' }
+GSCCore >> runAsyncShell: aString args: anArgsCollection sudo: aSudoBoolean onOutput: aBlock onFinish: aFinishBlock [
+
+	self doInBackground: [
+		self
+			runShell: aString
+			args: anArgsCollection
+			stdin: nil
+			sudo: aSudoBoolean
+			onOutput: aBlock
+			onRun: nil
+			onFinish: aFinishBlock
+	]
+]
+
+{ #category : 'shell' }
 GSCCore >> runAsyncShell: aString onOutput: aBlock [
 	^ self runAsyncShell: aString onOutput: aBlock onFinish: nil
 ]
@@ -516,17 +536,7 @@ GSCCore >> runAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
 
 { #category : 'shell' }
 GSCCore >> runAsyncShell: aString sudo: aSudoBoolean onOutput: aBlock onFinish: aFinishBlock [
-
-	self doInBackground: [
-		self
-			runShell: aString
-			args: {  }
-			stdin: nil
-			sudo: aSudoBoolean
-			onOutput: aBlock
-			onRun: nil
-			onFinish: aFinishBlock
-	]
+	^ self runAsyncShell: aString args: {  } sudo: aSudoBoolean onOutput: aBlock onFinish: aFinishBlock
 ]
 
 { #category : 'shell' }
@@ -603,10 +613,10 @@ https://superuser.com/questions/1015988/process-running-in-ssh-allocated-tty-not
 	"Some applications like 'service' have complained about non-capable terminal. We explicitely set to dumb."
 	envVars at: 'TERM' put: 'dumb'. 
 
-	rootTool ifNotNil: [
+"	rootTool ifNotNil: [
 		envVars at: 'GS_HOME' put: rootTool gemstoneGsHome pathString.
 		envVars at: 'PATH' put: (rootTool gemstoneGsHome pathString, '/bin:$PATH').
-	].
+	]."
 
 	cmd := 'ssh'.
 
@@ -863,7 +873,7 @@ GSCCore >> setupExampleApplications [
 
 	1 to: 5 do: [ :index |
 		| app scheme conf |
-		scheme := GSCWebApplicationSchemeV1 new.
+		scheme := GSCWebApplicationSchemeV2 new.
 		conf := GSCConfiguration fromFile: ('/etc/gsc/applications/', index asTwoCharacterString, '_example', index asString, '.conf').
 		conf at: 'project:shortCode' put: ('ExampleApp', index asString).
 		conf at: 'project:name' put: ('Example Webapp ', index asString).

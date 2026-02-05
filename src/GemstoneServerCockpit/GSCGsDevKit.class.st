@@ -113,7 +113,7 @@ GSCGsDevKit >> gsHome [
 	^ self gemstoneGsHome
 ]
 
-{ #category : 'testing' }
+{ #category : 'as yet unclassified' }
 GSCGsDevKit >> isInstalled [
 	^ self core fileExists: self gemstoneGsHome / 'bin/.gsdevkitSetup'
 

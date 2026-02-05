@@ -61,11 +61,6 @@ GSCGemstoneGem >> gemLogPath [
 	^ self stoneBasePath / 'logs' / (self gemFilesBasename, '.log')
 ]
 
-{ #category : 'accessing' }
-GSCGemstoneGem >> gsHome [
-	^ self gemstoneGsHome pathString
-]
-
 { #category : 'as yet unclassified' }
 GSCGemstoneGem >> monitCheckName [
 	^ (self appShortCode, '_gemstone_gem_', self gemIndex asString)
