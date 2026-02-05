@@ -82,12 +82,12 @@ GSCGemstoneStone >> build [
 	].
 
 	"TODO only if not installed already"
-	self add: GSCGeneralTool then: [ :tool |
+"	self add: GSCGeneralTool then: [ :tool |
 		tool title: 'Mount seaside in tode'.
 		tool actionBlock: [ tool runTodeCommand: 'mount @/sys/stone/dirs/Seaside3/tode /home seaside' stone: self stoneName ].
-"TODO		tool checkMeBlock: "
-	].
+	]."
 
+"Maybe reuse somehow for git files in metacello directory? Or metacello does it on its own?
 	(self configAt: 'sourceCode') dataDo: [ :key :conf |
 		self add: GSCTodeProject then: [ :project |
 			project
@@ -95,7 +95,7 @@ GSCGemstoneStone >> build [
 				gitBranch: (conf at: 'gitBranch');
 				gitUrl: (conf at: 'gitUrl').
 		]
-	].
+	]."
 
 	"Backup cron job"
 	self add: GSCCronJob then: [ :cron |
@@ -103,7 +103,7 @@ GSCGemstoneStone >> build [
 			minute: '0';
 			hour: '1,12';
 			title: (self stoneName, ' GemStone DB backup');
-			command: ((self core fileDepotScriptsDir / 'backup-gemstone-db.sh') pathString, ' ', self stoneName) ].
+			command: ((self core fileDepotScriptsDir / 'backup-gemstone-db.sh') pathString, ' ', self appShortCode) ].
 
 	"Cleanup tranlogs cron job"
 	self add: GSCCronJob then: [ :cron |
@@ -111,7 +111,7 @@ GSCGemstoneStone >> build [
 			minute: '0';
 			hour: '3';
 			title: (self stoneName, ' GemStone cleanup (tranlogs, objectlog, logfiles, ...)');
-			command: ((self core fileDepotScriptsDir / 'cleanup.sh') pathString, ' ', self stoneName) ]
+			command: ((self core fileDepotScriptsDir / 'cleanup.sh') pathString, ' ', self appShortCode) ]
 
 ]
 
@@ -259,8 +259,7 @@ GSCGemstoneStone >> gemstoneProductPath [
 	^ (self
 		configAt: 'gemstone:product'
 		ifBlank: [
-			"OPTIMIZE Use non gsdevkit neutral location, like /opt/gemstone/products/"
-			'/opt/GsDevKit_home/shared/downloads/products/GemStone64Bit', self stoneVersion, '-x86_64.Linux' ]
+			'/opt/gemstone/products/GemStone64Bit', self stoneVersion, '-x86_64.Linux' ]
 	) asPath
 ]
 
@@ -316,7 +315,7 @@ GSCGemstoneStone >> shrPageCacheSizeKb [
 	"OPTIMIZE: Does not use all the shared memory, if the GemStone license limits are hit. Maybe never the case, but
 	the math should be preciser, for distributing the total shared memory"
 
-	maxTotalKb := (self root gsDevKit sharedMemoryMaxBytes) // 1024.
+	maxTotalKb := (self root sharedMemoryMaxBytes) // 1024.
 	
 	"Get total of gems"
 	totalGems := (self root stones sumNumbers: [ :each | each gemsTool gemsCount ]) max: 1.

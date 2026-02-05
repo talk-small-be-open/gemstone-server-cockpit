@@ -1,9 +1,9 @@
 Class {
 	#name : 'GSCGemstoneGemWebserver',
 	#superclass : 'GSCTool',
-	#category : 'GemstoneServerCockpit-Model',
+	#category : 'GemstoneServerCockpit-Deprecated',
 	#package : 'GemstoneServerCockpit',
-	#tag : 'Model'
+	#tag : 'Deprecated'
 }
 
 { #category : 'as yet unclassified' }
@@ -13,15 +13,6 @@ GSCGemstoneGemWebserver >> checkMe [
 	"TODO get: GemServer gemServerNamed: serverName"
 	
 	"self beNeedsAttention: 'GemServer not registered'"
-]
-
-{ #category : 'as yet unclassified' }
-GSCGemstoneGemWebserver >> doRegisterZincWebserver [
-	"Register Servers in tODE"
-	| p i |
-	p := self gemTool portNumber asString.
-	i := self gemTool gemIndex asString.
-	self runTodeCommand: ('/home/seaside/gemServer --register=seaside', i, ' --type=zinc --port=', p) stone: self gemTool stoneName
 ]
 
 { #category : 'accessing' }

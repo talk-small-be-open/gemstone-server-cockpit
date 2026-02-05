@@ -20,7 +20,16 @@ GSCGemstoneGem >> build [
 	].
 
 	"Seaside web server in gem"
-	self add: GSCGemstoneGemWebserver
+"	self add: GSCGemstoneGemWebserver"
+]
+
+{ #category : 'as yet unclassified' }
+GSCGemstoneGem >> doRegisterZincWebserver [
+	"Register Servers in tODE"
+
+	self runDepotScript: 'seaside-webserver-register.sh' args: { self appShortCode. self webserverName. self portNumber asString } then: nil
+
+"	self runTodeCommand: ('/home/seaside/gemServer --register=seaside', i, ' --type=zinc --port=', p) stone: self gemTool stoneName"
 ]
 
 { #category : 'as yet unclassified' }
@@ -41,7 +50,7 @@ GSCGemstoneGem >> doStopViaMonit [
 
 { #category : 'as yet unclassified' }
 GSCGemstoneGem >> gemFilesBasename [
-	^ 'seaside', self gemIndex asString, '_server-', self portNumber asString
+	^ self webserverName, '_server-', self portNumber asString
 ]
 
 { #category : 'accessing' }
@@ -111,4 +120,9 @@ GSCGemstoneGem >> stoneTool [
 { #category : 'accessing' }
 GSCGemstoneGem >> title [
 	^ 'web gem ', gemIndex asString
+]
+
+{ #category : 'as yet unclassified' }
+GSCGemstoneGem >> webserverName [
+	^ 'seaside', self gemIndex asString
 ]

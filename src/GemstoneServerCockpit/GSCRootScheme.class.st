@@ -30,9 +30,6 @@ GSCRootScheme >> defaultConfigurationBuilder [
 		aptPackages: #();
 		snapPackages: #().
 
-	builder gemstone
-		gsHome: '/opt/GsDevKit_home'.
-
 	builder mail
 		smtpRelayhost: nil.
 		

@@ -7,9 +7,9 @@ Class {
 		'projectName',
 		'metacelloLoadList'
 	],
-	#category : 'GemstoneServerCockpit-Model',
+	#category : 'GemstoneServerCockpit-Deprecated',
 	#package : 'GemstoneServerCockpit',
-	#tag : 'Model'
+	#tag : 'Deprecated'
 }
 
 { #category : 'building' }
@@ -26,7 +26,7 @@ GSCTodeProject >> build [
 GSCTodeProject >> checkMe [
 	self beNotNeedsAttention.
 	
-	(self core fileExists: (self gemstoneGsHome / 'sys/local/server/projects' / self projectName , 'ston')) ifFalse: [
+	(self core fileExists: (self root gemstoneGsHome / 'sys/local/server/projects' / self projectName , 'ston')) ifFalse: [
 		self beNeedsAttention: 'Metacello project not installed' ]
 ]
 
@@ -92,7 +92,7 @@ GSCTodeProject >> gitUrl: anObject [
 
 { #category : 'as yet unclassified' }
 GSCTodeProject >> localRepoPath [
-	^ self gemstoneGsHome / 'shared/repos' / self projectName asLowercase
+	^ self root gemstoneGsHome / 'shared/repos' / self projectName asLowercase
 
 ]
 

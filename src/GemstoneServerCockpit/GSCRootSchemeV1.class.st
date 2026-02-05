@@ -71,6 +71,18 @@ GSCRootSchemeV1 >> buildRootTool [
 	^ root
 ]
 
+{ #category : 'building' }
+GSCRootSchemeV1 >> defaultConfigurationBuilder [
+	| builder |
+	
+	builder := super defaultConfigurationBuilder.
+
+	builder gemstone
+		gsHome: '/opt/GsDevKit_home'.
+
+	^ builder
+]
+
 { #category : 'as yet unclassified' }
 GSCRootSchemeV1 >> templateHaproxyConfig [
 	^ GSCSttTemplate sttString:

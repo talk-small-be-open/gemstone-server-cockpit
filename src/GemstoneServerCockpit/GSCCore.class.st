@@ -776,17 +776,6 @@ GSCCore >> runShellIsSuccess: aString [
 ]
 
 { #category : 'shell' }
-GSCCore >> runSudoAsyncShell: aString onOutput: aBlock [
-	^ self runSudoAsyncShell: aString onOutput: aBlock onFinish: nil
-]
-
-{ #category : 'shell' }
-GSCCore >> runSudoAsyncShell: aString onOutput: aBlock onFinish: aFinishBlock [
-	
-	self runAsyncShell: aString sudo: true onOutput: aBlock onFinish: aFinishBlock
-]
-
-{ #category : 'shell' }
 GSCCore >> runSudoShellIsSuccess: aString [
 
 	^ self

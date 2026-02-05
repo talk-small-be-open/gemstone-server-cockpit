@@ -53,8 +53,7 @@ GSCCronJob >> cronJobTemplate [
 
 MAILTO=<?stt= me mailto ?>
 SHELL=/bin/bash
-GS_HOME=<?stt= me gemstoneGsHome pathString ?>
-PATH=<?stt= me gemstoneGsHome pathString ?>/bin:/usr/bin:/bin:/usr/local/bin
+PATH=/bin:/usr/bin:/bin:/usr/local/bin
 
 # Job: <?stt= me title ?>
 <?stt= me minute ?> <?stt= me hour ?> * * <?stt= me weekday ?> <?stt= me user ?> cronic <?stt= me command ?>

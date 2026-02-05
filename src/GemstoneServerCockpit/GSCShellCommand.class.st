@@ -5,12 +5,25 @@ Class {
 		'cmd',
 		'checkMeBlock',
 		'title',
-		'sudo'
+		'sudo',
+		'args'
 	],
 	#category : 'GemstoneServerCockpit-Model',
 	#package : 'GemstoneServerCockpit',
 	#tag : 'Model'
 }
+
+{ #category : 'accessing' }
+GSCShellCommand >> args [
+
+	^ args
+]
+
+{ #category : 'accessing' }
+GSCShellCommand >> args: anObject [
+
+	args := anObject
+]
 
 { #category : 'as yet unclassified' }
 GSCShellCommand >> checkMe [
@@ -50,21 +63,20 @@ GSCShellCommand >> depotScript: aScriptName [
 ]
 
 { #category : 'as yet unclassified' }
-GSCShellCommand >> depotScript: aScriptName args: anArgsString [
+GSCShellCommand >> depotScript: aScriptName args: anArgsCollection [
 	| command |
 	command := (self core fileDepotScriptsDir / aScriptName) pathString.
 	
-	anArgsString ifNotBlank: [ command := command, ' ', anArgsString ].
-	
-	self cmd: command
+	self cmd: command.
+	self args: anArgsCollection
 ]
 
 { #category : 'as yet unclassified' }
 GSCShellCommand >> doExecute [
 	self isSudo ifTrue: [ 
-		self runSudoShellCommand: cmd
+		self runSudoShellCommand: cmd args: args.
 	] ifFalse: [ 
-		self runShellCommand: cmd
+		self runShellCommand: cmd args: args.
 	]
 ]
 

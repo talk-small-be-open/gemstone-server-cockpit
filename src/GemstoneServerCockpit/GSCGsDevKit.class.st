@@ -1,9 +1,9 @@
 Class {
 	#name : 'GSCGsDevKit',
 	#superclass : 'GSCTool',
-	#category : 'GemstoneServerCockpit-GsDevKitHome',
+	#category : 'GemstoneServerCockpit-Deprecated',
 	#package : 'GemstoneServerCockpit',
-	#tag : 'GsDevKitHome'
+	#tag : 'Deprecated'
 }
 
 { #category : 'building' }
@@ -27,7 +27,7 @@ export PATH=$GS_HOME/bin:$PATH'))
 
 	"Use 75% of total RAM for max shared memory. The 'Limited' GemStone license will give us only max 2GB per stone"
 	pageSize := self root factAt: 'memoryPageSizeBytes'.
-	shmmax := self sharedMemoryMaxBytes.
+	shmmax := self root sharedMemoryMaxBytes.
 	self add: GSCLineInFile then: [ :lif |
 		lif
 			filePath: '/etc/sysctl.conf';
@@ -58,7 +58,8 @@ export PATH=$GS_HOME/bin:$PATH'))
 	].
 
 	self add: GSCShellCommand then: [ :shell |
-		shell cmd: ('loginctl enable-linger ', self serverUsername)
+		shell cmd: 'loginctl'.
+		shell args: {'enable-linger'. self serverUsername}
 	].
 
 	self add: GSCGeneralTool then: [ :tool |
@@ -110,12 +111,12 @@ GSCGsDevKit >> doStartTodeClient [
 
 { #category : 'as yet unclassified' }
 GSCGsDevKit >> gsHome [
-	^ self gemstoneGsHome
+	^ self root gemstoneGsHome
 ]
 
 { #category : 'as yet unclassified' }
 GSCGsDevKit >> isInstalled [
-	^ self core fileExists: self gemstoneGsHome / 'bin/.gsdevkitSetup'
+	^ self core fileExists: self root gemstoneGsHome / 'bin/.gsdevkitSetup'
 
 ]
 
@@ -143,20 +144,6 @@ GSCGsDevKit >> seasideStonTemplate [
     status: #(#\''inactive\'');
     locked: false;
     yourself''}'
-]
-
-{ #category : 'as yet unclassified' }
-GSCGsDevKit >> sharedMemoryMaxBytes [
-	| hardwareBytes |
-	
-	"This is subject to change some few bytes on reboot, if using a virtual server.
-	So we round it down to the next KB"
-	hardwareBytes := (self root factAt: 'memoryTotalBytes') truncateTo: 1024.
-	
-	hardwareBytes := hardwareBytes max: (1024*1024*1024) . "Assuming some 1GB RAM, if not detected a real plausible value"
-	
-	"Take 75% of total RAM as shared memory"
-	^ (hardwareBytes * (3/4)) asInteger.
 ]
 
 { #category : 'accessing' }

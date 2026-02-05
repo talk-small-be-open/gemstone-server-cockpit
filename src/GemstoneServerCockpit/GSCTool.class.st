@@ -306,11 +306,6 @@ GSCTool >> gatherFacts [
 	"subclasses"
 ]
 
-{ #category : 'config-access' }
-GSCTool >> gemstoneGsHome [
-	^ self root gemstoneGsHome
-]
-
 { #category : 'testing' }
 GSCTool >> hasChildren [
 	^ children notBlank
@@ -566,7 +561,7 @@ cat /tmp/gscSmalltalkOutput.log
 	^ self runBashScript: bash.
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'shell' }
 GSCTool >> runBashScript: aString [
 	| lines |
 
@@ -588,17 +583,25 @@ GSCTool >> runBashScript: aString [
 
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'shell' }
+GSCTool >> runDepotScript: aScriptName args: anArgsCollection then: aBlock [
+	| command |
+	command := (self core fileDepotScriptsDir / aScriptName) pathString.
+	
+	^ self runShellCommand: command args: anArgsCollection then: aBlock
+]
+
+{ #category : 'shell' }
 GSCTool >> runShellCommand: aString [
 	^ self runShellCommand: aString then: nil
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'shell' }
 GSCTool >> runShellCommand: aString args: anArgsCollection [
 	^ self runShellCommand: aString args: anArgsCollection then: nil
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'shell' }
 GSCTool >> runShellCommand: aString args: anArgsCollection then: aBlock [
 	self log: 'Shell command: ', aString.
 	
@@ -610,7 +613,7 @@ GSCTool >> runShellCommand: aString args: anArgsCollection then: aBlock [
 	]
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'shell' }
 GSCTool >> runShellCommand: aString then: aBlock [
 	^ self runShellCommand: aString args: {  } then: aBlock
 ]
@@ -642,21 +645,31 @@ EOF
 	^ self runBashScript: bash.
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'shell' }
 GSCTool >> runSudoShellCommand: aString [
-	self runSudoShellCommand: aString then: nil
+	^ self runSudoShellCommand: aString then: nil
 ]
 
-{ #category : 'as yet unclassified' }
-GSCTool >> runSudoShellCommand: aString then: aBlock [
+{ #category : 'shell' }
+GSCTool >> runSudoShellCommand: aString args: anArgsCollection [
+	^ self runSudoShellCommand: aString args: anArgsCollection then: nil
+]
+
+{ #category : 'shell' }
+GSCTool >> runSudoShellCommand: aString args: anArgsCollection then: aBlock [
 	self log: 'Shell sudo command: ', aString.
 
-	self core runSudoAsyncShell: aString onOutput: [ :lines |
+	self core runAsyncShell: aString args: anArgsCollection sudo: true onOutput: [ :lines |
 		"log addAll: lines" ] onFinish: [ :success |
 "			self refresh."
 			aBlock ifNotNil: [
 				success ifTrue: aBlock ]
 	]
+]
+
+{ #category : 'shell' }
+GSCTool >> runSudoShellCommand: aString then: aBlock [
+	^ self runSudoShellCommand: aString args: {  } then: aBlock
 ]
 
 { #category : 'as yet unclassified' }
