@@ -124,4 +124,4 @@ Classical way of installing, for developers:
 		repository: 'github://talk-small-be-open/gemstone-server-cockpit:master/src';
 		load.
 
-	GSCCore install.
+This will implicitly run some bootstrapping by calling "GSCCore install."
