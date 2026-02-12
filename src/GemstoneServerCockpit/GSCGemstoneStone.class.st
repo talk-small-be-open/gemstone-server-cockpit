@@ -81,6 +81,15 @@ GSCGemstoneStone >> build [
 			contentTemplate: self gemConfTemplate
 	].
 
+	self add: GSCTextFile then: [ :file |
+		file
+			title: 'gemstone.env file';
+			filePath: self gemstoneEnvFilePath;
+			beUserOwned;
+			contentTemplate: self gemstoneEnvTemplate
+	].
+
+
 	"TODO only if not installed already"
 "	self add: GSCGeneralTool then: [ :tool |
 		tool title: 'Mount seaside in tode'.
@@ -126,7 +135,7 @@ GSCGemstoneStone >> checkMe [
 
 { #category : 'as yet unclassified' }
 GSCGemstoneStone >> doCreateStone [
-	self runShellCommand: ('createStone ', self stoneName, ' ', self stoneVersion)
+	self runDepotScript: 'create-stone.sh' args: { self appShortCode. self stoneVersion }
 ]
 
 { #category : 'as yet unclassified' }
@@ -201,6 +210,12 @@ GSCGemstoneStone >> doStopStone [
 ]
 
 { #category : 'as yet unclassified' }
+GSCGemstoneStone >> extentFilePath [
+	^ (self basePath / 'extents' / 'extent0.dbf')
+
+]
+
+{ #category : 'as yet unclassified' }
 GSCGemstoneStone >> gemConfFilePath [
 	^ (self basePath / 'gem.conf')
 
@@ -251,6 +266,78 @@ GSCGemstoneStone >> gemsTool [
 { #category : 'as yet unclassified' }
 GSCGemstoneStone >> gemstoneBinPath [
 	^ self gemstoneProductPath / 'bin'
+]
+
+{ #category : 'as yet unclassified' }
+GSCGemstoneStone >> gemstoneEnvFilePath [
+	^ (self basePath / 'gemstone.env')
+
+]
+
+{ #category : 'as yet unclassified' }
+GSCGemstoneStone >> gemstoneEnvTemplate [
+	^ GSCSttTemplate tool: self sttString:
+'#
+# Environment variables for one specific stone
+#
+
+## Gemstone environment settings
+
+## Stone name
+export GEMSTONE_NAME=<?stt= me stoneName ?>
+
+## Path to Stone directory
+export GEMSTONE_STONE_DIR="<?stt= me basePath pathString ?>"
+
+## Path to the Gemstone product directory
+export GEMSTONE=$GEMSTONE_STONE_DIR/product
+
+## Log directory
+export GEMSTONE_LOGDIR=$GEMSTONE_STONE_DIR/logs
+
+## Cypress git repository directory
+# export GEMSTONE_GITDIR=$GEMSTONE_STONE_DIR/git
+
+## Tranlog directory
+export GEMSTONE_TRANLOGDIR=$GEMSTONE_STONE_DIR/tranlogs
+
+## Path to the Gemstone keyfile
+# export GEMSTONE_KEYFILE=$GEMSTONE/seaside/etc/gemstone.key
+
+## Gemstone data directory
+export GEMSTONE_DATADIR=$GEMSTONE_STONE_DIR/extents
+
+## Path to Gemstone system config file
+export GEMSTONE_SYS_CONF=$GEMSTONE_DATADIR/system.conf
+
+## Path to Gemstone executable config directory
+export GEMSTONE_EXE_CONF=$GEMSTONE_STONE_DIR
+
+## NRS_ALL to define log directory for all processes
+export GEMSTONE_NRS_ALL=''#dir:$GEMSTONE_LOGDIR#log:%N%P.log''
+
+## Print instance counts and Smalltalk stack when an OutOfMemory error occurs
+export GS_DEBUG_VMGC_VERBOSE_OUTOFMEM=1
+
+
+### Add Gemstone paths to some common environment variables ###
+### -- unless they have already been added. ###
+### WARNING: assumes if paths start with $GEMSTONE they are already set ###
+
+# Compute the length of the $GEMSTONE environment variable
+GS_LEN=${#GEMSTONE}
+
+## Gemstone and Seaside program paths
+if [[ ${PATH:0:$GS_LEN} != $GEMSTONE ]] ; then
+    export PATH=$GEMSTONE/bin:$PATH
+fi
+
+## Gemstone library path
+if [[ ${LD_LIBRARY_PATH:0:$GS_LEN} != ${GEMSTONE} ]] ; then
+    export LD_LIBRARY_PATH=$GEMSTONE/lib:$LD_LIBRARY_PATH
+fi
+
+'
 ]
 
 { #category : 'as yet unclassified' }

@@ -150,6 +150,21 @@ GSCCore >> clearSudoPassword [
 	temporarySudoPassword := nil
 ]
 
+{ #category : 'as yet unclassified' }
+GSCCore >> cmdGscGemstoneExecute: aCmdString [
+	^ self cmdGscGemstoneExecute: aCmdString args: nil
+]
+
+{ #category : 'nil' }
+GSCCore >> cmdGscGemstoneExecute: aCmdString args: anArgsCollection [
+	"Answers a string as a commandline to the wrapper script which loads the GemStone environment for "
+	
+	^ GSCShellCommand new
+		gscGemstoneExecute: aCmdString args: anArgsCollection;
+		commandlineString
+
+]
+
 { #category : 'shell' }
 GSCCore >> createOSSUnixSubprocess [
 	| process gsHome path |

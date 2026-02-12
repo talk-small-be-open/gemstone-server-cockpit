@@ -1,6 +1,6 @@
 Class {
 	#name : 'GSCGsDevPlain',
-	#superclass : 'GSCTool',
+	#superclass : 'GSCGsDevBase',
 	#category : 'GemstoneServerCockpit-GsDevPlain',
 	#package : 'GemstoneServerCockpit',
 	#tag : 'GsDevPlain'

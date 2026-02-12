@@ -74,7 +74,7 @@ GSCWebApplicationSchemeV2 >> defaultConfigurationBuilder [
 
 	"Files in repositories"
 	(builder gitRepositories __example)
-		path: '/opt/webapp/main';
+		path: '/opt/gemstone/applications/webapp/main';
 		url: 'ssh://git@yourhost/repo.git';
 		branch: 'master'.
 
@@ -88,7 +88,7 @@ GSCWebApplicationSchemeV2 >> defaultConfigurationBuilder [
 		keyfile: nil.
 
 	builder web
-		webRoot: '/opt/webapp/main/web_root';
+		webRoot: '/opt/gemstone/applications/webapp/main/web_root';
 		useSsl: false;
 		appUrlPaths: {'app'. 'admin'};
 		domains: {'www.example.com'. };
@@ -118,8 +118,8 @@ check process <?stt= me monitCheckName ?> with pidfile <?stt= me pidFilePath pat
 	GROUP <?stt= me appShortCode ?>
 	GROUP gemstone_gems
 	MODE ACTIVE
-	start program = "/bin/bash -c ''<?stt= me core fileDepotScriptsDir pathString ?>/seaside-webserver-restart.sh <?stt= me appShortCode ?> <?stt= me webserverName ?>'' " as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>"
-	stop program = "/bin/bash -c ''<?stt= me core fileDepotScriptsDir pathString ?>/seaside-webserver-stop.sh <?stt= me appShortCode ?> <?stt= me webserverName ?>'' " as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>" with timeout 90 seconds
+	start program = "/bin/bash -c ''<?stt= me core fileDepotScriptsDir pathString ?>/seaside-webserver-restart.sh <?stt= me appShortCode ?> <?stt= me webserverName ?>'' " as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverGroupname ?>"
+	stop program = "/bin/bash -c ''<?stt= me core fileDepotScriptsDir pathString ?>/seaside-webserver-stop.sh <?stt= me appShortCode ?> <?stt= me webserverName ?>'' " as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverGroupname ?>" with timeout 90 seconds
 	if 7 restarts within 10 cycles then stop
 #	if failed url http://127.0.0.1:<?stt= me portNumber ?>/ping and content == "OK" for 2 cycles then alert
 #	if totalmem > 700 Mb then alert
@@ -192,8 +192,8 @@ check process <?stt= me netldiMonitCheckName ?> matching "^/opt/.*/sys/netldid <
 	MODE ACTIVE
 	GROUP <?stt= me appShortCode ?>
 	GROUP gemstone_netldis
-	start program = "/bin/bash -c ''source <?stt= me basePath pathString ?>/gemstone.env && <?stt= me gemstoneBinPath pathString ?>/startnetldi <?stt= me stoneName ?>''" as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>"
-	stop program = "/bin/bash -c ''source <?stt= me basePath pathString ?>/gemstone.env && <?stt= me gemstoneBinPath pathString ?>/stopnetldi <?stt= me stoneName ?>''" as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>" with timeout 90 seconds
+	start program = "<?stt= me core cmdGscGemstoneExecute: ''startnetldi'' args: { me stoneName. } ?>" as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverGroupname ?>"
+	stop program = "<?stt= me core cmdGscGemstoneExecute: ''stopnetldi'' args: { me stoneName. } ?>" as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverGroupname ?>"
 	if 7 restarts within 10 cycles then stop
 	# if totalmem > 700 Mb then alert
 	if cpu > 60% for 4 cycles then alert
@@ -376,8 +376,8 @@ check process <?stt= me monitCheckName ?> matching "^/opt/.*/sys/stoned <?stt= m
 	ONREBOOT START
 	MODE ACTIVE
 	GROUP <?stt= me appShortCode ?>
-	start program = "/bin/bash -c ''source <?stt= me basePath pathString ?>/gemstone.env && <?stt= me gemstoneBinPath pathString ?>/startstone <?stt= me stoneName ?>''" as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>"
-	stop program = "/bin/bash -c ''source <?stt= me basePath pathString ?>/gemstone.env && <?stt= me gemstoneBinPath pathString ?>/stopstone <?stt= me stoneName ?>''" as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverUsername ?>"
+	start program = "<?stt= me core cmdGscGemstoneExecute: ''startstone'' args: { me stoneName. } ?>" as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverGroupname ?>"
+	stop program = "<?stt= me core cmdGscGemstoneExecute: ''stopstone'' args: { me stoneName. } ?>" as uid "<?stt= me serverUsername ?>" gid "<?stt= me serverGroupname ?>"
 	if 7 restarts within 10 cycles then stop
 	# if totalmem > 700 Mb then alert
 	if cpu > 60% for 4 cycles then alert

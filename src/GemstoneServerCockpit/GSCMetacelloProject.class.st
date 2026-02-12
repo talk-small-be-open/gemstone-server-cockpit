@@ -14,42 +14,25 @@ Class {
 
 { #category : 'building' }
 GSCMetacelloProject >> build [
-	self add: GSCGitRepository then: [ :git |
+"	self add: GSCGitRepository then: [ :git |
 		git
 			url: gitUrl;
 			branch: gitBranch;
 			folderPath: self localRepoPath
-	]
+	]"
 ]
 
 { #category : 'as yet unclassified' }
 GSCMetacelloProject >> checkMe [
 	self beNotNeedsAttention.
 	
-	(self core fileExists: (self root gemstoneGsHome / 'sys/local/server/projects' / self projectName , 'ston')) ifFalse: [
-		self beNeedsAttention: 'Metacello project not installed' ]
-]
-
-{ #category : 'as yet unclassified' }
-GSCMetacelloProject >> doCreateEntry [
-"	self
-		runTodeCommand: ('project entry --baseline=', self metacelloName, ' --repo=\""filetree://', self localRepoPath pathString, '/src\"" /sys/local/server/projects')
-		stone: self stoneName."
-
-	self
-		runTodeCommand: ('project entry --baseline=', self metacelloName, ' --repo=filetree://', self localRepoPath pathString, '/src /sys/local/server/projects')
-		stone: self stoneName.
-
-]
-
-{ #category : 'as yet unclassified' }
-GSCMetacelloProject >> doGet [
-	self runTodeCommand: ('project get ', self projectName) stone: self stoneName
+"	(self core fileExists: (self root gemstoneGsHome / 'sys/local/server/projects' / self projectName , 'ston')) ifFalse: [
+		self beNeedsAttention: 'Metacello project not installed' ]"
 ]
 
 { #category : 'as yet unclassified' }
 GSCMetacelloProject >> doLoad [
-	| loadString |
+"	| loadString |
 	
 	loadString := String streamContents: [ :s |
 		s << '\`#('.
@@ -62,8 +45,8 @@ GSCMetacelloProject >> doLoad [
 		s << ')\`'.
 	].
 	
-	self runTodeCommand: ('project load --loads="', loadString, '" ', self projectName) stone: self stoneName
-
+	self runTodeCommand: ('project load --loads=""', loadString, '"" ', self projectName) stone: self stoneName
+"
 ]
 
 { #category : 'accessing' }
@@ -92,6 +75,7 @@ GSCMetacelloProject >> gitUrl: anObject [
 
 { #category : 'as yet unclassified' }
 GSCMetacelloProject >> localRepoPath [
+	"TODO"
 	^ self root gemstoneGsHome / 'shared/repos' / self projectName asLowercase
 
 ]
@@ -136,5 +120,5 @@ GSCMetacelloProject >> stoneTool [
 
 { #category : 'accessing' }
 GSCMetacelloProject >> title [
-	^ 'tode project ', projectName
+	^ 'Metacello project ', projectName
 ]

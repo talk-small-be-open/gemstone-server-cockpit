@@ -1,6 +1,6 @@
 Class {
 	#name : 'GSCGsDevKitUnderscoreStones',
-	#superclass : 'GSCTool',
+	#superclass : 'GSCGsDevBase',
 	#category : 'GemstoneServerCockpit-GsDevKitStones',
 	#package : 'GemstoneServerCockpit',
 	#tag : 'GsDevKitStones'

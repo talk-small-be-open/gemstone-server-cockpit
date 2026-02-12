@@ -219,6 +219,11 @@ GSCTool >> configAt: aConfigKey put: aValue [
 	^ value
 ]
 
+{ #category : 'shell' }
+GSCTool >> copyFile: aSource to: aTarget [
+	self runSudoShellCommand: 'cp' args: { '-p'. aSource asPath pathString. aTarget asPath pathString }
+]
+
 { #category : 'as yet unclassified' }
 GSCTool >> core [
 	^ GSCCore instance
@@ -581,6 +586,11 @@ GSCTool >> runBashScript: aString [
 
 	^ lines joinUsingLf
 
+]
+
+{ #category : 'shell' }
+GSCTool >> runDepotScript: aScriptName args: anArgsCollection [
+	^ self runDepotScript: aScriptName args: anArgsCollection then: nil
 ]
 
 { #category : 'shell' }

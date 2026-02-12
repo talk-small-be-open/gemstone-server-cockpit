@@ -57,6 +57,26 @@ GSCShellCommand >> cmd: anObject [
 ]
 
 { #category : 'as yet unclassified' }
+GSCShellCommand >> commandlineString [
+	"Get the command as a oneliner for execution in a shell"
+	^ String streamContents: [ :s |
+		s << cmd.
+		args do: [ :each |
+			| quote |
+			
+			"TODO Autoescape. Put that in a general usable place"
+			
+			quote := each includes: Character space.
+			
+			s space.
+			quote ifTrue: [ s << $" ].
+			s << each.
+			quote ifTrue: [ s << $" ].
+		]
+	]
+]
+
+{ #category : 'as yet unclassified' }
 GSCShellCommand >> depotScript: aScriptName [
 	^ self depotScript: aScriptName args: nil
 
@@ -78,6 +98,22 @@ GSCShellCommand >> doExecute [
 	] ifFalse: [ 
 		self runShellCommand: cmd args: args.
 	]
+]
+
+{ #category : 'as yet unclassified' }
+GSCShellCommand >> gscGemstoneExecute: aGemstoneShellCommand [
+	^ self gscGemstoneExecute: aGemstoneShellCommand args: nil
+]
+
+{ #category : 'as yet unclassified' }
+GSCShellCommand >> gscGemstoneExecute: aGemstoneShellCommand args: anArgsCollection [
+	| ensuredArgs |
+
+	"Robustness to nil"
+	ensuredArgs := anArgsCollection ifNil: [ {  } ].
+	
+	self depotScript: 'gsc-gemstone-execute.sh' args: (ensuredArgs copyWithFirst: aGemstoneShellCommand)
+
 ]
 
 { #category : 'testing' }

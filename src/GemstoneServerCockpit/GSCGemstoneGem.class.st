@@ -27,7 +27,7 @@ GSCGemstoneGem >> build [
 GSCGemstoneGem >> doRegisterZincWebserver [
 	"Register Servers in tODE"
 
-	self runDepotScript: 'seaside-webserver-register.sh' args: { self appShortCode. self webserverName. self portNumber asString } then: nil
+	self runDepotScript: 'seaside-webserver-register.sh' args: { self appShortCode. self webserverName. self portNumber asString }
 
 "	self runTodeCommand: ('/home/seaside/gemServer --register=seaside', i, ' --type=zinc --port=', p) stone: self gemTool stoneName"
 ]
