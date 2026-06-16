@@ -32,6 +32,18 @@ GSCMetacelloProject >> checkMe [
 
 { #category : 'as yet unclassified' }
 GSCMetacelloProject >> doLoad [
+"
+run
+GsDeployer deploy: [
+  Metacello new
+    baseline: 'Seaside3';
+    repository: 'github://SeasideSt/Seaside:master/repository';
+    onLock: [:ex | ex honor];
+    load: #('Zinc') ].
+%
+"
+
+
 "	| loadString |
 	
 	loadString := String streamContents: [ :s |
@@ -76,8 +88,8 @@ GSCMetacelloProject >> gitUrl: anObject [
 { #category : 'as yet unclassified' }
 GSCMetacelloProject >> localRepoPath [
 	"TODO"
-	^ self root gemstoneGsHome / 'shared/repos' / self projectName asLowercase
-
+"	^ self appBasePathOderso / 'github-cache' / self projectName asLowercase
+"
 ]
 
 { #category : 'accessing' }
