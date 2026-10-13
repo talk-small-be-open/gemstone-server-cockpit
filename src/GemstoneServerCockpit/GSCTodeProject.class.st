@@ -12,7 +12,7 @@ Class {
 	#tag : 'Model'
 }
 
-{ #category : 'building' }
+{ #category : 'as yet unclassified' }
 GSCTodeProject >> build [
 	self add: GSCGitRepository then: [ :git |
 		git
@@ -66,25 +66,25 @@ GSCTodeProject >> doLoad [
 
 ]
 
-{ #category : 'accessing' }
+{ #category : 'as yet unclassified' }
 GSCTodeProject >> gitBranch [
 
 	^ gitBranch
 ]
 
-{ #category : 'accessing' }
+{ #category : 'as yet unclassified' }
 GSCTodeProject >> gitBranch: anObject [
 
 	gitBranch := anObject
 ]
 
-{ #category : 'accessing' }
+{ #category : 'as yet unclassified' }
 GSCTodeProject >> gitUrl [
 
 	^ gitUrl
 ]
 
-{ #category : 'accessing' }
+{ #category : 'as yet unclassified' }
 GSCTodeProject >> gitUrl: anObject [
 
 	gitUrl := anObject
@@ -96,12 +96,12 @@ GSCTodeProject >> localRepoPath [
 
 ]
 
-{ #category : 'accessing' }
+{ #category : 'as yet unclassified' }
 GSCTodeProject >> metacelloLoadList [
 	^ metacelloLoadList ifBlank: [ #('default') ]
 ]
 
-{ #category : 'accessing' }
+{ #category : 'as yet unclassified' }
 GSCTodeProject >> metacelloLoadList: anObject [
 
 	metacelloLoadList := anObject
@@ -112,13 +112,13 @@ GSCTodeProject >> metacelloName [
 	^ self projectName capitalized
 ]
 
-{ #category : 'accessing' }
+{ #category : 'as yet unclassified' }
 GSCTodeProject >> projectName [
 
 	^ projectName
 ]
 
-{ #category : 'accessing' }
+{ #category : 'as yet unclassified' }
 GSCTodeProject >> projectName: anObject [
 
 	projectName := anObject
@@ -134,7 +134,7 @@ GSCTodeProject >> stoneTool [
 	^ self ancestorsDetectKindOf: GSCGemstoneStone
 ]
 
-{ #category : 'accessing' }
+{ #category : 'as yet unclassified' }
 GSCTodeProject >> title [
 	^ 'tode project ', projectName
 ]

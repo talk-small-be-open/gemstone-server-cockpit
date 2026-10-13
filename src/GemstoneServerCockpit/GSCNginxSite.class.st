@@ -59,9 +59,19 @@ GSCNginxSite >> haproxyPortNumber [
 	^ 9000
 ]
 
+{ #category : 'testing' }
+GSCNginxSite >> hasRateLimit [
+	^ self nginxRateLimit notBlank
+]
+
 { #category : 'as yet unclassified' }
 GSCNginxSite >> nginxDomainsString [
 	^ self domains joinUsing: String space
+]
+
+{ #category : 'as yet unclassified' }
+GSCNginxSite >> nginxRateLimit [
+	^ self configAt: 'web:nginxRateLimit'
 ]
 
 { #category : 'as yet unclassified' }

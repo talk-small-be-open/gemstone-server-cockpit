@@ -6,7 +6,7 @@ Class {
 	#tag : 'Scheme'
 }
 
-{ #category : 'building' }
+{ #category : 'as yet unclassified' }
 GSCWebApplicationSchemeV1 >> buildApplicationToolInto: aRootTool [
 	| app |
 
@@ -53,7 +53,7 @@ GSCWebApplicationSchemeV1 >> buildApplicationToolInto: aRootTool [
 	^ app
 ]
 
-{ #category : 'building' }
+{ #category : 'as yet unclassified' }
 GSCWebApplicationSchemeV1 >> defaultConfigurationBuilder [
 	
 	| builder |
@@ -93,7 +93,8 @@ GSCWebApplicationSchemeV1 >> defaultConfigurationBuilder [
 		appUrlPaths: {'app'. 'admin'};
 		domains: {'www.example.com'. };
 		workersCount: 3;
-		nginxIncludeFile: ''.
+		nginxIncludeFile: '';
+		nginxRateLimit: '5r/s'.
 
 	builder ansibleTasksJson: '[ { } ]'.
 
@@ -231,8 +232,10 @@ sttProxyToHaproxy := '
 	expires -1;
 	add_header Cache-Control "no-store, no-cache, must-revalidate, max-age=0, proxy-revalidate";
 
+	<?stt me hasRateLimit ifTrue: [ ?>
 	# Speed limits. Requests to the actual app behind HAProxy should be restricted.
-	limit_req zone=app burst=30;
+	limit_req zone=<?stt= each appShortCode ?>; # maybe add burst= ?
+	<?stt ] ?>
 
 	# Allow connections from Browser to websocket
 	# add_header Content-Security-Policy "connect-src https: ''self'' wss://$host;";

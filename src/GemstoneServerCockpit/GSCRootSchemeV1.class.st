@@ -207,6 +207,10 @@ http {
 	# What we want is to ban idiots
 	limit_req_zone $binary_remote_addr zone=app:10m rate=20r/s;
 
+	<?stt me nginxSites do: [ :each | each hasRateLimit ifTrue: [ ?>
+	limit_req_zone $binary_remote_addr zone=<?stt= each appShortCode ?>:10m rate=<?stt= each nginxRateLimit ?>;
+	<?stt ] ] ?>
+
 	# We need to manually re-add this. ngxblocker out-comments this in /etc/nginx/conf.d/botblocker-nginx-settings.conf
 	# because of conflict avoidance. But zone flood needs to exist.
 	limit_req_zone $binary_remote_addr zone=flood:50m rate=90r/s;

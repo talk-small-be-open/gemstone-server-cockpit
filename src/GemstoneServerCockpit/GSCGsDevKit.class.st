@@ -6,7 +6,7 @@ Class {
 	#tag : 'GsDevKitHome'
 }
 
-{ #category : 'building' }
+{ #category : 'as yet unclassified' }
 GSCGsDevKit >> build [
 	| shmmax pageSize |
 	self add: GSCGitRepository then: [ :git |
@@ -159,7 +159,7 @@ GSCGsDevKit >> sharedMemoryMaxBytes [
 	^ (hardwareBytes * (3/4)) asInteger.
 ]
 
-{ #category : 'accessing' }
+{ #category : 'as yet unclassified' }
 GSCGsDevKit >> title [
 	^ 'GsDevKit'
 ]
